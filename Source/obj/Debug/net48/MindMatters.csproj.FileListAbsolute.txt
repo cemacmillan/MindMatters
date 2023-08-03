@@ -1,0 +1,9 @@
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.csproj.AssemblyReference.cache
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.GeneratedMSBuildEditorConfig.editorconfig
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.AssemblyInfoInputs.cache
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.AssemblyInfo.cs
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.csproj.CoreCompileInputs.cache
+/Users/cem/projects/MindMatters/Assemblies/MindMatters.dll
+/Users/cem/projects/MindMatters/Assemblies/MindMatters.pdb
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.dll
+/Users/cem/projects/MindMatters/Source/obj/Debug/net48/MindMatters.pdb

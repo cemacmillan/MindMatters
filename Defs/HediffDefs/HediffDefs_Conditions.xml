@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <HediffDef>
+        <defName>Bipolar</defName>
+        <label>bipolar</label>
+        <description>A variation of human mind characterized by periods of depression and periods of abnormally elevated mood.</description>
+        <hediffClass>MindMatters.Hediff_Bipolar</hediffClass>
+        <stages>
+            <li>
+                <label>severely depressed</label>
+                <minSeverity>0.0</minSeverity>
+            </li>
+            <li>
+                <label>mildly depressed</label>
+                <minSeverity>0.2</minSeverity>
+            </li>
+            <li>
+                <label>stable</label>
+                <minSeverity>0.4</minSeverity>
+            </li>
+            <li>
+                <label>mildly manic</label>
+                <minSeverity>0.6</minSeverity>
+            </li>
+            <li>
+                <label>severely manic</label>
+                <minSeverity>0.8</minSeverity>
+            </li>
+        </stages>
+        <isBad>true</isBad>
+    </HediffDef>
+</Defs>

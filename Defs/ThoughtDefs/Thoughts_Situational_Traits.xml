@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<ThoughtDef>
+  <defName>Pluviophile</defName>
+  <workerClass>MindMatters.ThoughtWorker_Pluviophile</workerClass>
+  <stages>
+    <li>
+      <label>raining outside</label>
+      <description>I like the sound of the rain beating down above me.</description>
+      <baseMoodEffect>3</baseMoodEffect>
+    </li>
+    <li>
+      <label>in the rain</label>
+      <description>The rain is so relaxing. I don't mind getting wet.</description>
+      <baseMoodEffect>8</baseMoodEffect>
+    </li>
+  </stages>
+  <requiredTraits>
+    <li>Pluviophile</li>
+  </requiredTraits>
+</ThoughtDef>
+
+
+
+</Defs>

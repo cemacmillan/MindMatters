@@ -1,0 +1,16 @@
+
+Developing a new personality model for a RimWorld mod is a fascinating challenge. Psychology is a complex field with many different models of personality, but one of the most widely accepted and used is the Five-Factor Model, also known as the "Big Five." This model consists of five broad dimensions that are used to describe human personality:
+
+Openness to Experience: This refers to a person's willingness to experience new things, their imagination, their appreciation for art and beauty, and their preference for variety. At one end of the spectrum are people who are creative, curious, and open to new ideas, while at the other end are those who prefer routine and are more closed-minded.
+Conscientiousness: This refers to a person's level of organization, responsibility, and dependability. Highly conscientious people tend to be organized, thorough, and reliable, while those at the other end of the spectrum may be more spontaneous, careless, or even irresponsible.
+Extraversion: This factor refers to a person's level of sociability, assertiveness, and positivity. Extraverts are outgoing, friendly, and enjoy being around others, while introverts are more reserved, quiet, and may prefer to spend time alone.
+Agreeableness: This involves a person's level of friendliness, cooperativeness, and compassion. Highly agreeable people are typically kind, cooperative, and likeable, while those who score low on this trait may be competitive, skeptical, or even hostile.
+Neuroticism: This dimension refers to a person's emotional stability and level of negative emotionality. People with high levels of neuroticism often experience mood swings, anxiety, irritability, and sadness. Those with low levels are more emotionally stable and less likely to feel stressed.
+Your idea to include "degree of empathy" could potentially fall under the agreeableness category, but it could also be a unique trait if you wanted to extend beyond the Big Five.
+
+In addition to these, you might also consider traits like:
+
+Resilience: This trait could reflect a character's ability to handle stress and bounce back from adversity. On one end of the spectrum, you'd have characters who fall apart under pressure, while on the other, you'd have those who thrive in the face of challenge.
+Adventurousness: This would measure a character's willingness to take risks. Risk-averse characters might avoid danger and stick to what they know, while risk-tolerant characters would be more likely to explore and take on dangerous missions.
+Dominance/Submissiveness: This trait could affect a character's relationship with others. Dominant characters might strive to be leaders and make decisions for the group, while submissive characters might be more likely to follow orders and avoid conflict.
+Remember, personality traits are just a part of a character's overall psychology and behavior. Other factors like current mood, physical health, social relationships, and past experiences can also significantly influence a character's actions and reactions. 

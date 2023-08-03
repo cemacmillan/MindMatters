@@ -1,0 +1,35 @@
+<Patch>
+  <!-- Gourmand -->
+  <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+      <li Class="PatchOperationTest">
+        <xpath>/Defs/TraitDef[defName="Gourmand"]/modExtensions</xpath>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/TraitDef[defName="Gourmand"]</xpath>
+        <value>
+          <modExtensions>
+            <li Class="MindMatters.TraitPersonalityAdjustments">
+              <adjustments>
+                <li>Neuroticism,0.3</li>
+                <li>Conscientiousness,-0.2</li>
+              </adjustments>
+            </li>
+          </modExtensions>
+        </value>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/TraitDef[defName="Gourmand"]/modExtensions</xpath>
+        <value>
+          <li Class="MindMatters.TraitPersonalityAdjustments">
+            <adjustments>
+              <li>Neuroticism,0.3</li>
+              <li>Conscientiousness,-0.2</li>
+            </adjustments>
+          </li>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+</Patch>

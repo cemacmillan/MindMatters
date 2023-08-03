@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<ThoughtDef>
+    <defName>BipolarMood</defName>
+    <workerClass>MindMatters.ThoughtWorker_Bipolar</workerClass>
+    <stages>
+      <li>
+        <label>severe depression</label>
+        <description>I can barely summon the energy to move. Everything feels hopeless.</description>
+        <baseMoodEffect>-20</baseMoodEffect>
+      </li>
+      <li>
+        <label>mild depression</label>
+        <description>I'm feeling down today. Everything seems harder than it should be.</description>
+        <baseMoodEffect>-10</baseMoodEffect>
+      </li>
+      <li>
+        <label>stable</label>
+        <description>I feel normal today. Not too high, not too low.</description>
+        <baseMoodEffect>0</baseMoodEffect>
+      </li>
+      <li>
+        <label>mild mania</label>
+        <description>I feel energized and motivated today. I can get so much done!</description>
+        <baseMoodEffect>10</baseMoodEffect>
+      </li>
+      <li>
+        <label>severe mania</label>
+        <description>I feel unstoppable! I can do anything!</description>
+        <baseMoodEffect>20</baseMoodEffect>
+      </li>
+    </stages>
+</ThoughtDef>
+
+
+
+</Defs>

@@ -1,0 +1,37 @@
+<Patch>
+  <!-- Pyromaniac -->
+  <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+      <li Class="PatchOperationTest">
+        <xpath>/Defs/TraitDef[defName="Pyromaniac"]/modExtensions</xpath>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/TraitDef[defName="Pyromaniac"]</xpath>
+        <value>
+          <modExtensions>
+            <li Class="MindMatters.TraitPersonalityAdjustments">
+              <adjustments>
+                <li>Conscientiousness,-0.2</li>
+                <li>Neuroticism,0.3</li>
+                <li>Agreeableness,-0.2</li>
+              </adjustments>
+            </li>
+          </modExtensions>
+        </value>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/TraitDef[defName="Pyromaniac"]/modExtensions</xpath>
+        <value>
+          <li Class="MindMatters.TraitPersonalityAdjustments">
+            <adjustments>
+              <li>Conscientiousness,-0.2</li>
+              <li>Neuroticism,0.3</li>
+              <li>Agreeableness,-0.2</li>
+            </adjustments>
+          </li>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+</Patch>

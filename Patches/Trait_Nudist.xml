@@ -1,0 +1,43 @@
+<Patch>
+  <!-- Nudist -->
+  <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+      <li Class="PatchOperationTest">
+        <xpath>/Defs/TraitDef[defName="Nudist"]/modExtensions</xpath>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/TraitDef[defName="Nudist"]</xpath>
+        <value>
+          <modExtensions>
+            <li Class="MindMatters.TraitPersonalityAdjustments">
+              <adjustments>
+                <li>Openness,0.2</li>
+                <li>Conscientiousness,-0.1</li>
+                <li>Extraversion,0.1</li>
+                <li>Agreeableness,0.1</li>
+                <li>Neuroticism,-0.1</li>
+              </adjustments>
+            </li>
+          </modExtensions>
+        </value>
+      </li>
+      <li Class="PatchOperationAdd">
+        <xpath>/Defs/TraitDef[defName="Nudist"]/modExtensions</xpath>
+        <value>
+          <li Class="MindMatters.TraitPersonalityAdjustments">
+            <adjustments>
+              <li>Openness,0.2</li>
+              <li>Conscientiousness,-0.1</li>
+              <li>Extraversion,0.1</li>
+              <li>Agreeableness,0.1</li>
+              <li>Neuroticism,-0.1</li>
+            </adjustments>
+          </li>
+        </value>
+      </li>
+    </operations>
+  </Operation>
+
+  <!-- Add patches for Bloodlust, Kind, and Cannibal in a similar manner -->
+</Patch>

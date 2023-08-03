@@ -1,0 +1,10 @@
+    SpeedOffset
+    DrugDesire
+    NaturalMood
+    Nerves
+    Neurotic
+    Industriousness
+    PsychicSensitivity
+    ShootingAccuracy
+    Beauty
+    Immunity
