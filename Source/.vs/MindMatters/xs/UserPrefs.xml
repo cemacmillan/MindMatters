@@ -1,23 +1,24 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="ThoughtWorkers/ThoughtWorker_Bipolar.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ThoughtWorkers/ThoughtWorker_Empathetic.cs">
     <Files>
-      <File FileName="ThoughtWorkers/ThoughtWorker_Bipolar.cs" Line="83" Column="1" />
+      <File FileName="MindMattersGameComponent.cs" />
+      <File FileName="MindMatters.cs" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Adventurous.cs" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Organized.cs" Line="71" Column="1" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Alone.cs" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Empathetic.cs" Line="59" Column="66" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="MindMatters" expanded="True">
-            <Node name="MindMatters" expanded="True">
-              <Node name="Dependencies" expanded="True">
-                <Node name="PackageDependencies" expanded="True" />
-              </Node>
-              <Node name="ThoughtWorkers" expanded="True">
-                <Node name="ThoughtWorker_Bipolar.cs" selected="True" />
+          <Node name="MindMatters">
+            <Node name="MindMatters">
+              <Node name="ThoughtWorkers">
+                <Node name="ThoughtWorker_Empathetic.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -26,4 +27,5 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
 </Properties>

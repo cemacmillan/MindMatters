@@ -12,8 +12,9 @@ namespace MindMatters
         {
             // Initialize settings
             settings = GetSettings<MindMattersSettings>();
+            Current.Game?.components.Add(new MindMattersGameComponent(Current.Game));
 
-            Log.Message("Mind Matters v0.0.1");
+            Log.Message("Mind Matters v0.0.2");
 
             // Patch with Harmony
             new Harmony("mod.cem.mindmatters").PatchAll();

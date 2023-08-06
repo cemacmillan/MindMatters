@@ -61,8 +61,15 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="ThoughtWorkers\" />
+	  <None Remove="Harmony\" />
+	  <None Remove="Hediffs\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="ThoughtWorkers\" />
+	  <Folder Include="Harmony\" />
+	  <Folder Include="Hediffs\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Harmony\GetDistinctMoodThoughtGroupsDebugPatch.cs" />
 	</ItemGroup>
 </Project>

@@ -29,4 +29,36 @@
         </stages>
         <isBad>true</isBad>
     </HediffDef>
+
+    <HediffDef>
+    <defName>Empathetic</defName>
+    <label>empathetic</label>
+    <description>An empathetic person has a unique neurological wiring that allows them to deeply understand and resonate with the emotions and mental states of others. This heightened sensitivity can boost their social abilities but can also make them susceptible to the emotional state of those around them.</description>
+    <isBad>false</isBad>
+    <hediffClass>MindMatters.Hediff_Empathetic</hediffClass>
+    <stages>
+        <li>
+            <label>neutral</label>
+            <minSeverity>0.01</minSeverity>
+        </li>
+        <li>
+            <label>happy</label>
+            <minSeverity>0.5</minSeverity>
+            <statOffsets>
+                <SocialImpact>1</SocialImpact>
+                <TradePriceImprovement>0.05</TradePriceImprovement>
+                <TameAnimalChance>0.1</TameAnimalChance>
+                <TrainAnimalChance>0.1</TrainAnimalChance>
+            </statOffsets>
+        </li>
+        <li>
+            <label>unhappy</label>
+            <minSeverity>1</minSeverity>
+            <statOffsets>
+                <SocialImpact>-0.5</SocialImpact>
+            </statOffsets>
+        </li>
+    </stages>
+</HediffDef>
+
 </Defs>

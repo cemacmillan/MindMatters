@@ -1,8 +1,74 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
     <TraitDef>
+        <defName>Adventurous</defName>
+        <commonality>0.5</commonality>
+        <degreeDatas>
+            <li>
+                <degree>-1</degree>
+                <label>adventurous</label>
+                <description>This person loves adventure and exploration. They get a mood boost when outside their home area or in dangerous situations.</description>
+            </li>
+        </degreeDatas>
+        <requiredWorkTags>
+            <li>Violent</li>
+        </requiredWorkTags>
+        <conflictingTraits>
+            <li>Cautious</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Cautious</defName>
+        <commonality>0.5</commonality>
+        <degreeDatas>
+            <li>
+                <degree>-1</degree>
+                <label>cautious</label>
+                <description>[PAWN_nameDef] values safety over risk. [PAWN_pronoun] feel more at ease in a controlled, known environment.</description>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>Adventurous</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Organized</defName>
+        <commonality>0.5</commonality>
+        <degreeDatas>
+            <li>
+                <degree>1</degree>
+                <label>organized</label>
+                <description>[PAWN_nameDef] is meticulous and structured, always maintaining order in everything [PAWN_pronoun] does. This means [PAWN_pronoun] is efficient in [PAWN_possessive] work and maintains a good mood as long as things are in order.</description>
+                <statOffsets>
+                    <WorkSpeedGlobal>0.2</WorkSpeedGlobal>
+                    <MoveSpeed>0.05</MoveSpeed>
+                </statOffsets>
+            </li>
+        </degreeDatas>
+    </TraitDef>
+    <TraitDef>
+        <defName>Outgoing</defName>
+        <commonality>1</commonality>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>outgoing</label>
+                <description>[PAWN_nameDef] enjoys socializing and dislikes being alone. [PAWN_pronoun] gets a mood bonus when socializing and a mood debuff when isolated.</description>
+                <statOffsets>
+                    <SocialImpact>0.2</SocialImpact>
+                </statOffsets>
+                <skillGains>
+            <li>
+                <key>Social</key>
+                <value>3</value>
+            </li>
+            </skillGains>
+            </li>
+        </degreeDatas>
+    </TraitDef>
+    <TraitDef>
         <defName>Pluviophile</defName>
-        <commonality>1.5</commonality>
+        <commonality>1</commonality>
         <degreeDatas>
             <li>
                 <label>pluviophile</label>
@@ -10,17 +76,81 @@
             </li>
         </degreeDatas>
     </TraitDef>
-
     <TraitDef>
-    <defName>Bipolar</defName>
-    <degreeDatas>
-        <li>
-            <degree>-1</degree>
-            <label>bipolar</label>
-            <description>NAME experiences extreme emotional states, swinging from periods of energetic, "up" moods to depressive, "down" moods.</description>
-            <commonality>0.02</commonality>
-        </li>
-    </degreeDatas>
-  </TraitDef>
-
+        <defName>Relaxed</defName>
+        <commonality>1.0</commonality>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>relaxed</label>
+                <description>[PAWN_nameDef] takes life easy. Stress rarely gets to [PAWN_objective] and [PAWN_pronoun] generally enjoys whatever [PAWN_pronoun]'s doing, but [PAWN_pronoun]'s not the most efficient worker.</description>
+                <statOffsets>
+                    <MentalBreakThreshold>-0.1</MentalBreakThreshold>
+                    <WorkSpeedGlobal>-0.2</WorkSpeedGlobal>
+                </statOffsets>
+                <disallowedInspirations>
+            <li>Frenzy_Go</li>
+            </disallowedInspirations>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>Nerves</li>
+            <li>Industriousness</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Reserved</defName>
+        <degreeDatas>
+            <li>
+                <label>reserved</label>
+                <description>[PAWN_nameDef] tends to keep to themselves. They are content with solitude and don't crave for social interactions as much as others might.</description>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>Outgoing</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>SelfCentered</defName>
+        <commonality>0.5</commonality>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>self-centered</label>
+                <description>This person is focused on their own needs and wants. They tend to ignore the needs and feelings of others.</description>
+            </li>
+        </degreeDatas>
+         <conflictingTraits>
+            <li>Kind</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Bipolar</defName>
+        <commonality>0.1</commonality>
+        <degreeDatas>
+            <li>
+                <degree>-1</degree>
+                <label>bipolar</label>
+                <description>[PAWN_nameDef] experiences extreme emotional states, swinging from periods of energetic, "up" moods to depressive, "down" moods.</description>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>NaturalMood</li>
+            <li>Nerves</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Empathetic</defName>
+        <commonality>0.1</commonality>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>empathetic</label>
+                <description>[PAWN_nameDef] is deeply in tune with the emotions of those around them, often feeling their joy and pain as if it were their own. This emotional understanding can sometimes become overwhelming, but also often allows them to relate to others in a unique way.</description>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>Psychopath</li>
+        </conflictingTraits>
+    </TraitDef>
 </Defs>
