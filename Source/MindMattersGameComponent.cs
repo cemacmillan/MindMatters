@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using RimWorld;
 using System.Linq;
+using System;
 
 namespace MindMatters
 {
     public class MindMattersGameComponent : GameComponent
     {
         public static MindMattersGameComponent Instance;
+        public event Action<Pawn> OnPawnMoodChanged;
 
         public enum Mood
         {
@@ -56,6 +58,16 @@ namespace MindMatters
                     List<Thought> currentThoughts = new List<Thought>();
                     pawn.needs.mood.thoughts.GetAllMoodThoughts(currentThoughts);
 
+                    // Check if mood has changed
+                    bool moodHasChanged = false;
+                    if (PawnThoughtsCache.TryGetValue(pawn.thingIDNumber, out var oldThoughts))
+                    {
+                        if (!currentThoughts.SequenceEqual(oldThoughts))
+                        {
+                            moodHasChanged = true;
+                        }
+                    }
+
                     pawnThoughtsUpdates[pawn.thingIDNumber] = currentThoughts;
 
                     if (pawn.health == null || pawn.health.hediffSet == null)
@@ -89,6 +101,11 @@ namespace MindMatters
                     {
                         // Update the last checked tick
                         PawnThoughtsLastCheckedTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                    }
+
+                    if (moodHasChanged)
+                    {
+                        OnPawnMoodChanged?.Invoke(pawn);
                     }
                 }
 
@@ -134,22 +151,50 @@ namespace MindMatters
         {
             base.ExposeData();
 
-            // Save and load the dictionaries directly without splitting into keys and values
+            // Create temporary variable for serialization.
+            Dictionary<Pawn, int> tempPawnMoods = null;
+
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                // Convert Mood enum to int.
+                tempPawnMoods = PawnMoods.ToDictionary(pair => pair.Key, pair => (int)pair.Value);
+            }
+
+            // Adding debug logs for each dictionary type.
+            Log.Message($"BipolarPawnLastCheckedTicks key type: {BipolarPawnLastCheckedTicks?.FirstOrDefault().Key?.GetType()}, value type: {BipolarPawnLastCheckedTicks?.FirstOrDefault().Value?.GetType()}");
             Scribe_Collections.Look(ref BipolarPawnLastCheckedTicks, "BipolarPawnLastCheckedTicks", LookMode.Value, LookMode.Value);
+
+            Log.Message($"PawnLastAloneTicks key type: {PawnLastAloneTicks?.FirstOrDefault().Key?.GetType()}, value type: {PawnLastAloneTicks?.FirstOrDefault().Value?.GetType()}");
             Scribe_Collections.Look(ref PawnLastAloneTicks, "PawnLastAloneTicks", LookMode.Value, LookMode.Value);
+
+            Log.Message($"lastSeverity key type: {lastSeverity?.FirstOrDefault().Key?.GetType()}, value type: {lastSeverity?.FirstOrDefault().Value?.GetType()}");
             Scribe_Collections.Look(ref lastSeverity, "lastSeverity", LookMode.Reference, LookMode.Value);
-            Scribe_Collections.Look(ref PawnMoods, "PawnMoods", LookMode.Reference, LookMode.Value);
+
+            Log.Message($"tempPawnMoods key type: {tempPawnMoods?.FirstOrDefault().Key?.GetType()}, value type: {tempPawnMoods?.FirstOrDefault().Value?.GetType()}");
+            Scribe_Collections.Look(ref tempPawnMoods, "PawnMoods", LookMode.Reference, LookMode.Value);
+
+            Log.Message($"PawnThoughtsLastCheckedTicks key type: {PawnThoughtsLastCheckedTicks?.FirstOrDefault().Key?.GetType()}, value type: {PawnThoughtsLastCheckedTicks?.FirstOrDefault().Value?.GetType()}");
             Scribe_Collections.Look(ref PawnThoughtsLastCheckedTicks, "PawnThoughtsLastCheckedTicks", LookMode.Value, LookMode.Value);
+
+            Log.Message($"PawnThoughtsCache key type: {PawnThoughtsCache?.FirstOrDefault().Key?.GetType()}, value type: {PawnThoughtsCache?.FirstOrDefault().Value?.GetType()}");
             Scribe_Collections.Look(ref PawnThoughtsCache, "PawnThoughtsCache", LookMode.Value, LookMode.Reference);
 
-            if (PawnMoods == null || lastSeverity == null || BipolarPawnLastCheckedTicks == null || PawnLastAloneTicks == null || PawnThoughtsCache == null || PawnThoughtsLastCheckedTicks == null)
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                // Convert int back to Mood enum after loading.
+                PawnMoods = tempPawnMoods.ToDictionary(pair => pair.Key, pair => (Mood)pair.Value);
+            }
+
+            if (BipolarPawnLastCheckedTicks == null || PawnLastAloneTicks == null || lastSeverity == null || tempPawnMoods == null || PawnThoughtsLastCheckedTicks == null || PawnThoughtsCache == null)
             {
                 Log.Error("Some dictionaries in MindMattersGameComponent are null after loading game data.");
             }
-            else if (PawnMoods.Count == 0 || lastSeverity.Count == 0 || BipolarPawnLastCheckedTicks.Count == 0 || PawnLastAloneTicks.Count == 0 || PawnThoughtsCache.Count == 0 || PawnThoughtsLastCheckedTicks.Count == 0)
+            else if (BipolarPawnLastCheckedTicks.Count == 0 || PawnLastAloneTicks.Count == 0 || lastSeverity.Count == 0 || tempPawnMoods.Count == 0 || PawnThoughtsLastCheckedTicks.Count == 0 || PawnThoughtsCache.Count == 0)
             {
                 Log.Error("Some dictionaries in MindMattersGameComponent are empty after loading game data.");
             }
         }
+
+
     }
 }

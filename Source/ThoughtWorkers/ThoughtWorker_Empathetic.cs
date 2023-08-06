@@ -17,7 +17,7 @@ namespace MindMatters
                     return false;
                 }
 
-                var gameComponent = Current.Game.GetComponent<MindMattersGameComponent>();
+                var gameComponent = MindMattersGameComponent.Instance;
                 if (gameComponent == null)
                 {
                     Log.Error("MindMattersGameComponent not found.");
