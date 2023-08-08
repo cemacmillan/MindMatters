@@ -1,4 +1,5 @@
-﻿using Verse;
+﻿using UnityEngine;
+using Verse;
 using System.Collections.Generic;
 using RimWorld;
 using System.Linq;
@@ -13,8 +14,8 @@ namespace MindMatters
 
         private List<Pawn> pawnKeys;
         private List<int> moodValues;
-        private List<Pawn> severityKeys;
-        private List<float> severityValues;
+        //private List<Pawn> severityKeys;
+        //private List<float> severityValues;
 
         public enum Mood
         {
@@ -44,6 +45,8 @@ namespace MindMatters
             }
             Instance = this; // Assign this as the new Instance, whether it previously existed or not
         }
+
+        private static readonly int[] StageWeights = { 1, 2, 5, 2, 1 };
 
         public override void GameComponentTick()
         {
@@ -85,11 +88,23 @@ namespace MindMatters
                         }
                     }
 
-                    if (pawn.health?.hediffSet.HasHediff(HediffDef.Named("Bipolar")) == true)
+                    Hediff bipolar = pawn.health.hediffSet.GetFirstHediffOfDef(HediffDef.Named("Bipolar"));
+
+                    if (bipolar != null)
                     {
-                        if (!BipolarPawnLastCheckedTicks.ContainsKey(pawn.thingIDNumber))
+                        if (!BipolarPawnLastCheckedTicks.TryGetValue(pawn.thingIDNumber, out int lastCheckedTick))
                         {
-                            pawnsToAddToBipolarTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                            lastCheckedTick = Find.TickManager.TicksGame;
+                            BipolarPawnLastCheckedTicks[pawn.thingIDNumber] = lastCheckedTick;
+                        }
+
+                        if (Find.TickManager.TicksGame >= lastCheckedTick + GenDate.TicksPerDay)
+                        {
+                            // Pass bipolar.Severity to WeightedRandomStageWithInertia instead of bipolar.CurStageIndex
+                            int newStage = WeightedRandomStageWithInertia(pawn, bipolar.Severity);
+                            bipolar.Severity = newStage / (float)(bipolar.def.stages.Count - 1);
+
+                            BipolarPawnLastCheckedTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
                         }
                     }
                     else
@@ -162,7 +177,6 @@ namespace MindMatters
                 }
             }
         }
-
         public override void ExposeData()
         {
             base.ExposeData();
@@ -171,18 +185,12 @@ namespace MindMatters
             {
                 pawnKeys = PawnMoods.Keys.ToList();
                 moodValues = PawnMoods.Values.Select(mood => (int)mood).ToList();
-                severityKeys = lastSeverity.Keys.ToList();
-                severityValues = lastSeverity.Values.ToList();
             }
 
             Scribe_Collections.Look(ref pawnKeys, "pawnKeys", LookMode.Reference);
             Scribe_Collections.Look(ref moodValues, "moodValues", LookMode.Value);
-            Scribe_Collections.Look(ref severityKeys, "severityKeys", LookMode.Reference);
-            Scribe_Collections.Look(ref severityValues, "severityValues", LookMode.Value);
             Scribe_Collections.Look(ref BipolarPawnLastCheckedTicks, "BipolarPawnLastCheckedTicks", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref PawnLastAloneTicks, "PawnLastAloneTicks", LookMode.Value, LookMode.Value);
-
-            // New line for saving UnstablePawnLastMentalBreakTicks
             Scribe_Collections.Look(ref UnstablePawnLastMentalBreakTicks, "UnstablePawnLastMentalBreakTicks", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref UnstablePawnLastMoodSwitchTicks, "UnstablePawnLastMoodSwitchTicks", LookMode.Value, LookMode.Value);
 
@@ -191,13 +199,50 @@ namespace MindMatters
                 PawnMoods = pawnKeys.Zip(moodValues, (key, value) => new { Key = key, Value = (Mood)value })
                     .ToDictionary(x => x.Key, x => x.Value);
 
-                lastSeverity = severityKeys.Zip(severityValues, (key, value) => new { Key = key, Value = value })
-                    .ToDictionary(x => x.Key, x => x.Value);
-
-                // Add null checks and initialization for UnstablePawnLastMentalBreakTicks and UnstablePawnLastMoodSwitchTicks
                 UnstablePawnLastMentalBreakTicks = UnstablePawnLastMentalBreakTicks ?? new Dictionary<int, int>();
                 UnstablePawnLastMoodSwitchTicks = UnstablePawnLastMoodSwitchTicks ?? new Dictionary<int, int>();
             }
+        }
+
+        private int WeightedRandomStageWithInertia(Pawn p, float lastSeverity)
+        {
+            lastSeverity = Mathf.Clamp01(lastSeverity);
+            int currentStage = Mathf.RoundToInt(lastSeverity * (StageWeights.Length - 1));
+
+            List<int> possibleStages = Enumerable.Range(0, StageWeights.Length).ToList();
+
+            Log.Message($"Current stage: {currentStage}");
+            Log.Message($"Possible stages before removal: {string.Join(", ", possibleStages)}");
+
+            possibleStages.RemoveAll(stage => Math.Abs(stage - currentStage) > 1);
+
+            Log.Message($"Possible stages after removal: {string.Join(", ", possibleStages)}");
+
+            // Ensure all possible stages are within valid bounds
+            possibleStages = possibleStages.Where(stage => stage >= 0 && stage < StageWeights.Length).ToList();
+
+            if (!possibleStages.Any())
+            {
+                Log.Warning("No valid stages for bipolar thought.");
+                return currentStage;
+            }
+
+            int totalWeight = possibleStages.Sum(stage => StageWeights[stage]);
+
+            int randomNumber = Rand.RangeInclusive(1, totalWeight);
+
+            Log.Message($"Random number: {randomNumber}, total weight: {totalWeight}");
+
+            int cumulativeWeight = 0;
+            foreach (int stage in possibleStages)
+            {
+                cumulativeWeight += StageWeights[stage];
+                if (randomNumber <= cumulativeWeight)
+                    return stage;
+            }
+
+            // If somehow no stage was selected, return the current stage
+            return currentStage;
         }
     }
 }

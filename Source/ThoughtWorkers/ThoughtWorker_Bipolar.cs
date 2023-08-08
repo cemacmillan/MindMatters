@@ -17,7 +17,7 @@ namespace MindMatters
             if (p == null)
             {
                 Log.Error("Pawn object is null in CurrentStateInternal");
-                return false;
+                return ThoughtState.Inactive;
             }
 
             HediffDef bipolarDef = HediffDef.Named("Bipolar");
@@ -30,17 +30,16 @@ namespace MindMatters
             if (gameComponent == null)
             {
                 Log.Error("MindMattersGameComponent not found.");
-                return false;
+                return ThoughtState.Inactive;
             }
 
-            int lastCheckedDay = gameComponent.BipolarPawnLastCheckedTicks.ContainsKey(p.thingIDNumber) ? gameComponent.BipolarPawnLastCheckedTicks[p.thingIDNumber] : 0;
-
-            if (lastCheckedDay == 0)
+            if (!gameComponent.BipolarPawnLastCheckedTicks.TryGetValue(p.thingIDNumber, out int lastCheckedTick))
             {
-                gameComponent.BipolarPawnLastCheckedTicks[p.thingIDNumber] = GenLocalDate.DayOfYear(p.Map);
+                lastCheckedTick = Find.TickManager.TicksGame;
+                gameComponent.BipolarPawnLastCheckedTicks[p.thingIDNumber] = lastCheckedTick;
             }
 
-            if (GenLocalDate.HourOfDay(p.Map) < 18)
+            if (Find.TickManager.TicksGame < lastCheckedTick + GenDate.TicksPerDay)
             {
                 return gameComponent.lastSeverity.ContainsKey(p) ? ThoughtStateForSeverity(gameComponent.lastSeverity[p]) : ThoughtState.Inactive;
             }
@@ -49,28 +48,24 @@ namespace MindMatters
             if (hediff == null)
             {
                 Log.Error("Bipolar Hediff is null for pawn " + p.LabelShort);
-                return false;
+                return ThoughtState.Inactive;
             }
 
             float lastSeverity = gameComponent.lastSeverity.ContainsKey(p) ? gameComponent.lastSeverity[p] : hediff.Severity;
 
-            if (GenLocalDate.DayOfYear(p.Map) != lastCheckedDay && GenLocalDate.HourOfDay(p.Map) >= 18)
+            gameComponent.BipolarPawnLastCheckedTicks[p.thingIDNumber] = Find.TickManager.TicksGame;
+
+            int newStage = WeightedRandomStageWithInertia(p, lastSeverity);
+
+            float newSeverity = (newStage / (float)StageWeights.Length) * 0.99f;
+            newSeverity = Mathf.Clamp(newSeverity, 0.01f, 0.99f);
+
+            LongEventHandler.QueueLongEvent(() =>
             {
-                gameComponent.BipolarPawnLastCheckedTicks[p.thingIDNumber] = GenLocalDate.DayOfYear(p.Map);
-
-                int newStage = WeightedRandomStageWithInertia(p, lastSeverity);
-
-                float newSeverity = (newStage / (float)StageWeights.Length) * 0.99f;
-                newSeverity = Mathf.Clamp(newSeverity, 0.01f, 0.99f);
-
-                LongEventHandler.QueueLongEvent(() =>
-                {
-                    hediff.Severity = newSeverity;
-                    gameComponent.lastSeverity[p] = newSeverity;
-
-                    Log.Message($"Setting new severity for pawn {p.Name.ToStringShort}: {newSeverity} (stage {newStage})");
-                }, "UpdateBipolarSeverity", false, null);
-            }
+                hediff.Severity = newSeverity;
+                gameComponent.lastSeverity[p] = newSeverity;
+                Log.Message($"Setting new severity for pawn {p.Name.ToStringShort}: {newSeverity} (stage {newStage})");
+            }, "UpdateBipolarSeverity", false, null);
 
             return ThoughtStateForSeverity(lastSeverity);
         }

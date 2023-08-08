@@ -3,7 +3,7 @@
 
 <ThoughtDef>
     <defName>BipolarMood</defName>
-    <workerClass>MindMatters.ThoughtWorker_Bipolar</workerClass>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
     <stages>
       <li>
         <label>severe depression</label>

@@ -1,14 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workbench ActiveDocument="MindMattersGameComponent.cs">
     <Files>
-      <File FileName="MindMattersGameComponent.cs" Line="59" Column="18" />
-      <File FileName="MindMatters.cs" />
-      <File FileName="HediffBipolar.cs" Line="1" Column="1" />
-      <File FileName="ThoughtWorkers/ThoughtWorker_Empathetic.cs" Line="23" Column="34" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Bipolar.cs" Line="12" Column="72" />
+      <File FileName="MindMattersGameComponent.cs" Line="108" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -16,7 +11,7 @@
           <Node name="MindMatters">
             <Node name="MindMatters">
               <Node name="Harmony" expanded="True" />
-              <Node name="Hediffs" expanded="True" />
+              <Node name="ThoughtWorkers" expanded="True" />
               <Node name="MindMattersGameComponent.cs" selected="True" />
             </Node>
           </Node>
@@ -24,6 +19,9 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
 </Properties>

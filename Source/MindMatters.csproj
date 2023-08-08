@@ -71,5 +71,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Harmony\GetDistinctMoodThoughtGroupsDebugPatch.cs" />
+	  <Compile Remove="ThoughtWorkers\ThoughtWorker_Bipolar.cs" />
 	</ItemGroup>
 </Project>

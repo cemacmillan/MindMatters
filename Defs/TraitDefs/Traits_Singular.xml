@@ -65,6 +65,10 @@
             </skillGains>
             </li>
         </degreeDatas>
+         <conflictingTraits>
+            <li>Recluse</li>
+            <li>Reserved</li>
+        </conflictingTraits>
          <requiredWorkTags>
             <li>Social</li>
         </requiredWorkTags>
@@ -125,6 +129,7 @@
         <conflictingTraits>
             <li>Outgoing</li>
             <li>Socialite</li>
+            <li>Recluse</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
