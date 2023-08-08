@@ -65,6 +65,9 @@
             </skillGains>
             </li>
         </degreeDatas>
+         <requiredWorkTags>
+            <li>Social</li>
+        </requiredWorkTags>
     </TraitDef>
     <TraitDef>
         <defName>Pluviophile</defName>
@@ -77,16 +80,29 @@
         </degreeDatas>
     </TraitDef>
     <TraitDef>
+        <defName>Prude</defName>
+        <label>Prude</label>
+        <description>A prude pawn who is uncomfortable with nudity.</description>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>Prude</label>
+                <description>This pawn is uncomfortable with nudity.</description>
+            </li>
+        </degreeDatas>
+    </TraitDef>
+    <TraitDef>
         <defName>Relaxed</defName>
-        <commonality>1.0</commonality>
+        <commonality>0.5</commonality>
         <degreeDatas>
             <li>
                 <degree>0</degree>
                 <label>relaxed</label>
-                <description>[PAWN_nameDef] takes life easy. Stress rarely gets to [PAWN_objective] and [PAWN_pronoun] generally enjoys whatever [PAWN_pronoun]'s doing, but [PAWN_pronoun]'s not the most efficient worker.</description>
+                <description>[PAWN_nameDef] takes life easy and sleeps soundly. Stress rarely gets to [PAWN_objective] and [PAWN_pronoun] generally enjoys whatever [PAWN_pronoun]'s doing, but [PAWN_pronoun]'s not the fastest worker.</description>
                 <statOffsets>
                     <MentalBreakThreshold>-0.1</MentalBreakThreshold>
-                    <WorkSpeedGlobal>-0.2</WorkSpeedGlobal>
+                    <WorkSpeedGlobal>-0.15</WorkSpeedGlobal>
+                    <RestRateMultiplier>0.15</RestRateMultiplier>
                 </statOffsets>
                 <disallowedInspirations>
             <li>Frenzy_Go</li>
@@ -108,6 +124,22 @@
         </degreeDatas>
         <conflictingTraits>
             <li>Outgoing</li>
+            <li>Socialite</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>TenderHearted</defName>
+        <commonality>0.5</commonality>
+        <label>Tender-Hearted</label>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>tender-hearted</label>
+                <description>[PAWN_nameDef] is extremely empathetic, feeling deeply for others and often being moved to tears.</description>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>SelfCentered</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
@@ -120,8 +152,33 @@
                 <description>This person is focused on their own needs and wants. They tend to ignore the needs and feelings of others.</description>
             </li>
         </degreeDatas>
-         <conflictingTraits>
+        <conflictingTraits>
             <li>Kind</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Socialite</defName>
+        <commonality>0.5</commonality>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>socialite</label>
+                <description>This person thrives on social interaction. They love attending events, meeting new people, and being in the middle of all the action. They are usually more skilled in social activities.</description>
+                <skillGains>
+            <li>
+                <key>Social</key>
+                <value>2</value>
+            </li>
+            </skillGains>
+            </li>
+        </degreeDatas>
+        <requiredWorkTags>
+            <li>Social</li>
+        </requiredWorkTags>
+        <conflictingTraits>
+            <li>Outgoing</li>
+            <li>Reserved</li>
+            <li>Recluse</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
@@ -151,6 +208,31 @@
         </degreeDatas>
         <conflictingTraits>
             <li>Psychopath</li>
+        </conflictingTraits>
+    </TraitDef>
+    <TraitDef>
+        <defName>Unstable</defName>
+        <commonality>0.2</commonality>
+        <degreeDatas>
+            <li>
+                <degree>0</degree>
+                <label>unstable</label>
+                <description>[PAWN_nameDef] is emotionally unstable, experiencing frequent mood swings that can be hard to predict. This can be a challenge, but their tumultuous emotional state can also lead to bursts of creativity.</description>
+                <statOffsets>
+                    <MentalBreakThreshold>0.15</MentalBreakThreshold>
+                </statOffsets>
+                <skillGains>
+                   <li>
+                <key>Artistic</key>
+                <value>2</value>
+                 </li>
+                </skillGains>
+            </li>
+        </degreeDatas>
+        <conflictingTraits>
+            <li>NaturalMood</li>
+            <li>Nerves</li>
+            <li>Bipolar</li>
         </conflictingTraits>
     </TraitDef>
 </Defs>

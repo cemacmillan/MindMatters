@@ -11,6 +11,11 @@ namespace MindMatters
         public static MindMattersGameComponent Instance;
         public event Action<Pawn> OnPawnMoodChanged;
 
+        private List<Pawn> pawnKeys;
+        private List<int> moodValues;
+        private List<Pawn> severityKeys;
+        private List<float> severityValues;
+
         public enum Mood
         {
             Happy,
@@ -18,36 +23,47 @@ namespace MindMatters
             Neutral
         }
 
-        public static Dictionary<Pawn, float> lastSeverity = new Dictionary<Pawn, float>();
-        public static Dictionary<Pawn, Mood> PawnMoods = new Dictionary<Pawn, Mood>();
-
-        public Dictionary<int, List<Thought>> PawnThoughtsCache = new Dictionary<int, List<Thought>>();
-        public Dictionary<int, int> PawnThoughtsLastCheckedTicks = new Dictionary<int, int>();
-
+        public Dictionary<Pawn, float> lastSeverity = new Dictionary<Pawn, float>();
+        public Dictionary<Pawn, Mood> PawnMoods = new Dictionary<Pawn, Mood>();
         public Dictionary<int, int> BipolarPawnLastCheckedTicks = new Dictionary<int, int>();
-
         public Dictionary<int, int> PawnLastAloneTicks = new Dictionary<int, int>();
+        public Dictionary<int, int> UnstablePawnLastMentalBreakTicks = new Dictionary<int, int>();
+        public Dictionary<int, int> UnstablePawnLastMoodSwitchTicks = new Dictionary<int, int>();
+        public Dictionary<int, int> UnstablePawnLastMoodState = new Dictionary<int, int>();
+
 
         public MindMattersGameComponent(Game game)
         {
-            Instance = this;
-            if (Instance == null)
+            if (Instance != null)
             {
-                Log.Error("MindMattersGameComponent instance is null after assignment in constructor.");
+                Log.Warning("A new instance of MindMattersGameComponent is being created, even though an instance already exists. This is expected if a new game is being loaded or started.");
             }
+            else
+            {
+                Log.Message("MindMattersGameComponent created.");
+            }
+            Instance = this; // Assign this as the new Instance, whether it previously existed or not
         }
 
         public override void GameComponentTick()
         {
             base.GameComponentTick();
 
-            if (Find.TickManager.TicksGame % 2500 == 0)  // Every day
+            if (Find.TickManager.TicksGame % 2500 == 0) // Every day
             {
-                var pawnThoughtsUpdates = new Dictionary<int, List<Thought>>();
+                var allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
+                if (allPawns == null)
+                {
+                    Log.Error("AllMaps_FreeColonistsAndPrisonersSpawned list is null.");
+                    return;
+                }
+
+                var allPawnsCopy = new List<Pawn>(allPawns);
+
                 var pawnsToRemoveFromBipolarTicks = new List<int>();
                 var pawnsToAddToBipolarTicks = new Dictionary<int, int>();
 
-                foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned)
+                foreach (Pawn pawn in allPawnsCopy)
                 {
                     if (pawn == null)
                     {
@@ -55,28 +71,21 @@ namespace MindMatters
                         continue;
                     }
 
-                    List<Thought> currentThoughts = new List<Thought>();
-                    pawn.needs.mood.thoughts.GetAllMoodThoughts(currentThoughts);
-
-                    // Check if mood has changed
-                    bool moodHasChanged = false;
-                    if (PawnThoughtsCache.TryGetValue(pawn.thingIDNumber, out var oldThoughts))
+                    if (MindMattersUtilities.IsPawnAlone(pawn))
                     {
-                        if (!currentThoughts.SequenceEqual(oldThoughts))
+                        PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                    }
+                    //Unstable and bipolar
+                    if (pawn.story != null && pawn.story.traits != null &&
+                        pawn.story.traits.HasTrait(TraitDef.Named("Unstable")) && pawn.MentalState != null)
+                    {
+                        if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
                         {
-                            moodHasChanged = true;
+                            UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
                         }
                     }
 
-                    pawnThoughtsUpdates[pawn.thingIDNumber] = currentThoughts;
-
-                    if (pawn.health == null || pawn.health.hediffSet == null)
-                    {
-                        Log.Error("Pawn " + pawn.Name + "'s health or hediffSet is null.");
-                        continue;
-                    }
-
-                    if (pawn.health.hediffSet.HasHediff(HediffDef.Named("Bipolar")))
+                    if (pawn.health?.hediffSet.HasHediff(HediffDef.Named("Bipolar")) == true)
                     {
                         if (!BipolarPawnLastCheckedTicks.ContainsKey(pawn.thingIDNumber))
                         {
@@ -91,28 +100,31 @@ namespace MindMatters
                         }
                     }
 
-                    if (MindMattersUtilities.IsPawnAlone(pawn))
+                    if (PawnMoods.TryGetValue(pawn, out var currentMood))
                     {
-                        PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                        Mood newMood = GetMoodForPawn(pawn);
+
+                        if (currentMood != newMood)
+                        {
+                            PawnMoods[pawn] = newMood;
+                            OnPawnMoodChanged?.Invoke(pawn);
+                        }
+                    }
+                    else
+                    {
+                        PawnMoods[pawn] = GetMoodForPawn(pawn);
                     }
 
-                    if (!PawnThoughtsLastCheckedTicks.ContainsKey(pawn.thingIDNumber) ||
-                        Find.TickManager.TicksGame - PawnThoughtsLastCheckedTicks[pawn.thingIDNumber] >= 600)
+                    // New code for Unstable trait
+                    if (pawn.story.traits.HasTrait(TraitDef.Named("Unstable")) && pawn.MentalState != null)
                     {
-                        // Update the last checked tick
-                        PawnThoughtsLastCheckedTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                    }
+                        if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) || Find.TickManager.TicksGame - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
+                        {
+                            UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
 
-                    if (moodHasChanged)
-                    {
-                        OnPawnMoodChanged?.Invoke(pawn);
+                            TryGiveRandomInspiration(pawn);
+                        }
                     }
-                }
-
-                // Now apply the changes after all iterations are done.
-                foreach (var pair in pawnThoughtsUpdates)
-                {
-                    PawnThoughtsCache[pair.Key] = pair.Value;
                 }
 
                 foreach (var pawnId in pawnsToRemoveFromBipolarTicks)
@@ -127,74 +139,65 @@ namespace MindMatters
             }
         }
 
-        public Thought GetThoughtForPawn(Pawn p)
+        private Mood GetMoodForPawn(Pawn pawn)
         {
-            if (PawnThoughtsCache.TryGetValue(p.thingIDNumber, out var pawnThoughts))
-            {
-                foreach (var thought in pawnThoughts)
-                {
-                    if (thought == null || thought.def == null || thought.def.stages == null ||
-                        thought.CurStageIndex < 0 || thought.CurStageIndex >= thought.def.stages.Count)
-                    {
-                        Log.Warning($"Invalid stage index for thought in pawn {p.LabelShort}. Skipping...");
-                        continue;
-                    }
+            float pawnMood = pawn.needs?.mood?.CurLevel ?? 0f;
+            if (pawnMood > 0.6f) return Mood.Happy;
+            if (pawnMood < 0.4f) return Mood.Unhappy;
+            return Mood.Neutral;
+        }
 
-                    return thought;
+        private void TryGiveRandomInspiration(Pawn pawn)
+        {
+            if (Rand.Chance(0.5f))
+            {
+                var validInspirations = DefDatabase<InspirationDef>.AllDefsListForReading
+                    .Where(inspiration => pawn.InspirationDef == null)
+                    .ToList();
+
+                if (validInspirations.Any())
+                {
+                    var randomInspiration = validInspirations[Rand.Range(0, validInspirations.Count)];
+                    pawn.mindState.inspirationHandler.TryStartInspiration(randomInspiration);
                 }
             }
-
-            return null; // Or return an inactive/default thought here
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
 
-            // Create temporary variable for serialization.
-            Dictionary<Pawn, int> tempPawnMoods = null;
-
             if (Scribe.mode == LoadSaveMode.Saving)
             {
-                // Convert Mood enum to int.
-                tempPawnMoods = PawnMoods.ToDictionary(pair => pair.Key, pair => (int)pair.Value);
+                pawnKeys = PawnMoods.Keys.ToList();
+                moodValues = PawnMoods.Values.Select(mood => (int)mood).ToList();
+                severityKeys = lastSeverity.Keys.ToList();
+                severityValues = lastSeverity.Values.ToList();
             }
 
-            // Adding debug logs for each dictionary type.
-            Log.Message($"BipolarPawnLastCheckedTicks key type: {BipolarPawnLastCheckedTicks?.FirstOrDefault().Key?.GetType()}, value type: {BipolarPawnLastCheckedTicks?.FirstOrDefault().Value?.GetType()}");
+            Scribe_Collections.Look(ref pawnKeys, "pawnKeys", LookMode.Reference);
+            Scribe_Collections.Look(ref moodValues, "moodValues", LookMode.Value);
+            Scribe_Collections.Look(ref severityKeys, "severityKeys", LookMode.Reference);
+            Scribe_Collections.Look(ref severityValues, "severityValues", LookMode.Value);
             Scribe_Collections.Look(ref BipolarPawnLastCheckedTicks, "BipolarPawnLastCheckedTicks", LookMode.Value, LookMode.Value);
-
-            Log.Message($"PawnLastAloneTicks key type: {PawnLastAloneTicks?.FirstOrDefault().Key?.GetType()}, value type: {PawnLastAloneTicks?.FirstOrDefault().Value?.GetType()}");
             Scribe_Collections.Look(ref PawnLastAloneTicks, "PawnLastAloneTicks", LookMode.Value, LookMode.Value);
 
-            Log.Message($"lastSeverity key type: {lastSeverity?.FirstOrDefault().Key?.GetType()}, value type: {lastSeverity?.FirstOrDefault().Value?.GetType()}");
-            Scribe_Collections.Look(ref lastSeverity, "lastSeverity", LookMode.Reference, LookMode.Value);
-
-            Log.Message($"tempPawnMoods key type: {tempPawnMoods?.FirstOrDefault().Key?.GetType()}, value type: {tempPawnMoods?.FirstOrDefault().Value?.GetType()}");
-            Scribe_Collections.Look(ref tempPawnMoods, "PawnMoods", LookMode.Reference, LookMode.Value);
-
-            Log.Message($"PawnThoughtsLastCheckedTicks key type: {PawnThoughtsLastCheckedTicks?.FirstOrDefault().Key?.GetType()}, value type: {PawnThoughtsLastCheckedTicks?.FirstOrDefault().Value?.GetType()}");
-            Scribe_Collections.Look(ref PawnThoughtsLastCheckedTicks, "PawnThoughtsLastCheckedTicks", LookMode.Value, LookMode.Value);
-
-            Log.Message($"PawnThoughtsCache key type: {PawnThoughtsCache?.FirstOrDefault().Key?.GetType()}, value type: {PawnThoughtsCache?.FirstOrDefault().Value?.GetType()}");
-            Scribe_Collections.Look(ref PawnThoughtsCache, "PawnThoughtsCache", LookMode.Value, LookMode.Reference);
+            // New line for saving UnstablePawnLastMentalBreakTicks
+            Scribe_Collections.Look(ref UnstablePawnLastMentalBreakTicks, "UnstablePawnLastMentalBreakTicks", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref UnstablePawnLastMoodSwitchTicks, "UnstablePawnLastMoodSwitchTicks", LookMode.Value, LookMode.Value);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
-                // Convert int back to Mood enum after loading.
-                PawnMoods = tempPawnMoods.ToDictionary(pair => pair.Key, pair => (Mood)pair.Value);
-            }
+                PawnMoods = pawnKeys.Zip(moodValues, (key, value) => new { Key = key, Value = (Mood)value })
+                    .ToDictionary(x => x.Key, x => x.Value);
 
-            if (BipolarPawnLastCheckedTicks == null || PawnLastAloneTicks == null || lastSeverity == null || tempPawnMoods == null || PawnThoughtsLastCheckedTicks == null || PawnThoughtsCache == null)
-            {
-                Log.Error("Some dictionaries in MindMattersGameComponent are null after loading game data.");
-            }
-            else if (BipolarPawnLastCheckedTicks.Count == 0 || PawnLastAloneTicks.Count == 0 || lastSeverity.Count == 0 || tempPawnMoods.Count == 0 || PawnThoughtsLastCheckedTicks.Count == 0 || PawnThoughtsCache.Count == 0)
-            {
-                Log.Error("Some dictionaries in MindMattersGameComponent are empty after loading game data.");
+                lastSeverity = severityKeys.Zip(severityValues, (key, value) => new { Key = key, Value = value })
+                    .ToDictionary(x => x.Key, x => x.Value);
+
+                // Add null checks and initialization for UnstablePawnLastMentalBreakTicks and UnstablePawnLastMoodSwitchTicks
+                UnstablePawnLastMentalBreakTicks = UnstablePawnLastMentalBreakTicks ?? new Dictionary<int, int>();
+                UnstablePawnLastMoodSwitchTicks = UnstablePawnLastMoodSwitchTicks ?? new Dictionary<int, int>();
             }
         }
-
-
     }
 }

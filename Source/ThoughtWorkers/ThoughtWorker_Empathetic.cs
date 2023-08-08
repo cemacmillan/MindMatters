@@ -1,97 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using RimWorld;
+﻿using RimWorld;
 using Verse;
 
 namespace MindMatters
 {
     public class ThoughtWorker_Empathetic : ThoughtWorker
     {
+        private const float NearbyDistanceSquared = 64f; // 8 * 8 cells
+        private const float HappinessThreshold = 0.6f;
+        private const float UnhappinessThreshold = 0.4f;
+        private const int TickInterval = 60;
+
+        private int tickCounter = 0;
+
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
-            try
+            tickCounter++;
+            if (tickCounter < TickInterval)
             {
-                if (p == null)
-                {
-                    Log.Error("Pawn object is null in CurrentStateInternal");
-                    return false;
-                }
+                return ThoughtState.Inactive; // No need to check for mood transitions yet
+            }
 
-                var gameComponent = MindMattersGameComponent.Instance;
-                if (gameComponent == null)
-                {
-                    Log.Error("MindMattersGameComponent not found.");
-                    return false;
-                }
+            tickCounter = 0; // Reset the tick counter
 
-                HediffDef empatheticDef = HediffDef.Named("Empathetic");
-                if (empatheticDef == null)
-                {
-                    Log.Error("Empathetic HediffDef is null");
-                    return false;
-                }
+            // Find all pawns within the defined nearby distance
+            var nearbyPawns = p.Map.mapPawns.AllPawnsSpawned.FindAll(pawn =>
+            pawn != p &&
+             pawn.Position.DistanceToSquared(p.Position) <= NearbyDistanceSquared &&
+              (pawn.Faction == p.Faction || pawn.HostFaction == p.Faction || pawn.guest != null));
+            if (nearbyPawns.Count == 0)
+            {
+                return ThoughtState.Inactive; // No nearby pawns, no thought
+            }
 
-                const float happyPawnThreshold = 0.6f;
-                const float unhappyPawnThreshold = 0.4f;
+            float totalMood = 0f;
 
-                if (!p.health.hediffSet.HasHediff(empatheticDef))
+            foreach (var pawn in nearbyPawns)
+            {
+                if (pawn.needs != null && pawn.needs.mood != null)
                 {
-                    return ThoughtState.Inactive;
-                }
-
-                Thought thought = gameComponent.GetThoughtForPawn(p);
-                if (thought == null)
-                {
-                    return ThoughtState.Inactive;
-                }
-
-                int happyCount = 0;
-                int unhappyCount = 0;
-
-                if (thought.def.defName == "Empathetic")
-                {
-                    return ThoughtState.Inactive;
-                }
-
-                if (thought.MoodOffset() > happyPawnThreshold)
-                {
-                    happyCount++;
-                }
-                else if (thought.MoodOffset() < unhappyPawnThreshold)
-                {
-                    unhappyCount++;
-                }
-
-                Hediff hediff = p.health.hediffSet.GetFirstHediffOfDef(empatheticDef);
-                if (hediff == null)
-                {
-                    Log.Error("Empathetic Hediff is null for pawn " + p.LabelShort);
-                    return false;
-                }
-
-                if (happyCount > unhappyCount && happyCount >= 1)
-                {
-                    hediff.Severity = 0.5f;
-                    MindMattersGameComponent.PawnMoods[p] = MindMattersGameComponent.Mood.Happy;
-                    return ThoughtState.ActiveAtStage(1);
-                }
-                else if (unhappyCount > happyCount && unhappyCount >= 1)
-                {
-                    hediff.Severity = 1f;
-                    MindMattersGameComponent.PawnMoods[p] = MindMattersGameComponent.Mood.Unhappy;
-                    return ThoughtState.ActiveAtStage(2);
-                }
-                else
-                {
-                    hediff.Severity = 0.01f;
-                    MindMattersGameComponent.PawnMoods[p] = MindMattersGameComponent.Mood.Neutral;
-                    return ThoughtState.ActiveAtStage(0);
+                    totalMood += pawn.needs.mood.CurLevel;
                 }
             }
-            catch (Exception ex)
+
+            float averageMood = totalMood / nearbyPawns.Count;
+
+            if (averageMood > HappinessThreshold)
             {
-                Log.Error($"Exception caught in CurrentStateInternal: {ex}");
-                return ThoughtState.Inactive;
+                return ThoughtState.ActiveAtStage(1); // Feeling shared joy
+            }
+            else if (averageMood < UnhappinessThreshold)
+            {
+                return ThoughtState.ActiveAtStage(2); // Feeling shared pain
+            }
+            else
+            {
+                return ThoughtState.ActiveAtStage(0); // Feeling shared emotions
             }
         }
     }

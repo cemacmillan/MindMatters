@@ -9,9 +9,9 @@ namespace MindMatters
         {
             bool isAlone = MindMattersUtilities.IsPawnAlone(p);
 
-            if (p.story.traits.HasTrait(TraitDef.Named("Outgoing")))
+            if (p.story.traits.HasTrait(TraitDef.Named("Outgoing")) || p.story.traits.HasTrait(TraitDef.Named("Socialite")))
             {
-                // Outgoing pawns are unhappy when alone
+                // Outgoing and Socialite pawns are unhappy when alone
                 return isAlone ? ThoughtState.ActiveAtStage(0) : ThoughtState.Inactive;
             }
             else if (p.story.traits.HasTrait(TraitDef.Named("Reserved")))

@@ -3,23 +3,21 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="ThoughtWorkers/ThoughtWorker_Empathetic.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MindMattersGameComponent.cs">
     <Files>
-      <File FileName="MindMattersGameComponent.cs" />
+      <File FileName="MindMattersGameComponent.cs" Line="59" Column="18" />
       <File FileName="MindMatters.cs" />
-      <File FileName="ThoughtWorkers/ThoughtWorker_Adventurous.cs" />
-      <File FileName="ThoughtWorkers/ThoughtWorker_Organized.cs" Line="71" Column="1" />
-      <File FileName="ThoughtWorkers/ThoughtWorker_Alone.cs" />
-      <File FileName="ThoughtWorkers/ThoughtWorker_Empathetic.cs" Line="59" Column="66" />
+      <File FileName="HediffBipolar.cs" Line="1" Column="1" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Empathetic.cs" Line="23" Column="34" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="MindMatters">
             <Node name="MindMatters">
-              <Node name="ThoughtWorkers">
-                <Node name="ThoughtWorker_Empathetic.cs" selected="True" />
-              </Node>
+              <Node name="Harmony" expanded="True" />
+              <Node name="Hediffs" expanded="True" />
+              <Node name="MindMattersGameComponent.cs" selected="True" />
             </Node>
           </Node>
         </State>
