@@ -1,17 +1,20 @@
 ﻿<Properties>
-  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workbench ActiveDocument="MindMattersGameComponent.cs">
     <Files>
-      <File FileName="ThoughtWorkers/ThoughtWorker_Bipolar.cs" Line="12" Column="72" />
-      <File FileName="MindMattersGameComponent.cs" Line="108" Column="26" />
+      <File FileName="MentalStates/MentalState_SeekSolitude.cs" />
+      <File FileName="Harmony/GainTraitPatch.cs" />
+      <File FileName="MindMattersVictimManager.cs" Line="112" Column="2" />
+      <File FileName="MindMattersGameComponent.cs" Line="47" Column="50" />
+      <File FileName="InteractionWorkers/InteractionWorker_ScapegoatBlame.cs" Line="29" Column="14" />
+      <File FileName="MindMattersDefOf.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="MindMatters">
             <Node name="MindMatters">
-              <Node name="Harmony" expanded="True" />
-              <Node name="ThoughtWorkers" expanded="True" />
+              <Node name="InteractionWorkers" expanded="True" />
+              <Node name="MentalStates" expanded="True" />
               <Node name="MindMattersGameComponent.cs" selected="True" />
             </Node>
           </Node>
@@ -22,6 +25,7 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

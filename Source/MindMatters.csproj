@@ -63,14 +63,22 @@
 	  <None Remove="ThoughtWorkers\" />
 	  <None Remove="Harmony\" />
 	  <None Remove="Hediffs\" />
+	  <None Remove="MentalStates\" />
+	  <None Remove="InteractionWorkers\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="ThoughtWorkers\" />
 	  <Folder Include="Harmony\" />
 	  <Folder Include="Hediffs\" />
+	  <Folder Include="MentalStates\" />
+	  <Folder Include="InteractionWorkers\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Harmony\GetDistinctMoodThoughtGroupsDebugPatch.cs" />
 	  <Compile Remove="ThoughtWorkers\ThoughtWorker_Bipolar.cs" />
+	  <Compile Remove="PersonalityMatrix.cs" />
+	  <Compile Remove="PersonalityMatrixHandler.cs" />
+	  <Compile Remove="TraitPersonalityAdjustments.cs" />
+	  <Compile Remove="Harmony\GeneratePawnPatch.cs" />
 	</ItemGroup>
 </Project>

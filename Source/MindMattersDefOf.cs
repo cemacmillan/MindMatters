@@ -9,5 +9,8 @@ namespace MindMatters
         public static ThoughtDef MindMatters_FilledGraveTenderHearted;
         public static ThoughtDef MindMatters_KilledPatientTenderHearted;
         public static ThoughtDef MindMatters_SomeoneDied;
+        public static ThoughtDef MindMatters_WasBlamed;
+        public static ThoughtDef MindMatters_CalledSomeoneOut;
+
     }
 }

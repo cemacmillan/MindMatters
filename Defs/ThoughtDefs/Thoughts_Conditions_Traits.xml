@@ -31,6 +31,9 @@
         <baseMoodEffect>20</baseMoodEffect>
       </li>
     </stages>
+        <requiredTraits>
+            <li>Bipolar</li>
+        </requiredTraits>
 </ThoughtDef>
 
 
@@ -54,6 +57,9 @@
       <baseMoodEffect>-5</baseMoodEffect>
     </li>
   </stages>
+  <requiredTraits>
+    <li>Empathetic</li>
+  </requiredTraits>
 </ThoughtDef>
 
 <ThoughtDef>
@@ -77,6 +83,27 @@
         </li>
     </stages>
     <workerClass>MindMatters.ThoughtWorker_Unstable</workerClass>
+</ThoughtDef>
+
+<ThoughtDef>
+  <defName>Paranoid</defName>
+  <stackLimit>1</stackLimit>
+  <stages>
+    <li>
+      <label>paranoid</label>
+      <baseMoodEffect>-10</baseMoodEffect>
+      <description>Strangers are here. I can't trust them...</description>
+    </li>
+    <li>
+      <label>alone</label>
+      <baseMoodEffect>-15</baseMoodEffect>
+      <description>I'm all alone... What if something happens?</description>
+    </li>
+  </stages>
+  <workerClass>MindMatters.ThoughtWorker_Paranoid</workerClass>
+        <requiredTraits>
+            <li>Paranoid</li>
+        </requiredTraits>
 </ThoughtDef>
 
 

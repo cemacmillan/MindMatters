@@ -3,21 +3,23 @@ using Verse;
 using System.Collections.Generic;
 using RimWorld;
 using System.Linq;
+using UnityEngine;
+using static MindMatters.MindMattersGameComponent;
 
 namespace MindMatters
 {
     public static class MindMattersUtilities
     {
+        public static readonly int[] StageWeights = { 1, 2, 5, 2, 1 };
+
         public const float AloneDistanceSquared = 18f * 18f;  // Adjust this to match the "alone" radius
 
         public static bool IsPawnAlone(Pawn pawn)
         {
             MindMattersGameComponent gameComponent = Current.Game.GetComponent<MindMattersGameComponent>();
 
-            // If the pawn has never been alone or was last alone more than X ticks ago (adjust to match your desired frequency),
-            // then calculate if the pawn is currently alone
             if (!gameComponent.PawnLastAloneTicks.ContainsKey(pawn.thingIDNumber) ||
-                Find.TickManager.TicksGame - gameComponent.PawnLastAloneTicks[pawn.thingIDNumber] > 60)  // Adjust this to match your desired frequency
+                Find.TickManager.TicksGame - gameComponent.PawnLastAloneTicks[pawn.thingIDNumber] > 60)
             {
                 foreach (Pawn otherPawn in pawn.Map.mapPawns.AllPawnsSpawned)
                 {
@@ -27,11 +29,9 @@ namespace MindMatters
                     }
                 }
 
-                // If we've gotten to this point, the pawn is alone, so update the last alone tick
                 gameComponent.PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
             }
 
-            // If the pawn was alone the last time we checked, consider them still alone
             return true;
         }
 
@@ -45,23 +45,128 @@ namespace MindMatters
 
             Area_Home homeArea = p.Map.areaManager.Home;
 
-            // If pawn is outside the home area
             if (homeArea != null && !homeArea.ActiveCells.Contains(p.Position))
             {
-                return false; // Considered unsafe when outside home area
+                return false;
             }
 
             int currentTick = Find.TickManager.TicksGame;
 
-            // If the pawn was in a dangerous situation recently
             if (currentTick - p.mindState.lastMeleeThreatHarmTick < inSafeSituationThreshhold ||
                 currentTick - p.mindState.lastEngageTargetTick < inSafeSituationThreshhold ||
-                currentTick - p.mindState.lastAttackTargetTick < inSafeSituationThreshhold )
+                currentTick - p.mindState.lastAttackTargetTick < inSafeSituationThreshhold)
             {
-                return false; // Considered unsafe when recently in danger
+                return false;
             }
 
-            return true; // Otherwise, considered safe
+            return true;
+        }
+
+        public static void UpdateBipolarPawnTicks(Pawn pawn, Dictionary<int, int> BipolarPawnLastCheckedTicks)
+        {
+            Hediff bipolar = pawn.health.hediffSet.GetFirstHediffOfDef(HediffDef.Named("Bipolar"));
+
+            if (bipolar != null)
+            {
+                if (!BipolarPawnLastCheckedTicks.TryGetValue(pawn.thingIDNumber, out int lastCheckedTick))
+                {
+                    lastCheckedTick = Find.TickManager.TicksGame;
+                    BipolarPawnLastCheckedTicks[pawn.thingIDNumber] = lastCheckedTick;
+                }
+
+                if (Find.TickManager.TicksGame >= lastCheckedTick + GenDate.TicksPerDay)
+                {
+                    UpdateBipolarPawn(pawn, bipolar, BipolarPawnLastCheckedTicks);
+                }
+            }
+            else
+            {
+                if (BipolarPawnLastCheckedTicks.ContainsKey(pawn.thingIDNumber))
+                {
+                    BipolarPawnLastCheckedTicks.Remove(pawn.thingIDNumber);
+                }
+            }
+        }
+
+        public static void TryGiveRandomInspiration(Pawn pawn)
+        {
+            if (Rand.Chance(0.5f))
+            {
+                var validInspirations = DefDatabase<InspirationDef>.AllDefsListForReading
+                    .Where(inspiration => pawn.InspirationDef == null)
+                    .ToList();
+
+                if (validInspirations.Any())
+                {
+                    var randomInspiration = validInspirations[Rand.Range(0, validInspirations.Count)];
+                    pawn.mindState.inspirationHandler.TryStartInspiration(randomInspiration);
+                }
+            }
+        }
+
+        public static void UpdatePawnMoods(Pawn pawn, Dictionary<Pawn, Mood> pawnMoods, Action<Pawn> onPawnMoodChanged)
+        {
+            Mood newMood = GetMoodForPawn(pawn);
+
+            if (pawnMoods.TryGetValue(pawn, out var currentMood))
+            {
+                if (currentMood != newMood)
+                {
+                    pawnMoods[pawn] = newMood;
+                    onPawnMoodChanged?.Invoke(pawn);
+                }
+            }
+            else
+            {
+                pawnMoods[pawn] = newMood;
+            }
+        }
+
+        public static void UpdateBipolarPawn(Pawn pawn, Hediff bipolar, Dictionary<int, int> BipolarPawnLastCheckedTicks)
+        {
+            int newStage = WeightedRandomStageWithInertia(pawn, bipolar.Severity);
+            bipolar.Severity = newStage / (float)(bipolar.def.stages.Count - 1);
+            BipolarPawnLastCheckedTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+        }
+
+        public static Mood GetMoodForPawn(Pawn pawn)
+        {
+            float pawnMood = pawn.needs?.mood?.CurLevel ?? 0f;
+            if (pawnMood > 0.6f) return Mood.Happy;
+            if (pawnMood < 0.4f) return Mood.Unhappy;
+            return Mood.Neutral;
+        }
+
+        public static int WeightedRandomStageWithInertia(Pawn p, float lastSeverity)
+        {
+            lastSeverity = Mathf.Clamp01(lastSeverity);
+            int currentStage = Mathf.RoundToInt(lastSeverity * (StageWeights.Length - 1));
+
+            List<int> possibleStages = Enumerable.Range(0, StageWeights.Length).ToList();
+
+            possibleStages.RemoveAll(stage => Math.Abs(stage - currentStage) > 1);
+
+            possibleStages = possibleStages.Where(stage => stage >= 0 && stage < StageWeights.Length).ToList();
+
+            if (!possibleStages.Any())
+            {
+                Log.Warning("No valid stages for bipolar thought.");
+                return currentStage;
+            }
+
+            int totalWeight = possibleStages.Sum(stage => StageWeights[stage]);
+
+            int randomNumber = Rand.RangeInclusive(1, totalWeight);
+
+            int cumulativeWeight = 0;
+            foreach (int stage in possibleStages)
+            {
+                cumulativeWeight += StageWeights[stage];
+                if (randomNumber <= cumulativeWeight)
+                    return stage;
+            }
+
+            return currentStage;
         }
     }
 }

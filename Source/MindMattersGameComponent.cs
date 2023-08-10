@@ -14,8 +14,9 @@ namespace MindMatters
 
         private List<Pawn> pawnKeys;
         private List<int> moodValues;
-        //private List<Pawn> severityKeys;
-        //private List<float> severityValues;
+
+        private MindMattersVictimManager victimManager = new MindMattersVictimManager();
+
 
         public enum Mood
         {
@@ -35,148 +36,99 @@ namespace MindMatters
 
         public MindMattersGameComponent(Game game)
         {
-            if (Instance != null)
-            {
-                Log.Warning("A new instance of MindMattersGameComponent is being created, even though an instance already exists. This is expected if a new game is being loaded or started.");
-            }
-            else
-            {
-                Log.Message("MindMattersGameComponent created.");
-            }
-            Instance = this; // Assign this as the new Instance, whether it previously existed or not
+            Instance = this;
         }
-
-        private static readonly int[] StageWeights = { 1, 2, 5, 2, 1 };
 
         public override void GameComponentTick()
         {
             base.GameComponentTick();
 
-            if (Find.TickManager.TicksGame % 2500 == 0) // Every day
+            //if (Find.TickManager.TicksGame % 3600000 == 0)
+            if (Find.TickManager.TicksGame % 3600 == 0)
+            {
+                victimManager.DesignateNewVictim();
+            }
+
+            // Every 60 ticks
+            if (Find.TickManager.TicksGame % 60 == 0)
             {
                 var allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
                 if (allPawns == null)
                 {
-                    Log.Error("AllMaps_FreeColonistsAndPrisonersSpawned list is null.");
                     return;
                 }
 
-                var allPawnsCopy = new List<Pawn>(allPawns);
-
-                var pawnsToRemoveFromBipolarTicks = new List<int>();
-                var pawnsToAddToBipolarTicks = new Dictionary<int, int>();
-
-                foreach (Pawn pawn in allPawnsCopy)
+                foreach (Pawn pawn in allPawns)
                 {
                     if (pawn == null)
                     {
-                        Log.Error("Found null pawn in AllMaps_FreeColonistsAndPrisonersSpawned list.");
                         continue;
                     }
 
-                    if (MindMattersUtilities.IsPawnAlone(pawn))
+                    if (pawn.story != null && pawn.story.traits != null)
                     {
-                        PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                    }
-                    //Unstable and bipolar
-                    if (pawn.story != null && pawn.story.traits != null &&
-                        pawn.story.traits.HasTrait(TraitDef.Named("Unstable")) && pawn.MentalState != null)
-                    {
-                        if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
+                        var traits = pawn.story.traits;
+
+                        if (traits.HasTrait(MindMattersTraits.Outgoing) ||
+                            traits.HasTrait(MindMattersTraits.Reserved) ||
+                            traits.HasTrait(MindMattersTraits.Recluse))
                         {
-                            UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                            if (MindMattersUtilities.IsPawnAlone(pawn))
+                            {
+                                PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                            }
+                        }
+
+                        if (traits.HasTrait(MindMattersTraits.Unstable) && pawn.MentalState != null)
+                        {
+                            if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
+                            {
+                                UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                            }
+
+                            if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) || Find.TickManager.TicksGame - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
+                            {
+                                UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                                MindMattersUtilities.TryGiveRandomInspiration(pawn);
+                            }
+                            MindMattersUtilities.UpdatePawnMoods(pawn, PawnMoods, OnPawnMoodChanged);
                         }
                     }
 
-                    Hediff bipolar = pawn.health.hediffSet.GetFirstHediffOfDef(HediffDef.Named("Bipolar"));
-
-                    if (bipolar != null)
-                    {
-                        if (!BipolarPawnLastCheckedTicks.TryGetValue(pawn.thingIDNumber, out int lastCheckedTick))
-                        {
-                            lastCheckedTick = Find.TickManager.TicksGame;
-                            BipolarPawnLastCheckedTicks[pawn.thingIDNumber] = lastCheckedTick;
-                        }
-
-                        if (Find.TickManager.TicksGame >= lastCheckedTick + GenDate.TicksPerDay)
-                        {
-                            // Pass bipolar.Severity to WeightedRandomStageWithInertia instead of bipolar.CurStageIndex
-                            int newStage = WeightedRandomStageWithInertia(pawn, bipolar.Severity);
-                            bipolar.Severity = newStage / (float)(bipolar.def.stages.Count - 1);
-
-                            BipolarPawnLastCheckedTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                        }
-                    }
-                    else
-                    {
-                        if (BipolarPawnLastCheckedTicks.ContainsKey(pawn.thingIDNumber))
-                        {
-                            pawnsToRemoveFromBipolarTicks.Add(pawn.thingIDNumber);
-                        }
-                    }
-
-                    if (PawnMoods.TryGetValue(pawn, out var currentMood))
-                    {
-                        Mood newMood = GetMoodForPawn(pawn);
-
-                        if (currentMood != newMood)
-                        {
-                            PawnMoods[pawn] = newMood;
-                            OnPawnMoodChanged?.Invoke(pawn);
-                        }
-                    }
-                    else
-                    {
-                        PawnMoods[pawn] = GetMoodForPawn(pawn);
-                    }
-
-                    // New code for Unstable trait
-                    if (pawn.story.traits.HasTrait(TraitDef.Named("Unstable")) && pawn.MentalState != null)
-                    {
-                        if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) || Find.TickManager.TicksGame - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
-                        {
-                            UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-
-                            TryGiveRandomInspiration(pawn);
-                        }
-                    }
-                }
-
-                foreach (var pawnId in pawnsToRemoveFromBipolarTicks)
-                {
-                    BipolarPawnLastCheckedTicks.Remove(pawnId);
-                }
-
-                foreach (var pair in pawnsToAddToBipolarTicks)
-                {
-                    BipolarPawnLastCheckedTicks[pair.Key] = pair.Value;
+                    
                 }
             }
-        }
 
-        private Mood GetMoodForPawn(Pawn pawn)
-        {
-            float pawnMood = pawn.needs?.mood?.CurLevel ?? 0f;
-            if (pawnMood > 0.6f) return Mood.Happy;
-            if (pawnMood < 0.4f) return Mood.Unhappy;
-            return Mood.Neutral;
-        }
-
-        private void TryGiveRandomInspiration(Pawn pawn)
-        {
-            if (Rand.Chance(0.5f))
+            // Every day
+            if (Find.TickManager.TicksGame % 2500 == 0)
             {
-                var validInspirations = DefDatabase<InspirationDef>.AllDefsListForReading
-                    .Where(inspiration => pawn.InspirationDef == null)
-                    .ToList();
-
-                if (validInspirations.Any())
+                var allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
+                if (allPawns == null)
                 {
-                    var randomInspiration = validInspirations[Rand.Range(0, validInspirations.Count)];
-                    pawn.mindState.inspirationHandler.TryStartInspiration(randomInspiration);
+                    return;
+                }
+
+                foreach (Pawn pawn in allPawns)
+                {
+                    if (pawn == null)
+                    {
+                        continue;
+                    }
+
+                    if (pawn.story != null && pawn.story.traits != null)
+                    {
+                        var traits = pawn.story.traits;
+
+                        if (traits.HasTrait(MindMattersTraits.Bipolar))
+                        {
+                            MindMattersUtilities.UpdateBipolarPawnTicks(pawn, BipolarPawnLastCheckedTicks);
+                        }
+                    }
                 }
             }
         }
+
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -202,47 +154,6 @@ namespace MindMatters
                 UnstablePawnLastMentalBreakTicks = UnstablePawnLastMentalBreakTicks ?? new Dictionary<int, int>();
                 UnstablePawnLastMoodSwitchTicks = UnstablePawnLastMoodSwitchTicks ?? new Dictionary<int, int>();
             }
-        }
-
-        private int WeightedRandomStageWithInertia(Pawn p, float lastSeverity)
-        {
-            lastSeverity = Mathf.Clamp01(lastSeverity);
-            int currentStage = Mathf.RoundToInt(lastSeverity * (StageWeights.Length - 1));
-
-            List<int> possibleStages = Enumerable.Range(0, StageWeights.Length).ToList();
-
-            Log.Message($"Current stage: {currentStage}");
-            Log.Message($"Possible stages before removal: {string.Join(", ", possibleStages)}");
-
-            possibleStages.RemoveAll(stage => Math.Abs(stage - currentStage) > 1);
-
-            Log.Message($"Possible stages after removal: {string.Join(", ", possibleStages)}");
-
-            // Ensure all possible stages are within valid bounds
-            possibleStages = possibleStages.Where(stage => stage >= 0 && stage < StageWeights.Length).ToList();
-
-            if (!possibleStages.Any())
-            {
-                Log.Warning("No valid stages for bipolar thought.");
-                return currentStage;
-            }
-
-            int totalWeight = possibleStages.Sum(stage => StageWeights[stage]);
-
-            int randomNumber = Rand.RangeInclusive(1, totalWeight);
-
-            Log.Message($"Random number: {randomNumber}, total weight: {totalWeight}");
-
-            int cumulativeWeight = 0;
-            foreach (int stage in possibleStages)
-            {
-                cumulativeWeight += StageWeights[stage];
-                if (randomNumber <= cumulativeWeight)
-                    return stage;
-            }
-
-            // If somehow no stage was selected, return the current stage
-            return currentStage;
         }
     }
 }

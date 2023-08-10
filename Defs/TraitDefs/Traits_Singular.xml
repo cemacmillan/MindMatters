@@ -32,6 +32,54 @@
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
+    <defName>Desensitized</defName>
+    <commonality>0.5</commonality>
+    <degreeDatas>
+      <li>
+        <degree>0</degree>
+        <label>desensitized</label>
+        <description>[PAWN_nameDef] has been through so much that [PAWN_pronoun] doesn't feel much of anything anymore. Traumatic events don't seem to bother [PAWN_objective] as much.</description>
+      </li>
+    </degreeDatas>
+    <conflictingTraits>
+      <li>Nerves</li>
+      <li>TooSmart</li>
+      <li>Psychopath</li>
+      <li>Bloodlust</li>
+      <li>TenderHearted</li>
+      <li>Empathetic</li>
+      <li>Masochist</li>
+    </conflictingTraits>
+    <requiredWorkTags>
+      <li>Violent</li>
+    </requiredWorkTags>
+</TraitDef>
+    <TraitDef>
+    <defName>OpenMinded</defName>
+    <commonality>0.5</commonality>
+    <degreeDatas>
+      <li>
+        <degree>0</degree>
+        <label>open-minded</label>
+        <description>[PAWN_nameDef] sees the world with an open heart and mind. [PAWN_pronoun] is more receptive to new ideas, eager to learn, and less likely to judge others by their appearances or beliefs.</description>
+        <statOffsets>
+            <GlobalLearningFactor>0.2</GlobalLearningFactor> 
+        </statOffsets>
+      </li>
+    </degreeDatas>
+    <conflictingTraits>
+      <li>Prude</li>
+      <li>DislikesMen</li>
+      <li>DislikesWomen</li>
+      <li>BodyPurist</li>
+      <li>Psychopath</li>
+    </conflictingTraits>
+    <requiredWorkTags>
+      <li>Social</li>
+      <li>Intellectual</li> 
+    </requiredWorkTags>
+</TraitDef>
+    <TraitDef>
         <defName>Organized</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
@@ -120,6 +168,7 @@
     </TraitDef>
     <TraitDef>
         <defName>Reserved</defName>
+        <commonality>0.5</commonality>
         <degreeDatas>
             <li>
                 <label>reserved</label>
@@ -159,6 +208,7 @@
         </degreeDatas>
         <conflictingTraits>
             <li>Kind</li>
+            <li>Empathetic</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
@@ -213,7 +263,15 @@
         </degreeDatas>
         <conflictingTraits>
             <li>Psychopath</li>
+            <li>Reserved</li>
+            <li>Desensitized</li>
+            <li>SelfCentered</li>
+            <li>Masochist</li>
         </conflictingTraits>
+         <requiredWorkTags>
+            <li>Violent</li>
+            <li>Caring</li>
+        </requiredWorkTags>
     </TraitDef>
     <TraitDef>
         <defName>Unstable</defName>
@@ -240,4 +298,43 @@
             <li>Bipolar</li>
         </conflictingTraits>
     </TraitDef>
+
+    <TraitDef>
+    <defName>Paranoid</defName>
+    <commonality>0.3</commonality>
+    <degreeDatas>
+        <li>
+            <degree>0</degree>
+            <label>paranoid</label>
+            <description>Constantly on edge, this person is quick to react and has heightened senses, but struggles with trusting others.</description>
+            <commonality>1</commonality>
+            <statOffsets>
+                <ShootingAccuracyPawn>0.1</ShootingAccuracyPawn>
+                <MeleeDodgeChance>0.1</MeleeDodgeChance>
+            </statOffsets>
+            <socialFightChanceFactor>1.5</socialFightChanceFactor>
+            <statFactors>
+            <CertaintyLossFactor MayRequire="Ludeon.RimWorld.Ideology">1.5</CertaintyLossFactor>
+             </statFactors>
+              <skillGains>
+                <li>
+                    <key>Shooting</key>
+                    <value>3</value>
+                </li>
+                <li>
+                    <key>Melee</key>
+                    <value>3</value>
+                </li>
+            </skillGains>
+        </li>
+    </degreeDatas>
+    <conflictingTraits>
+        <li>Kind</li>
+        <li>Socialite</li>
+        <li>Outgoing</li>
+    </conflictingTraits>
+     <requiredWorkTags>
+                <li>Violent</li>
+     </requiredWorkTags>
+</TraitDef>
 </Defs>

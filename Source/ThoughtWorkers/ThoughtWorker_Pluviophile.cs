@@ -18,7 +18,7 @@ namespace MindMatters
                 return ThoughtState.Inactive;
             }
 
-            if (!p.story.traits.HasTrait(TraitDef.Named("Pluviophile")))
+            if (!p.story.traits.HasTrait(MindMattersTraits.Pluviophile))
             {
                 return ThoughtState.Inactive;
             }

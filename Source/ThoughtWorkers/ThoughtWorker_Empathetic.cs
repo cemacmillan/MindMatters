@@ -14,6 +14,12 @@ namespace MindMatters
 
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
+
+            if (!p.story.traits.HasTrait(MindMattersTraits.Empathetic))
+            {
+                return ThoughtState.Inactive;
+            }
+
             tickCounter++;
             if (tickCounter < TickInterval)
             {

@@ -34,14 +34,11 @@ namespace MindMatters
                 {
                     Log.Error("MindMattersGameComponent not found.");
                 }
-
-                Log.Message($"Bipolar hediff added to {pawn.Name.ToStringShort}");
             }
             else if (trait.def.defName == "Empathetic" && !pawn.health.hediffSet.HasHediff(HediffDef.Named("Empathetic")))
             {
                 Hediff hediff = HediffMaker.MakeHediff(HediffDef.Named("Empathetic"), pawn);
                 pawn.health.AddHediff(hediff);
-                Log.Message($"Empathetic hediff added to {pawn.Name.ToStringShort}");
             }
         }
     }

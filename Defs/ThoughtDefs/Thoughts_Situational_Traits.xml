@@ -140,5 +140,8 @@
                 <description>Being in a dining or recreation room makes me feel sociable and content.</description>
             </li>
         </stages>
+        <requiredTraits>
+            <li>Socialite</li>
+        </requiredTraits>
     </ThoughtDef>
 </Defs>

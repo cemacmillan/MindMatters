@@ -38,6 +38,9 @@
             </li>
         </stages>
         <workerClass>MindMatters.ThoughtWorker_Cautious</workerClass>
+        <requiredTraits>
+            <li>Cautious</li>
+        </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
         <defName>Adventurous</defName>
@@ -72,6 +75,9 @@
                 <baseMoodEffect>-3</baseMoodEffect>
             </li>
         </stages>
+        <requiredTraits>
+            <li>Organized</li>
+        </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
         <defName>SelfCentered</defName>
@@ -94,5 +100,8 @@
             </li>
         </stages>
         <workerClass>MindMatters.ThoughtWorker_SelfCentered</workerClass>
+        <requiredTraits>
+            <li>SelfCentered</li>
+        </requiredTraits>
     </ThoughtDef>
 </Defs>
