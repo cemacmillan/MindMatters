@@ -4,14 +4,14 @@
     <operations>
         <!-- Test operation for "Ugly" thought -->
         <li Class="PatchOperationTest">
-            <xpath>Defs/ThoughtDef[defName="Ugly"]/nullifyingTraits/li[text()="OpenMinded"]</xpath>
+            <xpath>Defs/ThoughtDef[defName="Ugly"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
             <success>Invert</success>
         </li>
         <li Class="PatchOperationAdd">
             <xpath>Defs/ThoughtDef[defName="Ugly"]/nullifyingTraits</xpath>
             <value>
-                <li>OpenMinded</li>
-                <li>TenderHearted</li>
+                <li>MM_OpenMinded</li>
+                <li>MM_TenderHearted</li>
             </value>
         </li>
     </operations>
@@ -22,14 +22,14 @@
     <operations>
         <!-- Test operation for "Ugly" thought -->
         <li Class="PatchOperationTest">
-            <xpath>Defs/ThoughtDef[defName="Disfigured"]/nullifyingTraits/li[text()="OpenMinded"]</xpath>
+            <xpath>Defs/ThoughtDef[defName="Disfigured"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
             <success>Invert</success>
         </li>
         <li Class="PatchOperationAdd">
             <xpath>Defs/ThoughtDef[defName="Disfigured"]/nullifyingTraits</xpath>
             <value>
-                <li>OpenMinded</li>
-                <li>TenderHearted</li>
+                <li>MM_OpenMinded</li>
+                <li>MM_TenderHearted</li>
             </value>
         </li>
     </operations>
@@ -40,13 +40,13 @@
     <operations>
         <!-- Test operation for "Ugly" thought -->
         <li Class="PatchOperationTest">
-            <xpath>Defs/ThoughtDef[defName="AnnoyingVoice"]/nullifyingTraits/li[text()="OpenMinded"]</xpath>
+            <xpath>Defs/ThoughtDef[defName="AnnoyingVoice"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
             <success>Invert</success>
         </li>
         <li Class="PatchOperationAdd">
             <xpath>Defs/ThoughtDef[defName="AnnoyingVoice"]/nullifyingTraits</xpath>
             <value>
-                <li>OpenMinded</li>
+                <li>MM_OpenMinded</li>
             </value>
         </li>
     </operations>
@@ -57,13 +57,13 @@
     <operations>
         <!-- Test operation for "Ugly" thought -->
         <li Class="PatchOperationTest">
-            <xpath>Defs/ThoughtDef[defName="CreepyBreathing"]/nullifyingTraits/li[text()="OpenMinded"]</xpath>
+            <xpath>Defs/ThoughtDef[defName="CreepyBreathing"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
             <success>Invert</success>
         </li>
         <li Class="PatchOperationAdd">
             <xpath>Defs/ThoughtDef[defName="CreepyBreathing"]/nullifyingTraits</xpath>
             <value>
-                <li>OpenMinded</li>
+                <li>MM_OpenMinded</li>
             </value>
         </li>
     </operations>
@@ -80,7 +80,7 @@
 				<xpath>*/ThoughtDef[defName="ObservedLayingCorpse"]</xpath>
 				<value>
 					<nullifyingTraits>
-						<li>Desensitized</li>
+						<li>MM_Desensitized</li>
 					</nullifyingTraits>
 				</value>
 			</li>
@@ -98,7 +98,7 @@
 				<xpath>*/ThoughtDef[defName="DeadMansApparel"]</xpath>
 				<value>
 					<nullifyingTraits>
-						<li>Desensitized</li>
+						<li>MM_Desensitized</li>
 					</nullifyingTraits>
 				</value>
 			</li>
@@ -116,8 +116,8 @@
 				<xpath>*/ThoughtDef[defName="WitnessedDeathAlly"]</xpath>
 				<value>
 					<nullifyingTraits>
-						<li>TenderHearted</li>
-						<li>Desensitized</li>
+						<li>MM_TenderHearted</li>
+						<li>MM_Desensitized</li>
 					</nullifyingTraits>
 				</value>
 			</li>
@@ -135,8 +135,8 @@
 				<xpath>*/ThoughtDef[defName="WitnessedDeathNonAlly"]</xpath>
 				<value>
 					<nullifyingTraits>
-						<li>TenderHearted</li>
-						<li>Desensitized</li>
+						<li>MM_TenderHearted</li>
+						<li>MM_Desensitized</li>
 					</nullifyingTraits>
 				</value>
 			</li>
@@ -154,7 +154,7 @@
 				<xpath>*/ThoughtDef[defName="ColonistLeftUnburied"]</xpath>
 				<value>
 					<nullifyingTraits>
-						<li>Desensitized</li>
+						<li>MM_Desensitized</li>
 					</nullifyingTraits>
 				</value>
 			</li>

@@ -39,7 +39,7 @@
         </stages>
         <workerClass>MindMatters.ThoughtWorker_Cautious</workerClass>
         <requiredTraits>
-            <li>Cautious</li>
+            <li>MM_Cautious</li>
         </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
@@ -76,7 +76,7 @@
             </li>
         </stages>
         <requiredTraits>
-            <li>Organized</li>
+            <li>MM_Organized</li>
         </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
@@ -101,7 +101,7 @@
         </stages>
         <workerClass>MindMatters.ThoughtWorker_SelfCentered</workerClass>
         <requiredTraits>
-            <li>SelfCentered</li>
+            <li>MM_SelfCentered</li>
         </requiredTraits>
     </ThoughtDef>
 </Defs>

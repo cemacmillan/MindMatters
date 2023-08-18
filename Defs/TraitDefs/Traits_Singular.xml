@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
     <TraitDef>
-        <defName>Adventurous</defName>
+        <defName>MM_Adventurous</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -14,11 +14,11 @@
             <li>Violent</li>
         </requiredWorkTags>
         <conflictingTraits>
-            <li>Cautious</li>
+            <li>MM_Cautious</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>Cautious</defName>
+        <defName>MM_Cautious</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -28,11 +28,11 @@
             </li>
         </degreeDatas>
         <conflictingTraits>
-            <li>Adventurous</li>
+            <li>MM_Adventurous</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-    <defName>Desensitized</defName>
+    <defName>MM_Desensitized</defName>
     <commonality>0.5</commonality>
     <degreeDatas>
       <li>
@@ -46,8 +46,8 @@
       <li>TooSmart</li>
       <li>Psychopath</li>
       <li>Bloodlust</li>
-      <li>TenderHearted</li>
-      <li>Empathetic</li>
+      <li>MM_TenderHearted</li>
+      <li>MM_Empathetic</li>
       <li>Masochist</li>
     </conflictingTraits>
     <requiredWorkTags>
@@ -55,7 +55,7 @@
     </requiredWorkTags>
 </TraitDef>
     <TraitDef>
-    <defName>OpenMinded</defName>
+    <defName>MM_OpenMinded</defName>
     <commonality>0.5</commonality>
     <degreeDatas>
       <li>
@@ -68,7 +68,7 @@
       </li>
     </degreeDatas>
     <conflictingTraits>
-      <li>Prude</li>
+      <li>MM_Prude</li>
       <li>DislikesMen</li>
       <li>DislikesWomen</li>
       <li>BodyPurist</li>
@@ -80,7 +80,7 @@
     </requiredWorkTags>
 </TraitDef>
     <TraitDef>
-        <defName>Organized</defName>
+        <defName>MM_Organized</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -93,9 +93,13 @@
                 </statOffsets>
             </li>
         </degreeDatas>
+         <conflictingTraits>
+            <li>MM_Relaxed</li>
+            <li>Industriousness</li>
+        </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>Outgoing</defName>
+        <defName>MM_Outgoing</defName>
         <commonality>1</commonality>
         <degreeDatas>
             <li>
@@ -115,14 +119,14 @@
         </degreeDatas>
          <conflictingTraits>
             <li>Recluse</li>
-            <li>Reserved</li>
+            <li>MM_Reserved</li>
         </conflictingTraits>
          <requiredWorkTags>
             <li>Social</li>
         </requiredWorkTags>
     </TraitDef>
     <TraitDef>
-        <defName>Pluviophile</defName>
+        <defName>MM_Pluviophile</defName>
         <commonality>1</commonality>
         <degreeDatas>
             <li>
@@ -132,7 +136,7 @@
         </degreeDatas>
     </TraitDef>
     <TraitDef>
-        <defName>Prude</defName>
+        <defName>MM_Prude</defName>
         <label>Prude</label>
         <description>A prude pawn who is uncomfortable with nudity.</description>
         <degreeDatas>
@@ -144,7 +148,7 @@
         </degreeDatas>
     </TraitDef>
     <TraitDef>
-        <defName>Relaxed</defName>
+        <defName>MM_Relaxed</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -167,7 +171,7 @@
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>Reserved</defName>
+        <defName>MM_Reserved</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -176,13 +180,13 @@
             </li>
         </degreeDatas>
         <conflictingTraits>
-            <li>Outgoing</li>
-            <li>Socialite</li>
+            <li>MM_Outgoing</li>
+            <li>MM_Socialite</li>
             <li>Recluse</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>TenderHearted</defName>
+        <defName>MM_TenderHearted</defName>
         <commonality>0.5</commonality>
         <label>Tender-Hearted</label>
         <degreeDatas>
@@ -193,11 +197,11 @@
             </li>
         </degreeDatas>
         <conflictingTraits>
-            <li>SelfCentered</li>
+            <li>MM_SelfCentered</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>SelfCentered</defName>
+        <defName>MM_SelfCentered</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -208,11 +212,11 @@
         </degreeDatas>
         <conflictingTraits>
             <li>Kind</li>
-            <li>Empathetic</li>
+            <li>MM_Empathetic</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>Socialite</defName>
+        <defName>MM_Socialite</defName>
         <commonality>0.5</commonality>
         <degreeDatas>
             <li>
@@ -231,13 +235,13 @@
             <li>Social</li>
         </requiredWorkTags>
         <conflictingTraits>
-            <li>Outgoing</li>
-            <li>Reserved</li>
+            <li>MM_Outgoing</li>
+            <li>MM_Reserved</li>
             <li>Recluse</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>Bipolar</defName>
+        <defName>MM_Bipolar</defName>
         <commonality>0.1</commonality>
         <degreeDatas>
             <li>
@@ -252,7 +256,7 @@
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
-        <defName>Empathetic</defName>
+        <defName>MM_Empathetic</defName>
         <commonality>0.1</commonality>
         <degreeDatas>
             <li>
@@ -263,9 +267,9 @@
         </degreeDatas>
         <conflictingTraits>
             <li>Psychopath</li>
-            <li>Reserved</li>
-            <li>Desensitized</li>
-            <li>SelfCentered</li>
+            <li>MM_Reserved</li>
+            <li>MM_Desensitized</li>
+            <li>MM_SelfCentered</li>
             <li>Masochist</li>
         </conflictingTraits>
          <requiredWorkTags>
@@ -274,7 +278,7 @@
         </requiredWorkTags>
     </TraitDef>
     <TraitDef>
-        <defName>Unstable</defName>
+        <defName>MM_Unstable</defName>
         <commonality>0.2</commonality>
         <degreeDatas>
             <li>
@@ -295,12 +299,12 @@
         <conflictingTraits>
             <li>NaturalMood</li>
             <li>Nerves</li>
-            <li>Bipolar</li>
+            <li>MM_Bipolar</li>
         </conflictingTraits>
     </TraitDef>
 
     <TraitDef>
-    <defName>Paranoid</defName>
+    <defName>MM_Paranoid</defName>
     <commonality>0.3</commonality>
     <degreeDatas>
         <li>
@@ -330,8 +334,8 @@
     </degreeDatas>
     <conflictingTraits>
         <li>Kind</li>
-        <li>Socialite</li>
-        <li>Outgoing</li>
+        <li>MM_Socialite</li>
+        <li>MM_Outgoing</li>
     </conflictingTraits>
      <requiredWorkTags>
                 <li>Violent</li>

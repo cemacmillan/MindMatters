@@ -16,7 +16,7 @@
             </li>
         </stages>
         <requiredTraits>
-            <li>Pluviophile</li>
+            <li>MM_Pluviophile</li>
         </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
@@ -141,7 +141,7 @@
             </li>
         </stages>
         <requiredTraits>
-            <li>Socialite</li>
+            <li>MM_Socialite</li>
         </requiredTraits>
     </ThoughtDef>
 </Defs>

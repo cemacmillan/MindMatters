@@ -4,6 +4,7 @@
 <ThoughtDef>
     <defName>MM_BipolarMood</defName>
     <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Bipolar</hediff>
     <stages>
       <li>
         <label>severe depression</label>
@@ -32,7 +33,7 @@
       </li>
     </stages>
         <requiredTraits>
-            <li>Bipolar</li>
+            <li>MM_Bipolar</li>
         </requiredTraits>
 </ThoughtDef>
 
@@ -58,7 +59,7 @@
     </li>
   </stages>
   <requiredTraits>
-    <li>Empathetic</li>
+    <li>MM_Empathetic</li>
   </requiredTraits>
 </ThoughtDef>
 
@@ -83,6 +84,9 @@
         </li>
     </stages>
     <workerClass>MindMatters.ThoughtWorker_Unstable</workerClass>
+     <requiredTraits>
+    <li>MM_Unstable</li>
+  </requiredTraits>
 </ThoughtDef>
 
 <ThoughtDef>
@@ -102,7 +106,7 @@
   </stages>
   <workerClass>MindMatters.ThoughtWorker_Paranoid</workerClass>
         <requiredTraits>
-            <li>Paranoid</li>
+            <li>MM_Paranoid</li>
         </requiredTraits>
 </ThoughtDef>
 

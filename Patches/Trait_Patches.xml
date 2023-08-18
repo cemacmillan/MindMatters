@@ -10,7 +10,7 @@
 				<xpath>Defs/TraitDef[defname="Nudist"]</xpath>
 				<value>
 					<conflictingTraits>
-						<li>Prude</li>
+						<li>MM_Prude</li>
 					</conflictingTraits>
 				</value>
 			</li>
@@ -28,8 +28,8 @@
 				<xpath>Defs/TraitDef[defname="Bloodlust"]</xpath>
 				<value>
 					<conflictingTraits>
-						<li>TenderHearted</li>
-						<li>Desensitized</li>
+						<li>MM_TenderHearted</li>
+						<li>MM_Desensitized</li>
 					</conflictingTraits>
 				</value>
 			</li>
@@ -47,9 +47,9 @@
 				<xpath>*/TraitDef[defname="Psychopath"]</xpath>
 				<value>
 					<conflictingTraits>
-						<li>TenderHearted</li>
-						<li>Desensitized</li>
-						<li>OpenMinded</li>
+						<li>MM_TenderHearted</li>
+						<li>MM_Desensitized</li>
+						<li>MM_OpenMinded</li>
 					</conflictingTraits>
 				</value>
 			</li>
