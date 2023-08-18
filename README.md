@@ -8,6 +8,7 @@
 - **Anxiety and Trauma Systems:** Pawns can develop anxiety or trauma based on their negative experiences. The likelihood of developing these conditions depends on the pawn's traits and the severity of the experiences.
 - **Trait System:** Pawns can gain or lose traits based on their experiences. Traits also influence a pawn's susceptibility to anxiety and trauma.
 - **Immunizing Traits:** Certain traits, like Psychopath and Desensitized, make a pawn immune to the effects of acquired experiences.
+- **Scapegoat:** If your colony is large enough, a pawn may be picked (based on their traits) to have the role of scapegoat. If the scapegoat is happier than another pawn, the other pawn may blame them for problems in the colony and thus gain a mood boost. (I called someone out +6)
 
 ## Installation
 
