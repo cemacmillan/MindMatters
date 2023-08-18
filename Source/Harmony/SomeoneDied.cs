@@ -10,7 +10,7 @@ namespace MindMatters
     public static class SomeoneDiedPatch
     {
         [HarmonyPostfix]
-        public static void AppendPsychologyThoughts(Pawn victim, DamageInfo? dinfo, PawnDiedOrDownedThoughtsKind thoughtsKind, ref List<IndividualThoughtToAdd> outIndividualThoughts)
+        public static void AppendThoughts(Pawn victim, DamageInfo? dinfo, PawnDiedOrDownedThoughtsKind thoughtsKind, ref List<IndividualThoughtToAdd> outIndividualThoughts)
         {
             if (victim?.Faction == null || victim.Faction.HostileTo(Faction.OfPlayer))
                 return;
@@ -30,13 +30,13 @@ namespace MindMatters
                 var opinionOfTheDeceased = pawn.relations.OpinionOf(victim);
                 var stageIndex = Mathf.Clamp(opinionOfTheDeceased / 10, 0, 4);
 
-                if (ThoughtDefOfMindMatters.MindMatters_SomeoneDied == null)
+                if (ThoughtDefOfMindMatters.MM_SomeoneDied == null)
                 {
                     Log.Error("MindMatters_SomeoneDied ThoughtDef is null");
                     continue;
                 }
 
-                Thought_Memory newThought = (Thought_Memory)ThoughtMaker.MakeThought(ThoughtDefOfMindMatters.MindMatters_SomeoneDied);
+                Thought_Memory newThought = (Thought_Memory)ThoughtMaker.MakeThought(ThoughtDefOfMindMatters.MM_SomeoneDied);
                 if (newThought == null)
                 {
                     Log.Error("Failed to create new Thought_Memory");

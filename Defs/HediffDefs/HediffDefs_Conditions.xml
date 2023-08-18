@@ -61,5 +61,52 @@
     </stages>
 </HediffDef>
 
+<HediffDef>
+  <defName>Anxiety</defName>
+  <label>anxiety</label>
+  <description>A mental condition characterized by excessive and persistent worry, fear, and unease.</description>
+  <hediffClass>MindMatters.Hediff_Anxiety</hediffClass>
+  <stages>
+    <li>
+      <label>mild anxiety</label>
+      <minSeverity>0.1</minSeverity>
+      <painFactor>0.05</painFactor>
+    </li>
+    <li>
+      <label>moderate anxiety</label>
+      <minSeverity>0.4</minSeverity>
+      <painFactor>0.15</painFactor>
+    </li>
+    <li>
+      <label>severe anxiety</label>
+      <minSeverity>0.7</minSeverity>
+      <painFactor>0.25</painFactor>
+    </li>
+  </stages>
+</HediffDef>
+
+<HediffDef>
+  <defName>Trauma</defName>
+  <label>trauma</label>
+  <description>A deeply distressing or disturbing experience that has a lasting impact on mental well-being.</description>
+  <hediffClass>MindMatters.Hediff_Trauma</hediffClass>
+  <stages>
+    <li>
+      <label>mild trauma</label>
+      <minSeverity>0.1</minSeverity>
+      <painFactor>0.1</painFactor>
+    </li>
+    <li>
+      <label>moderate trauma</label>
+      <minSeverity>0.4</minSeverity>
+      <painFactor>0.2</painFactor>
+    </li>
+    <li>
+      <label>severe trauma</label>
+      <minSeverity>0.7</minSeverity>
+      <painFactor>0.3</painFactor>
+    </li>
+  </stages>
+</HediffDef>
 
 </Defs>

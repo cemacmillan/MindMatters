@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
     <ThoughtDef>
-        <defName>Alone</defName>
+        <defName>MM_Alone</defName>
         <stackLimit>1</stackLimit>
         <stages>
             <li>
@@ -23,7 +23,7 @@
         <workerClass>MindMatters.ThoughtWorker_Alone</workerClass>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>CautiousOutsideHomeArea</defName>
+        <defName>MM_CautiousOutsideHomeArea</defName>
         <stackLimit>1</stackLimit>
         <stages>
             <li>
@@ -43,7 +43,7 @@
         </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>Adventurous</defName>
+        <defName>MM_Adventurous</defName>
         <durationDays>0</durationDays>
         <stackLimit>1</stackLimit>
         <stages>
@@ -61,7 +61,7 @@
         <workerClass>MindMatters.ThoughtWorker_Adventurous</workerClass>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>OrganizedThought</defName>
+        <defName>MM_OrganizedThought</defName>
         <workerClass>MindMatters.ThoughtWorker_Organized</workerClass>
         <stages>
             <li>
@@ -80,7 +80,7 @@
         </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>SelfCentered</defName>
+        <defName>MM_SelfCentered</defName>
         <stackLimit>1</stackLimit>
         <stages>
             <li>

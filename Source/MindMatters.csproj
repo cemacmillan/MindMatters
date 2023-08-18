@@ -65,6 +65,7 @@
 	  <None Remove="Hediffs\" />
 	  <None Remove="MentalStates\" />
 	  <None Remove="InteractionWorkers\" />
+	  <None Remove="README.md" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="ThoughtWorkers\" />

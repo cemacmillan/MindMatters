@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
     <ThoughtDef>
-        <defName>Pluviophile</defName>
+        <defName>MM_Pluviophile</defName>
         <workerClass>MindMatters.ThoughtWorker_Pluviophile</workerClass>
         <stages>
             <li>
@@ -20,7 +20,7 @@
         </requiredTraits>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>PrudeUncomfortableNudity</defName>
+        <defName>MM_PrudeUncomfortableNudity</defName>
         <label>Uncomfortable Nudity</label>
         <description>This pawn is uncomfortable with nudity while resting on a bed.</description>
         <workerClass>MindMatters.ThoughtWorker_Prude</workerClass>
@@ -38,7 +38,7 @@
         </stages>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>MindMatters_FilledGraveTenderHearted</defName>
+        <defName>MM_FilledGraveTenderHearted</defName>
         <durationDays>1</durationDays>
         <label>Filled Grave - Tender-Hearted</label>
         <description>Seeing a filled grave reminds [PAWN_nameDef] of the fragility of life, stirring up [PAWN_pronounPossessive] tender-hearted nature.</description>
@@ -63,7 +63,7 @@
         </stages>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>MindMatters_KilledPatientTenderHearted</defName>
+        <defName>MM_KilledPatientTenderHearted</defName>
         <durationDays>1</durationDays>
         <label>Killed Patient - Tender-Hearted</label>
         <description>Witnessing the death of a patient brings [PAWN_nameDef] great sorrow, touching [PAWN_pronounPossessive] tender-hearted nature.</description>
@@ -87,7 +87,7 @@
         </stages>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>MindMatters_SomeoneDied</defName>
+        <defName>MM_SomeoneDied</defName>
         <description>Someone died</description>
         <thoughtClass>Thought_Memory</thoughtClass>
         <durationDays>8</durationDays> <!-- The thought fades after 30 days -->
@@ -116,7 +116,7 @@
         </stages>
     </ThoughtDef>
     <ThoughtDef>
-        <defName>SocialiteActivity</defName>
+        <defName>MM_SocialiteActivity</defName>
         <workerClass>MindMatters.ThoughtWorker_SocialActivity</workerClass>
         <stages>
             <li>

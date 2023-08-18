@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using UnityEngine.Networking.Match;
 using Verse;
 
 namespace MindMatters
@@ -12,12 +13,22 @@ namespace MindMatters
         {
             // Initialize settings
             settings = GetSettings<MindMattersSettings>();
+
+            // Initialize MindMattersGameComponent
             Current.Game?.components.Add(new MindMattersGameComponent(Current.Game));
 
-            Log.Message("Mind Matters v0.0.2");
+            // Initialize MindMattersExperienceComponent
+            if (Current.Game != null && !Current.Game.components.Any(x => x is MindMattersExperienceComponent))
+            {
+                Current.Game.components.Add(new MindMattersExperienceComponent(Current.Game));
+            }
+
+            Log.Message("Mind Matters v0.2.2");
 
             // Patch with Harmony
-            new Harmony("mod.cem.mindmatters").PatchAll();
+            var harmony = new Harmony("mod.cem.mindmatters");
+            Harmony.DEBUG = true;
+            harmony.PatchAll();
         }
 
         // Override Mod Settings

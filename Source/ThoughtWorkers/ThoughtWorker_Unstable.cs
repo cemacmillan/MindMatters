@@ -13,13 +13,12 @@ namespace MindMatters
             {
                 if (Current.Game == null)
                 {
-                    Log.Error("Current.Game is null.");
                     return ThoughtState.Inactive;
                 }
 
                // Log.Message($"Checking ThoughtState for pawn {p.LabelShort}");
 
-                if (!p.story.traits.HasTrait(TraitDef.Named("Unstable")))
+                if (!p.story.traits.HasTrait(MindMattersTraits.Unstable))
                 {
                    // Log.Message($"Pawn {p.LabelShort} does not have Unstable trait.");
                     return ThoughtState.Inactive;

@@ -23,6 +23,20 @@ namespace MindMatters
         public static readonly TraitDef Unstable = TraitDef.Named("Unstable");
         public static readonly TraitDef Paranoid = TraitDef.Named("Paranoid");
         public static readonly TraitDef Recluse = TraitDef.Named("Recluse");
+        public static readonly TraitDef Nerves = TraitDef.Named("Nerves");
+        public static readonly TraitDef Abrasive = TraitDef.Named("Abrasive");
+        public static readonly TraitDef Ascetic = TraitDef.Named("Ascetic");
+        public static readonly TraitDef Bloodlust = TraitDef.Named("Bloodlust");
+        public static readonly TraitDef Greedy = TraitDef.Named("Greedy");
+        public static readonly TraitDef Gourmand = TraitDef.Named("Gourmand");
+        public static readonly TraitDef Psychopath = TraitDef.Named("Psychopath");
+        public static readonly TraitDef TooSmart = TraitDef.Named("TooSmart");
+        public static readonly TraitDef Neurotic = TraitDef.Named("Neurotic");
+        public static readonly TraitDef Masochist = TraitDef.Named("Masochist");
+        public static readonly TraitDef NightOwl = TraitDef.Named("NightOwl");
+        public static readonly TraitDef Jealous = TraitDef.Named("Jealous");
+        public static readonly TraitDef Nimble = TraitDef.Named("Nimble");
+       
     }
 }
 

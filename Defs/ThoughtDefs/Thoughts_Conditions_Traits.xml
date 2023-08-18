@@ -2,7 +2,7 @@
 <Defs>
 
 <ThoughtDef>
-    <defName>BipolarMood</defName>
+    <defName>MM_BipolarMood</defName>
     <workerClass>ThoughtWorker_Hediff</workerClass>
     <stages>
       <li>
@@ -38,7 +38,7 @@
 
 
 <ThoughtDef>
-  <defName>EmpatheticThought</defName>
+  <defName>MM_EmpatheticThought</defName>
   <workerClass>MindMatters.ThoughtWorker_Empathetic</workerClass>
   <stages>
     <li>
@@ -63,7 +63,7 @@
 </ThoughtDef>
 
 <ThoughtDef>
-    <defName>Unstable</defName>
+    <defName>MM_Unstable</defName>
     <stackLimit>1</stackLimit>
     <stages>
         <li>
@@ -86,7 +86,7 @@
 </ThoughtDef>
 
 <ThoughtDef>
-  <defName>Paranoid</defName>
+  <defName>MM_Paranoid</defName>
   <stackLimit>1</stackLimit>
   <stages>
     <li>
@@ -106,6 +106,53 @@
         </requiredTraits>
 </ThoughtDef>
 
+<ThoughtDef>
+  <defName>AnxietyMood</defName>
+  <description>anxiety</description>
+  <workerClass>ThoughtWorker_Hediff</workerClass>
+  <hediff>Anxiety</hediff> 
+  <stages>
+    <li>
+      <label>mild anxiety</label>
+      <baseMoodEffect>-3</baseMoodEffect>
+      <description>I'm often feeling anxious.</description>
+    </li>
+    <li>
+      <label>moderate anxiety</label>
+      <baseMoodEffect>-6</baseMoodEffect>
+      <description>My anxiety is keeping me from functioning.</description>
+    </li>
+    <li>
+      <label>severe anxiety</label>
+      <baseMoodEffect>-12</baseMoodEffect>
+      <description>My fears pervade every aspect of my life. I cannot get away from them.</description>
+    </li>
+  </stages>
+</ThoughtDef>
+
+<ThoughtDef>
+  <defName>TraumaMood</defName>
+  <description>trauma</description>
+  <workerClass>ThoughtWorker_Hediff</workerClass>
+  <hediff>Trauma</hediff> 
+  <stages>
+    <li>
+      <label>mild trauma</label>
+      <baseMoodEffect>-3</baseMoodEffect>
+      <description>I am mildly traumatized.</description>
+    </li>
+    <li>
+      <label>moderate trauma</label>
+      <baseMoodEffect>-5</baseMoodEffect>
+      <description>I am seriously traumatized.</description>
+    </li>
+    <li>
+      <label>severe trauma</label>
+      <baseMoodEffect>-10</baseMoodEffect>
+      <description>I am deeply traumatized.</description>
+    </li>
+  </stages>
+</ThoughtDef>
 
 
 </Defs>
