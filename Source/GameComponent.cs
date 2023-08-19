@@ -19,6 +19,8 @@ namespace MindMatters
 
         private MindMattersVictimManager victimManager = new MindMattersVictimManager();
 
+        TraitDef recluseTrait;
+
         public enum Mood
         {
             Happy,
@@ -54,51 +56,53 @@ namespace MindMatters
             if (Find.TickManager.TicksGame % 300 == 0)
             {
                 allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
-
-                if (allPawns != null)
+                if (allPawns == null)
                 {
-                    foreach (Pawn pawn in allPawns)
+                    return;
+                }
+
+                if (MindMattersTraits.Recluse != null)
+                {
+                    recluseTrait = MindMattersTraits.Recluse;
+                } else
+                {
+                    recluseTrait = null;
+                }
+
+                foreach (Pawn pawn in allPawns)
+                {
+                    if (pawn == null || pawn.story == null || pawn.story.traits == null)
                     {
-                        if (pawn == null)
+                        continue;
+                    }
+
+                    var traits = pawn.story.traits;
+
+                    if ((traits.HasTrait(MindMattersTraits.Outgoing)) ||
+                        (traits.HasTrait(MindMattersTraits.Reserved)) ||
+                        (recluseTrait != null && traits.HasTrait(recluseTrait)) &&
+                        MindMattersUtilities.IsPawnAlone(pawn))
+                    {
+                        PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                    }
+
+                    if (traits.HasTrait(MindMattersTraits.Unstable) && pawn.MentalState != null)
+                    {
+                        if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
                         {
-                            continue;
+                            UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
                         }
 
-                        if (pawn.story != null && pawn.story.traits != null)
+                        if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) ||
+                            Find.TickManager.TicksGame - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
                         {
-                            var traits = pawn.story.traits;
-
-                            if (traits.HasTrait(MindMattersTraits.Outgoing) ||
-                                traits.HasTrait(MindMattersTraits.Reserved) ||
-                                traits.HasTrait(MindMattersTraits.Recluse))
-                            {
-                                if (MindMattersUtilities.IsPawnAlone(pawn))
-                                {
-                                    PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                                }
-                            }
-
-                            if (traits.HasTrait(MindMattersTraits.Unstable) && pawn.MentalState != null)
-                            {
-                                if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
-                                {
-                                    UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                                }
-
-                                if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) || Find.TickManager.TicksGame - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
-                                {
-                                    UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                                    MindMattersUtilities.TryGiveRandomInspiration(pawn);
-                                }
-                                MindMattersUtilities.UpdatePawnMoods(pawn, PawnMoods, OnPawnMoodChanged);
-                            }
-
-                            
+                            UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                            MindMattersUtilities.TryGiveRandomInspiration(pawn);
                         }
-
+                        MindMattersUtilities.UpdatePawnMoods(pawn, PawnMoods, OnPawnMoodChanged);
                     }
                 }
-            } // 60
+            }
 
             if (Find.TickManager.TicksGame % 15000 == 0)  // Every quarter game day (6 hours)
             {

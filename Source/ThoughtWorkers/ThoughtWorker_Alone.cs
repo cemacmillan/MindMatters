@@ -14,20 +14,26 @@ namespace MindMatters
                 // Outgoing and Socialite pawns are unhappy when alone
                 return isAlone ? ThoughtState.ActiveAtStage(0) : ThoughtState.Inactive;
             }
-            else if (p.story.traits.HasTrait(TraitDef.Named("Reserved")))
-            {
-                // Reserved pawns are happy when alone
-                return isAlone ? ThoughtState.ActiveAtStage(1) : ThoughtState.Inactive;
-            }
-            else if (p.story.traits.HasTrait(TraitDef.Named("Recluse")))
-            {
-                // Recluse pawns are very happy when alone
-                return isAlone ? ThoughtState.ActiveAtStage(2) : ThoughtState.Inactive;
-            }
             else
             {
-                return ThoughtState.Inactive;
+                TraitDef reservedTrait = MindMattersTraits.Reserved;
+                if (reservedTrait != null && p.story.traits.HasTrait(reservedTrait))
+                {
+                    // Reserved pawns are happy when alone
+                    return isAlone ? ThoughtState.ActiveAtStage(1) : ThoughtState.Inactive;
+                }
+                else
+                {
+                    TraitDef recluseTrait = TraitDef.Named("Recluse");
+                    if (recluseTrait != null && p.story.traits.HasTrait(recluseTrait))
+                    {
+                        // Recluse pawns are very happy when alone
+                        return isAlone ? ThoughtState.ActiveAtStage(2) : ThoughtState.Inactive;
+                    }
+                }
             }
+
+            return ThoughtState.Inactive;
         }
     }
 }

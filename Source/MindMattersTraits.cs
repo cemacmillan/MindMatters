@@ -22,7 +22,7 @@ namespace MindMatters
         public static readonly TraitDef Empathetic = TraitDef.Named("MM_Empathetic");
         public static readonly TraitDef Unstable = TraitDef.Named("MM_Unstable");
         public static readonly TraitDef Paranoid = TraitDef.Named("MM_Paranoid");
-        public static readonly TraitDef Recluse = TraitDef.Named("MM_Recluse");
+        public static readonly TraitDef Recluse = TraitDef.Named("Recluse");
         public static readonly TraitDef Nerves = TraitDef.Named("Nerves");
         public static readonly TraitDef Abrasive = TraitDef.Named("Abrasive");
         public static readonly TraitDef Ascetic = TraitDef.Named("Ascetic");

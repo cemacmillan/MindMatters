@@ -8,11 +8,13 @@ namespace MindMatters
     public class MindMattersMod : Mod
     {
         public static MindMattersSettings settings;
+        public static bool IsVTEActive;
 
         public MindMattersMod(ModContentPack content) : base(content)
         {
             // Initialize settings
             settings = GetSettings<MindMattersSettings>();
+            IsVTEActive = ModsConfig.IsActive("VanillaExpanded.VanillaTraitsExpanded");
 
             // Initialize MindMattersGameComponent
             Current.Game?.components.Add(new MindMattersGameComponent(Current.Game));

@@ -4,5 +4,6 @@
     <li>/</li>
     <li>1.4</li>
     <li IfModActive="Ludeon.RimWorld.Ideology">Rituals/Ideology</li>
+    <li IfModActive="VanillaExpanded.VanillaTraitsExpanded">Mods/VTE</li>
   </v1.4>
 </loadFolders>

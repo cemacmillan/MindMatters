@@ -37,18 +37,21 @@
     <degreeDatas>
       <li>
         <degree>0</degree>
-        <label>desensitized</label>
+        <label>impervious</label>
         <description>[PAWN_nameDef] has been through so much that [PAWN_pronoun] doesn't feel much of anything anymore. Traumatic events don't seem to bother [PAWN_objective] as much.</description>
       </li>
     </degreeDatas>
     <conflictingTraits>
       <li>Nerves</li>
+      <li>NaturalMood</li>
       <li>TooSmart</li>
       <li>Psychopath</li>
       <li>Bloodlust</li>
       <li>MM_TenderHearted</li>
       <li>MM_Empathetic</li>
       <li>Masochist</li>
+      <li>Wimp</li>
+      <li>Neurotic</li>
     </conflictingTraits>
     <requiredWorkTags>
       <li>Violent</li>
@@ -118,7 +121,7 @@
             </li>
         </degreeDatas>
          <conflictingTraits>
-            <li>Recluse</li>
+           <li MayRequire="Ludeon.RimWorld.Biotech">Recluse</li>
             <li>MM_Reserved</li>
         </conflictingTraits>
          <requiredWorkTags>
@@ -138,6 +141,7 @@
     <TraitDef>
         <defName>MM_Prude</defName>
         <label>Prude</label>
+        <commonality>0</commonality>
         <description>A prude pawn who is uncomfortable with nudity.</description>
         <degreeDatas>
             <li>
@@ -182,7 +186,7 @@
         <conflictingTraits>
             <li>MM_Outgoing</li>
             <li>MM_Socialite</li>
-            <li>Recluse</li>
+            <li MayRequire="Ludeon.RimWorld.Biotech">Recluse</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>
@@ -237,7 +241,7 @@
         <conflictingTraits>
             <li>MM_Outgoing</li>
             <li>MM_Reserved</li>
-            <li>Recluse</li>
+            <li MayRequire="Ludeon.RimWorld.Biotech">Recluse</li>
         </conflictingTraits>
     </TraitDef>
     <TraitDef>

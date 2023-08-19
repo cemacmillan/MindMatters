@@ -5,6 +5,7 @@ using RimWorld;
 using System.Linq;
 using UnityEngine;
 using static MindMatters.MindMattersGameComponent;
+using static MindMatters.MindMattersExperienceComponent;
 
 namespace MindMatters
 {
@@ -13,6 +14,30 @@ namespace MindMatters
         public static readonly int[] StageWeights = { 1, 2, 5, 2, 1 };
 
         public const float AloneDistanceSquared = 18f * 18f;  // Adjust this to match the "alone" radius
+
+
+        public static void AddExperience(Pawn pawn, string eventType, ExperienceValency valency)
+        {
+            // Get the MindMattersExperienceComponent
+            MindMattersExperienceComponent gameComponent =
+                Current.Game.GetComponent<MindMattersExperienceComponent>();
+
+            // If the component exists, add the experience
+            if (gameComponent != null)
+            {
+                // Create a new experience
+                Experience newExperience = new Experience(eventType, valency);
+
+                // If the pawn doesn't have an entry in the dictionary yet, create it
+                if (!gameComponent.pawnExperiences.ContainsKey(pawn))
+                {
+                    gameComponent.pawnExperiences[pawn] = new List<Experience>();
+                }
+
+                // Add the experience to the pawn's list of experiences
+                gameComponent.pawnExperiences[pawn].Add(newExperience);
+            }
+        }
 
         public static bool IsPawnAlone(Pawn pawn)
         {

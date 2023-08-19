@@ -73,7 +73,7 @@ namespace MindMatters
         private readonly List<TraitDef> immunizingTraits = new List<TraitDef>
         {
             TraitDef.Named("Psychopath"),
-            TraitDef.Named("Desensitized")
+            MindMattersTraits.Desensitized
             // Add other traits here
         };
 
@@ -103,20 +103,19 @@ namespace MindMatters
                     {
                         bool outcomeOccurred = false;  // Flag to track if an outcome has occurred for this experience
 
-                        // If the pawn has a "Sensitive" trait, they may be more likely to develop anxiety from negative experiences
                         if (!outcomeOccurred && experience.Valency == ExperienceValency.Negative && HasAnxietyProneTrait(pawn))
                         {
                             // Roll for anxiety
                             outcomeOccurred = TryDevelopAnxiety(pawn, anxietyFactorAnxious);  // 10% chance
                         }
-                        else
+                        else if (!outcomeOccurred && experience.Valency == ExperienceValency.Negative)
                         {
                             // Try to develop anxiety for 1/4 the frequency of pawns with HasAnxietyProneTrait
                             outcomeOccurred = TryDevelopAnxiety(pawn, anxietyFactor);  // 2.5% chance
                         }
 
                         // Roll for trauma
-                        if (!outcomeOccurred)
+                        if (!outcomeOccurred && experience.Valency == ExperienceValency.Negative)
                         {
                             outcomeOccurred = TryDevelopTrauma(pawn, traumaFactor);  // 10% chance
                         }
@@ -137,7 +136,13 @@ namespace MindMatters
                                 }
                             }
                         }
+
+                        if (!outcomeOccurred && experience.Valency == ExperienceValency.Positive)
+                        {
+                            MindMatters.MindMattersUtilities.TryGiveRandomInspiration(pawn);
+                        }
                     }
+                      
 
                     // Clear the list of experiences for the pawn
                     experiences.Clear();

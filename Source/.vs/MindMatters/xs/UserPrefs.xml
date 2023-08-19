@@ -1,22 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ExperienceManager.cs">
-    <Files>
-      <File FileName="OutcomeManager.cs" Line="263" Column="10" />
-      <File FileName="ExperienceManager.cs" Line="53" Column="1" />
-      <File FileName="MindMattersTraits.cs" />
-      <File FileName="MindMattersGameComponent.cs" Line="68" Column="26" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="MindMatters">
             <Node name="MindMatters">
+              <Node name="MentalStates" expanded="True" />
               <Node name="ExperienceManager.cs" selected="True" />
             </Node>
           </Node>
@@ -24,4 +14,9 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
 </Properties>
