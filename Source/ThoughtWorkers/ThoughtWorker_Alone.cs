@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using System.Collections.Generic;
+using RimWorld;
 using Verse;
 
 namespace MindMatters
@@ -7,7 +8,8 @@ namespace MindMatters
     {
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
-            bool isAlone = MindMattersUtilities.IsPawnAlone(p);
+            List<Pawn> allPawns = Current.Game.GetComponent<MindMattersGameComponent>().GetAllPawns();
+            bool isAlone = MindMattersUtilities.IsPawnAlone(p,allPawns);
 
             if (p.story.traits.HasTrait(MindMattersTraits.Outgoing) || p.story.traits.HasTrait(MindMattersTraits.Socialite))
             {

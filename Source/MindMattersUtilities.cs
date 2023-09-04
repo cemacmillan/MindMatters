@@ -13,7 +13,7 @@ namespace MindMatters
     {
         public static readonly int[] StageWeights = { 1, 2, 5, 2, 1 };
 
-        public const float AloneDistanceSquared = 18f * 18f;  // Adjust this to match the "alone" radius
+        public const float AloneDistanceSquared = 9f * 9f;  // Adjust this to match the "alone" radius
 
 
         public static void AddExperience(Pawn pawn, string eventType, ExperienceValency valency)
@@ -39,16 +39,27 @@ namespace MindMatters
             }
         }
 
-        public static bool IsPawnAlone(Pawn pawn)
+        public static bool IsPawnAlone(Pawn pawn, List<Pawn> allPawns)
         {
             MindMattersGameComponent gameComponent = Current.Game.GetComponent<MindMattersGameComponent>();
 
             if (!gameComponent.PawnLastAloneTicks.ContainsKey(pawn.thingIDNumber) ||
                 Find.TickManager.TicksGame - gameComponent.PawnLastAloneTicks[pawn.thingIDNumber] > 60)
             {
-                foreach (Pawn otherPawn in pawn.Map.mapPawns.AllPawnsSpawned)
+                Region pawnRegion = pawn.GetRegion(RegionType.Set_Passable);
+
+                if (pawnRegion == null)
                 {
-                    if (otherPawn != pawn && otherPawn.Position.DistanceToSquared(pawn.Position) <= AloneDistanceSquared)
+                    return false; // or true, depending on how you want to treat cases where the pawn's region is undetermined
+                }
+
+                foreach (Pawn otherPawn in allPawns)
+                {
+                    if (otherPawn == null || otherPawn == pawn || otherPawn.Map != pawn.Map || !otherPawn.RaceProps.Humanlike)
+                        continue;
+
+                    if (otherPawn.GetRegion(RegionType.Set_Passable) == pawnRegion &&
+                        otherPawn.Position.DistanceToSquared(pawn.Position) <= AloneDistanceSquared)
                     {
                         return false;
                     }
@@ -59,6 +70,8 @@ namespace MindMatters
 
             return true;
         }
+
+
 
         public static bool IsPawnInSafeSituation(Pawn p)
         {

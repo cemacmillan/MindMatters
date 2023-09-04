@@ -51,7 +51,8 @@ namespace MindMatters
         {
             base.GameComponentTick();
 
-            if (Find.TickManager.TicksGame % 15000 == 0)  // Every quarter game day (6 hours)
+            // Every quarter game day (6 hours)
+            if (Find.TickManager.TicksGame % 15000 == 0)
             {
                 int expireTime = Find.TickManager.TicksGame - GenDate.TicksPerDay;
                 foreach (var pawnExperience in pawnExperiences)
@@ -59,10 +60,42 @@ namespace MindMatters
                     pawnExperience.Value.RemoveAll(e => e.Timestamp < expireTime);
                 }
             }
-           
+
+            // Every full game day (24 hours)
+            if (Find.TickManager.TicksGame % 60000 == 0)
+            {
+                CheckForTherapyThoughtsAndAddExperiences();
+            }
+
+
+
         }
 
-   
+        private void CheckForTherapyThoughtsAndAddExperiences()
+        {
+            foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsSpawned) // Iterating over all spawned colonists across maps
+            {
+                List<Thought_Memory> pawnMemories = pawn.needs.mood.thoughts.memories.Memories;
+
+                foreach (Thought_Memory memory in pawnMemories)
+                {
+                    if (IsTherapyRelated(memory))
+                    {
+                        // Create an Experience and pass it to "Mind Matters"
+                        Experience newExperience = new Experience("Therapy", ExperienceValency.Positive );
+                        MindMattersUtilities.AddExperience(pawn, "Therapy", newExperience.Valency);
+                        break; // If you only want one experience per therapy session, exit loop early
+                    }
+                }
+            }
+        }
+
+
+        private bool IsTherapyRelated(Thought thought)
+        {
+            return thought.def.defName == "TherapyRelieved";
+        }
+
 
 
         public void OnPawnDowned(Pawn pawn)

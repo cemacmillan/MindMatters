@@ -14,7 +14,7 @@ namespace MindMatters
         {
             Pawn pawn = AccessTools.Field(typeof(TraitSet), "pawn").GetValue(__instance) as Pawn;
 
-            if (trait.def.defName == "Bipolar" && !pawn.health.hediffSet.HasHediff(HediffDef.Named("Bipolar")))
+            if (trait.def.defName == "MM_Bipolar" && !pawn.health.hediffSet.HasHediff(HediffDef.Named("Bipolar")))
             {
                 Hediff hediff = HediffMaker.MakeHediff(HediffDef.Named("Bipolar"), pawn);
                 pawn.health.AddHediff(hediff);

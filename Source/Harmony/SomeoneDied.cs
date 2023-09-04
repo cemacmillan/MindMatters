@@ -15,7 +15,7 @@ namespace MindMatters
             if (victim?.Faction == null || victim.Faction.HostileTo(Faction.OfPlayer))
                 return;
 
-            var tenderHeartedTrait = TraitDef.Named("TenderHearted");
+            var tenderHeartedTrait = TraitDef.Named("MM_TenderHearted");
             foreach (var pawn in PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive)
             {
                 if (pawn == null || pawn == victim)

@@ -66,7 +66,7 @@ namespace MindMatters
             if (roll < 1 / 3f)
             {
                 DesignatedVictim = null;
-                Log.Message("Did not choose a scapegoat");
+                Log.Message("Scapegoat: Did not choose a scapegoat");
             }
             else
             {

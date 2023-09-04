@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking.Match;
 using Verse;
+using System;
 
 namespace MindMatters
 {
@@ -9,12 +10,14 @@ namespace MindMatters
     {
         public static MindMattersSettings settings;
         public static bool IsVTEActive;
+        public static bool IsPositiveConnectionsActive;
 
         public MindMattersMod(ModContentPack content) : base(content)
         {
             // Initialize settings
             settings = GetSettings<MindMattersSettings>();
             IsVTEActive = ModsConfig.IsActive("VanillaExpanded.VanillaTraitsExpanded");
+            IsPositiveConnectionsActive = ModsConfig.IsActive("cem.PositiveConnections");
 
             // Initialize MindMattersGameComponent
             Current.Game?.components.Add(new MindMattersGameComponent(Current.Game));
@@ -25,11 +28,18 @@ namespace MindMatters
                 Current.Game.components.Add(new MindMattersExperienceComponent(Current.Game));
             }
 
-            Log.Message("Mind Matters v0.2.2");
+            if (IsPositiveConnectionsActive)
+            {
+               
+                MindMattersBridge.Initialize();
+
+            }
+
+            Log.Message("Mind Matters v0.2.9");
 
             // Patch with Harmony
             var harmony = new Harmony("mod.cem.mindmatters");
-            Harmony.DEBUG = true;
+           //Harmony.DEBUG = true;
             harmony.PatchAll();
         }
 

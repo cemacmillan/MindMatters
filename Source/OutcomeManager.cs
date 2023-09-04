@@ -79,70 +79,26 @@ namespace MindMatters
 
         public void ProcessOutcomes()
         {
-            // Get the ExperienceManager from the Current.Game object
             var experienceManager = Current.Game.GetComponent<MindMattersExperienceComponent>();
-
             if (experienceManager == null)
             {
                 Log.Error("ExperienceManager is null.");
                 return;
             }
 
-            // Loop through all colonist pawns
             foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonists)
             {
-                // Get the experiences for this pawn
                 if (experienceManager.pawnExperiences.TryGetValue(pawn, out List<Experience> experiences))
                 {
                     if (HasImmunizingTrait(pawn))
                     {
                         continue;
                     }
-                    // Process each experience
+
                     foreach (Experience experience in experiences)
                     {
-                        bool outcomeOccurred = false;  // Flag to track if an outcome has occurred for this experience
-
-                        if (!outcomeOccurred && experience.Valency == ExperienceValency.Negative && HasAnxietyProneTrait(pawn))
-                        {
-                            // Roll for anxiety
-                            outcomeOccurred = TryDevelopAnxiety(pawn, anxietyFactorAnxious);  // 10% chance
-                        }
-                        else if (!outcomeOccurred && experience.Valency == ExperienceValency.Negative)
-                        {
-                            // Try to develop anxiety for 1/4 the frequency of pawns with HasAnxietyProneTrait
-                            outcomeOccurred = TryDevelopAnxiety(pawn, anxietyFactor);  // 2.5% chance
-                        }
-
-                        // Roll for trauma
-                        if (!outcomeOccurred && experience.Valency == ExperienceValency.Negative)
-                        {
-                            outcomeOccurred = TryDevelopTrauma(pawn, traumaFactor);  // 10% chance
-                        }
-
-                        if (!outcomeOccurred)
-                        {
-                            // Roll for gain/lose trait
-                            if (Rand.Value < traitFactor) 
-                            {
-                                // Roll for gain or lose trait
-                                if (Rand.Value < 0.5f)  // 50% chance
-                                {
-                                    GainTrait(pawn);
-                                }
-                                else
-                                {
-                                    LoseTrait(pawn);
-                                }
-                            }
-                        }
-
-                        if (!outcomeOccurred && experience.Valency == ExperienceValency.Positive)
-                        {
-                            MindMatters.MindMattersUtilities.TryGiveRandomInspiration(pawn);
-                        }
+                        ProcessExperienceForPawn(experience, pawn);
                     }
-                      
 
                     // Clear the list of experiences for the pawn
                     experiences.Clear();
@@ -150,6 +106,83 @@ namespace MindMatters
             }
         }
 
+        private void ProcessExperienceForPawn(Experience experience, Pawn pawn)
+        {
+            bool outcomeOccurred = false;
+
+            switch (experience.EventType)
+            {
+                case "Therapy":
+                    ApplyTherapyEffects(pawn);
+                    Log.Message("Therapizing!");
+                    outcomeOccurred = true;
+                    break;
+            }
+
+            if (outcomeOccurred) return;
+
+            switch (experience.Valency)
+            {
+                case ExperienceValency.Neutral:
+                case ExperienceValency.Negative:
+                    outcomeOccurred = HandleNegativeExperience(pawn);
+                    break;
+                case ExperienceValency.Positive:
+                    MindMattersUtilities.TryGiveRandomInspiration(pawn);
+                    outcomeOccurred = true;
+                    break;
+            }
+        }
+
+        private bool HandleNegativeExperience(Pawn pawn)
+        {
+            if (HasAnxietyProneTrait(pawn))
+            {
+                return TryDevelopAnxiety(pawn, anxietyFactorAnxious);
+            }
+
+            if (TryDevelopAnxiety(pawn, anxietyFactor)) return true;
+
+            if (TryDevelopTrauma(pawn, traumaFactor)) return true;
+
+            return TryAdjustTrait(pawn);
+        }
+
+        private bool TryAdjustTrait(Pawn pawn)
+        {
+            if (Rand.Value < traitFactor)
+            {
+                if (Rand.Value < 0.5f)
+                {
+                    GainTrait(pawn);
+                }
+                else
+                {
+                    LoseTrait(pawn);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private void ApplyTherapyEffects(Pawn patient)
+        {
+            // Specify the hediffs associated with trauma and anxiety
+            List<string> hediffNames = new List<string> { "Trauma", "Anxiety" };  // Add or modify the list to match your hediff defNames
+
+            // Gradually reduce the severity of the specified hediffs
+            var hediffsToTreat = patient.health.hediffSet.hediffs
+                .Where(h => hediffNames.Contains(h.def.defName)).ToList();
+
+            foreach (var hediff in hediffsToTreat)
+            {
+                hediff.Severity -= 0.1f;
+                if (hediff.Severity <= 0) // Remove the hediff if the severity drops to 0 or below
+                {
+                    patient.health.RemoveHediff(hediff);
+                }
+            }
+        }
         private void GainTrait(Pawn pawn)
         {
             // Choose a random trait to gain, weighted by the defined probabilities
@@ -164,10 +197,15 @@ namespace MindMatters
             // Add the new trait to the pawn's traits
             pawn.story.traits.GainTrait(newTrait);
 
+            // Notify the player via a letter
+            string title = "Trait Gained";
+            string text = $"{pawn.Name} has gained the {newTrait.Label} trait due to an experience.";
+            LetterDef letterDef = LetterDefOf.NeutralEvent;  
+            Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
+
             // Log for debugging
             Log.Message($"{pawn.Name} gained the {newTrait.Label} trait due to an experience.");
         }
-
         private void LoseTrait(Pawn pawn)
         {
             // If the pawn has only one trait, do not remove it
@@ -189,6 +227,12 @@ namespace MindMatters
                 // Remove the chosen trait from the pawn's traits
                 pawn.story.traits.allTraits.Remove(traitToLose);
 
+                // Notify the player via a letter
+                string title = "Trait Lost";
+                string text = $"{pawn.Name} has lost the {traitToLose.Label} trait due to an experience.";
+                LetterDef letterDef = LetterDefOf.NeutralEvent;  // This is a neutral event as per your description
+                Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
+
                 // Log for debugging
                 Log.Message($"{pawn.Name} lost the {traitToLose.Label} trait due to a negative experience.");
             }
@@ -198,6 +242,7 @@ namespace MindMatters
         {
             if (Rand.Value < chance)
             {
+                string title, text;
                 // Check if the pawn already has trauma
                 if (pawn.health.hediffSet.HasHediff(HediffDef.Named("Trauma")))
                 {
@@ -209,7 +254,10 @@ namespace MindMatters
 
                     // Log for debugging
                     Log.Message($"{pawn.Name}'s trauma worsened due to negative experience.");
-                    
+
+                    // Notify the player via a letter
+                    title = "Trauma Worsened";
+                    text = $"{pawn.Name}'s trauma has worsened due to a recent negative experience.";
                 }
                 else
                 {
@@ -220,17 +268,26 @@ namespace MindMatters
 
                     // Log for debugging
                     Log.Message($"{pawn.Name}'s trauma developed due to negative experience.");
+
+                    // Notify the player via a letter
+                    title = "Trauma Developed";
+                    text = $"{pawn.Name} has developed trauma due to a recent negative experience.";
                 }
+
+                LetterDef letterDef = LetterDefOf.NegativeEvent;  // This is a negative event
+                Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
 
                 return true;  // Return true to indicate that the outcome occurred
             }
 
             return false;  // Return false if the outcome did not occur
         }
+
         private bool TryDevelopAnxiety(Pawn pawn, float chance)
         {
             if (Rand.Value < chance)
             {
+                string title, text;
                 // Check if the pawn already has anxiety
                 if (pawn.health.hediffSet.HasHediff(HediffDef.Named("Anxiety")))
                 {
@@ -242,6 +299,10 @@ namespace MindMatters
 
                     // Log for debugging
                     Log.Message($"{pawn.Name}'s anxiety worsened due to negative experience.");
+
+                    // Notify the player via a letter
+                    title = "Anxiety Worsened";
+                    text = $"{pawn.Name}'s anxiety has worsened due to a recent negative experience.";
                 }
                 else
                 {
@@ -252,13 +313,21 @@ namespace MindMatters
 
                     // Log for debugging
                     Log.Message($"{pawn.Name}'s anxiety developed due to negative experience.");
+
+                    // Notify the player via a letter
+                    title = "Anxiety Developed";
+                    text = $"{pawn.Name} has developed anxiety due to a recent negative experience.";
                 }
+
+                LetterDef letterDef = LetterDefOf.NegativeEvent;  // This is a negative event
+                Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
 
                 return true;  // Return true to indicate that the outcome occurred
             }
 
             return false;  // Return false if the outcome did not occur
         }
+
 
         private bool HasImmunizingTrait(Pawn pawn)
         {

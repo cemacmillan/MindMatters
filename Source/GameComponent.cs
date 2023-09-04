@@ -39,99 +39,114 @@ namespace MindMatters
         public MindMattersGameComponent(Game game)
         {
             outcomeManager = new OutcomeManager();
+            recluseTrait = MindMattersTraits.Recluse ?? null;
             Instance = this;
+        }
+
+        public List<Pawn> GetAllPawns()
+        {
+            return allPawns;
         }
 
         public override void GameComponentTick()
         {
             base.GameComponentTick();
 
-            //if (Find.TickManager.TicksGame % 3600000 == 0)
-            if (Find.TickManager.TicksGame % 3600000 == 0) // testing
+            int currentTick = Find.TickManager.TicksGame;
+
+            // Every game hour (testing for now)
+            if (currentTick % 3600000 == 0)
             {
                 victimManager.DesignateNewVictim();
             }
 
             // Every 60 ticks
-            if (Find.TickManager.TicksGame % 300 == 0)
+            if (currentTick % 300 == 0)
             {
-                allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
-                if (allPawns == null)
-                {
-                    return;
-                }
-
-                if (MindMattersTraits.Recluse != null)
-                {
-                    recluseTrait = MindMattersTraits.Recluse;
-                } else
-                {
-                    recluseTrait = null;
-                }
-
-                foreach (Pawn pawn in allPawns)
-                {
-                    if (pawn == null || pawn.story == null || pawn.story.traits == null)
-                    {
-                        continue;
-                    }
-
-                    var traits = pawn.story.traits;
-
-                    if ((traits.HasTrait(MindMattersTraits.Outgoing)) ||
-                        (traits.HasTrait(MindMattersTraits.Reserved)) ||
-                        (recluseTrait != null && traits.HasTrait(recluseTrait)) &&
-                        MindMattersUtilities.IsPawnAlone(pawn))
-                    {
-                        PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                    }
-
-                    if (traits.HasTrait(MindMattersTraits.Unstable) && pawn.MentalState != null)
-                    {
-                        if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
-                        {
-                            UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                        }
-
-                        if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) ||
-                            Find.TickManager.TicksGame - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
-                        {
-                            UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
-                            MindMattersUtilities.TryGiveRandomInspiration(pawn);
-                        }
-                        MindMattersUtilities.UpdatePawnMoods(pawn, PawnMoods, OnPawnMoodChanged);
-                    }
-                }
+                ProcessTraitsForAllPawns();
             }
 
-            if (Find.TickManager.TicksGame % 15000 == 0)  // Every quarter game day (6 hours)
+            // Every quarter game day (6 hours)
+            if (currentTick % 15000 == 0)
             {
                 outcomeManager.ProcessOutcomes();
             }
 
             // Every day
-            if (Find.TickManager.TicksGame % 60000 == 0 && allPawns != null)
+            if (currentTick % 60000 == 0)
             {
+                CheckBipolarTraitsForAllPawns();
+            }
+        }
 
-                foreach (Pawn pawn in allPawns)
+        private void ProcessTraitsForAllPawns()
+        {
+            allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
+
+            if (allPawns == null)
+            {
+                return;
+            }
+
+            foreach (Pawn pawn in allPawns)
+            {
+                if (pawn == null || pawn.story == null || pawn.story.traits == null)
                 {
-                    if (pawn == null)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (pawn.story != null && pawn.story.traits != null)
-                    {
-                        var traits = pawn.story.traits;
+                var traits = pawn.story.traits;
 
-                        if (traits.HasTrait(MindMattersTraits.Bipolar))
-                        {
-                            MindMattersUtilities.UpdateBipolarPawnTicks(pawn, BipolarPawnLastCheckedTicks);
-                        }
-                    }
+                if ((traits.HasTrait(MindMattersTraits.Outgoing) ||
+                     traits.HasTrait(MindMattersTraits.Reserved) ||
+                     (recluseTrait != null && traits.HasTrait(recluseTrait))) &&
+                    MindMattersUtilities.IsPawnAlone(pawn,allPawns))
+                {
+                    PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                }
+
+                if (traits.HasTrait(MindMattersTraits.Unstable) && pawn.MentalState != null)
+                {
+                    ProcessUnstableTrait(pawn);
                 }
             }
         }
+
+        private void ProcessUnstableTrait(Pawn pawn)
+        {
+            int currentTick = Find.TickManager.TicksGame;
+
+            if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
+            {
+                UnstablePawnLastMoodSwitchTicks[pawn.thingIDNumber] = currentTick;
+            }
+
+            if (!UnstablePawnLastMentalBreakTicks.ContainsKey(pawn.thingIDNumber) ||
+                currentTick - UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] > 60000)
+            {
+                UnstablePawnLastMentalBreakTicks[pawn.thingIDNumber] = currentTick;
+                MindMattersUtilities.TryGiveRandomInspiration(pawn);
+            }
+
+            MindMattersUtilities.UpdatePawnMoods(pawn, PawnMoods, OnPawnMoodChanged);
+        }
+
+        private void CheckBipolarTraitsForAllPawns()
+        {
+            foreach (Pawn pawn in allPawns)
+            {
+                if (pawn == null || pawn.story == null || pawn.story.traits == null)
+                {
+                    continue;
+                }
+
+                if (pawn.story.traits.HasTrait(MindMattersTraits.Bipolar))
+                {
+                    MindMattersUtilities.UpdateBipolarPawnTicks(pawn, BipolarPawnLastCheckedTicks);
+                }
+            }
+        }
+
 
 
         public override void ExposeData()

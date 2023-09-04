@@ -30,7 +30,7 @@ public static class Pawn_HealthTracker_MakeDowned_Patch
         }
         else
         {
-            Log.Message("Something else was wrong.");
+            //Log.Message("Something else was wrong.");
         }
     }
 }

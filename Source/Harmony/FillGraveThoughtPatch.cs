@@ -14,9 +14,9 @@ namespace MindMatters
         {
             Log.Message("Entered FillGraveThought");
             Log.Message($"Worker: {worker.Name}");
-            Log.Message($"Has TenderHearted Trait: {worker.story.traits.HasTrait(TraitDef.Named("TenderHearted"))}");
+            Log.Message($"Has TenderHearted Trait: {worker.story.traits.HasTrait(MindMattersTraits.TenderHearted)}");
 
-            if (worker.story != null && worker.story.traits.HasTrait(TraitDef.Named("TenderHearted")))
+            if (worker.story != null && worker.story.traits.HasTrait(MindMattersTraits.TenderHearted))
             {
                 Log.Message($"Trying to add tender-hearted thought");
                 ThoughtDef thoughtDef = ThoughtDef.Named(ThoughtDefName);
