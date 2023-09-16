@@ -6,7 +6,7 @@ namespace MindMatters
 {
     public class InteractionWorker_ScapegoatBlame : InteractionWorker
     {
-        private MindMattersVictimManager victimManager = new MindMattersVictimManager();
+        private MindMattersVictimManager victimManager = MindMattersVictimManager.Instance;
 
         public override float RandomSelectionWeight(Pawn initiator, Pawn recipient)
         {
@@ -18,7 +18,7 @@ namespace MindMatters
 
             // Check if the initiator's mood is less than 50, they haven't blamed the scapegoat this cycle,
             // and they don't have the Kind or TenderHearted traits.
-            if (initiator.needs.mood.CurLevelPercentage > 0.6f ||
+            if (initiator.needs.mood.CurLevelPercentage > 0.7f ||
                 victimManager.AlreadyBlamedThisCycle(initiator) ||
                 initiator.story.traits.HasTrait(TraitDefOf.Kind) ||
                 initiator.story.traits.HasTrait(MindMattersTraits.TenderHearted)) // Assuming TenderHearted is a defined TraitDef

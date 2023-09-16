@@ -41,21 +41,64 @@ namespace MindMatters
 
         public static bool IsPawnAlone(Pawn pawn, List<Pawn> allPawns)
         {
+            // Check if our game instance is null
+            if (Current.Game == null)
+            {
+                Log.Error("Current.Game is null.");
+                return false;
+            }
+
             MindMattersGameComponent gameComponent = Current.Game.GetComponent<MindMattersGameComponent>();
+
+            // Check if our game component is null
+            if (gameComponent == null)
+            {
+                Log.Error("MindMattersGameComponent is null.");
+                return false;
+            }
+
+            // Check if our dictionary is null
+            if (gameComponent.PawnLastAloneTicks == null)
+            {
+                Log.Error("PawnLastAloneTicks dictionary is null.");
+                return false;
+            }
+
+            // Check if our pawn is null
+            if (pawn == null)
+            {
+                Log.Error("Passed pawn is null.");
+                return false;
+            }
+
+            // Check if our allPawns list is null
+            if (allPawns == null)
+            {
+                //Log.Error("allPawns list is null.");
+                return false;
+            }
 
             if (!gameComponent.PawnLastAloneTicks.ContainsKey(pawn.thingIDNumber) ||
                 Find.TickManager.TicksGame - gameComponent.PawnLastAloneTicks[pawn.thingIDNumber] > 60)
             {
                 Region pawnRegion = pawn.GetRegion(RegionType.Set_Passable);
 
+                // Check if our pawn's region is null
                 if (pawnRegion == null)
                 {
-                    return false; // or true, depending on how you want to treat cases where the pawn's region is undetermined
+                    Log.Error($"Region for pawn {pawn.Name} is null.");
+                    return false;
                 }
 
                 foreach (Pawn otherPawn in allPawns)
                 {
-                    if (otherPawn == null || otherPawn == pawn || otherPawn.Map != pawn.Map || !otherPawn.RaceProps.Humanlike)
+                    if (otherPawn == null)
+                    {
+                        Log.Warning("One of the pawns in allPawns list is null. Skipping this pawn.");
+                        continue;
+                    }
+
+                    if (otherPawn == pawn || otherPawn.Map != pawn.Map || !otherPawn.RaceProps.Humanlike)
                         continue;
 
                     if (otherPawn.GetRegion(RegionType.Set_Passable) == pawnRegion &&
@@ -70,6 +113,7 @@ namespace MindMatters
 
             return true;
         }
+
 
 
 

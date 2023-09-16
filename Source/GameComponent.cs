@@ -17,7 +17,7 @@ namespace MindMatters
         private List<int> moodValues;
         private List<Pawn> allPawns;
 
-        private MindMattersVictimManager victimManager = new MindMattersVictimManager();
+        private MindMattersVictimManager victimManager = MindMattersVictimManager.Instance;
 
         TraitDef recluseTrait;
 
@@ -55,12 +55,12 @@ namespace MindMatters
             int currentTick = Find.TickManager.TicksGame;
 
             // Every game hour (testing for now)
-            if (currentTick % 3600000 == 0)
+            if (currentTick % 900000 == 0)
             {
                 victimManager.DesignateNewVictim();
             }
 
-            // Every 60 ticks
+            // Every 5 seconds or so
             if (currentTick % 300 == 0)
             {
                 ProcessTraitsForAllPawns();

@@ -1,29 +1,35 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="OutcomeManager.cs">
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="MentalStates/MentalState_CleaningFit.cs">
     <Files>
       <File FileName="ExperienceManager.cs" />
-      <File FileName="OutcomeManager.cs" Line="116" Column="47" />
-      <File FileName="ThoughtWorkers/ThoughtWorker_Alone.cs" Line="18" Column="14" />
+      <File FileName="OutcomeManager.cs" />
+      <File FileName="ThoughtWorkers/ThoughtWorker_Alone.cs" />
       <File FileName="MindMatters.cs" />
       <File FileName="MentalStates/MentalState_SeekSolitude.cs" />
+      <File FileName="InteractionWorkers/InteractionWorker_ScapegoatBlame.cs" />
+      <File FileName="MindMattersUtilities.cs" />
+      <File FileName="VictimManager.cs" />
+      <File FileName="GameComponent.cs" Line="167" Column="35" />
+      <File FileName="MentalStates/MentalState_CleaningFit.cs" Line="73" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="MindMatters">
             <Node name="MindMatters">
-              <Node name="ThoughtWorkers" expanded="True" />
-              <Node name="OutcomeManager.cs" selected="True" />
+              <Node name="MentalStates">
+                <Node name="MentalState_CleaningFit.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

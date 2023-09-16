@@ -11,6 +11,19 @@ namespace MindMatters
 
         private Dictionary<Pawn, int> lastBlameTicks = new Dictionary<Pawn, int>();
 
+        private static MindMattersVictimManager _instance;
+        public static MindMattersVictimManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new MindMattersVictimManager();
+                }
+                return _instance;
+            }
+        }
+
         public void DesignateNewVictim()
         {
             // Get a list of all colonist pawns
@@ -79,6 +92,11 @@ namespace MindMatters
             if (DesignatedVictim != null)
             {
                 DesignatedVictim.needs.mood.thoughts.memories.TryGainMemory(ThoughtDef.Named("MM_DesignatedVictim"));
+                Messages.Message($"It seems {DesignatedVictim.Label} is the new scapegoat.", DesignatedVictim, MessageTypeDefOf.NeutralEvent, true);
+            } else
+            {
+                Messages.Message("No scapegoat has emerged.", MessageTypeDefOf.NeutralEvent);
+
             }
 
             // Clear the blame tracking dictionary when a new victim is designated
