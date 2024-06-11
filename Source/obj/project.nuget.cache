@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "vTgdhlLDCdGv3CyTu2fEoV4pWAtK6MeoJ4aX8eAAI6+llInG3H5pIh7p0da+YJJ9FBCt9o/2WMn8rpJRYK9Abw==",
+  "dgSpecHash": "4xhZdveCfPfaXQv8wrGOID9HwSu6YI5Hs0Yd0mwyI4su/S93g+sXeL9tRSnsKSoelSyG68PJoIGCw8imnZqrQw==",
   "success": true,
-  "projectFilePath": "/Users/cem/projects/MindMatters/Source/MindMatters.csproj",
+  "projectFilePath": "/Volumes/expand/projects/rw/MindMatters/Source/MindMatters.csproj",
   "expectedPackageFiles": [
-    "/Users/cem/.nuget/packages/krafs.rimworld.ref/1.4.3704/krafs.rimworld.ref.1.4.3704.nupkg.sha512",
-    "/Users/cem/.nuget/packages/lib.harmony/2.2.2/lib.harmony.2.2.2.nupkg.sha512",
+    "/Users/cem/.nuget/packages/krafs.rimworld.ref/1.5.4104/krafs.rimworld.ref.1.5.4104.nupkg.sha512",
+    "/Users/cem/.nuget/packages/lib.harmony/2.3.3/lib.harmony.2.3.3.nupkg.sha512",
     "/Users/cem/.nuget/packages/microsoft.netframework.referenceassemblies/1.0.3/microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
     "/Users/cem/.nuget/packages/microsoft.netframework.referenceassemblies.net48/1.0.3/microsoft.netframework.referenceassemblies.net48.1.0.3.nupkg.sha512"
   ],

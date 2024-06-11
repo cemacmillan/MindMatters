@@ -13,4 +13,16 @@ namespace MindMatters
         public static ThoughtDef MM_CalledSomeoneOut;
 
     }
+
+    [DefOf]
+    public static class RoomRoleDefOf_MindMatters
+    {
+        public static RoomRoleDef DiningRoom;
+        public static RoomRoleDef RecRoom;
+
+        static RoomRoleDefOf_MindMatters()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(RoomRoleDefOf_MindMatters));
+        }
+    }
 }

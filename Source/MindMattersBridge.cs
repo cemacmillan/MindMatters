@@ -4,12 +4,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using Verse;
 
-
 namespace MindMatters
 {
     public class MindMattersBridge
     {
-        
         public static void HandlePositiveInteraction(Pawn initiator, float probability, string eventType, int valency)
         {
             // Convert the int to ExperienceValency
@@ -30,16 +28,16 @@ namespace MindMatters
             {
                 // List of interaction worker types
                 var interactionWorkerTypes = new List<string>
-        {
-            "DIL_PositiveConnections.InteractionWorker_Compliment",
-            "DIL_PositiveConnections.InteractionWorker_DiscussIdeoligion",
-             "DIL_PositiveConnections.InteractionWorker_Gift",
-            "DIL_PositiveConnections.InteractionWorker_GiveComfort",
-             "DIL_PositiveConnections.InteractionWorker_Mediation",
-            "DIL_PositiveConnections.InteractionWorker_SharedPassion",
-             "DIL_PositiveConnections.InteractionWorker_SkillShare"
-            
-        };
+                {
+                    "DIL_PositiveConnections.InteractionWorker_Compliment",
+                    "DIL_PositiveConnections.InteractionWorker_DiscussIdeoligion",
+                    "DIL_PositiveConnections.InteractionWorker_Gift",
+                    "DIL_PositiveConnections.InteractionWorker_GiveComfort",
+                    "DIL_PositiveConnections.InteractionWorker_Mediation",
+                    "DIL_PositiveConnections.InteractionWorker_SharedPassion",
+                    "DIL_PositiveConnections.InteractionWorker_SkillShare",
+                    "DIL_PositiveConnections.LordJob_Storytelling"  // Add Storytelling here
+                };
 
                 foreach (var workerType in interactionWorkerTypes)
                 {
@@ -70,5 +68,4 @@ namespace MindMatters
             }
         }
     }
-
 }

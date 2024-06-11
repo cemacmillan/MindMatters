@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/cem/projects/MindMatters/Source/MindMatters.csproj": {}
+    "/Volumes/expand/projects/rw/MindMatters/Source/MindMatters.csproj": {}
   },
   "projects": {
-    "/Users/cem/projects/MindMatters/Source/MindMatters.csproj": {
+    "/Volumes/expand/projects/rw/MindMatters/Source/MindMatters.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/cem/projects/MindMatters/Source/MindMatters.csproj",
+        "projectUniqueName": "/Volumes/expand/projects/rw/MindMatters/Source/MindMatters.csproj",
         "projectName": "MindMatters",
-        "projectPath": "/Users/cem/projects/MindMatters/Source/MindMatters.csproj",
+        "projectPath": "/Volumes/expand/projects/rw/MindMatters/Source/MindMatters.csproj",
         "packagesPath": "/Users/cem/.nuget/packages/",
-        "outputPath": "/Users/cem/projects/MindMatters/Source/obj/",
+        "outputPath": "/Volumes/expand/projects/rw/MindMatters/Source/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/cem/.nuget/NuGet/NuGet.Config"
@@ -40,7 +40,7 @@
           "dependencies": {
             "Krafs.Rimworld.Ref": {
               "target": "Package",
-              "version": "[1.4.*, )"
+              "version": "[1.5.4104, )"
             },
             "Lib.Harmony": {
               "include": "Compile, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -54,7 +54,7 @@
               "autoReferenced": true
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.308/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.316/RuntimeIdentifierGraph.json"
         }
       }
     }

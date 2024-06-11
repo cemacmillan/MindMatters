@@ -2,6 +2,7 @@
 using System.Linq;
 using Verse;
 using Verse.AI;
+using static MindMatters.MindMattersUtilities;
 
 namespace MindMatters
 {
@@ -36,11 +37,14 @@ namespace MindMatters
                 return ThoughtState.ActiveAtStage(2);
             }
 
-            // Check if they're in a dining or recreation room.
+            // Get the room the pawn is currently in
             Room room = p.GetRoom();
-            if (room != null && (room.Role == RoomRoleDefOf.DiningRoom || room.Role == RoomRoleDefOf.RecRoom))
+            RoomRoleDef roomRole = room?.Role;
+
+            if (roomRole == RoomRoleDefOf_MindMatters.DiningRoom || roomRole == RoomRoleDefOf_MindMatters.RecRoom)
             {
-                // Log.Message("Pawn is in a social space.");
+                // Log a message for debugging purposes
+                Log.Message("Pawn is in a social space.");
                 return ThoughtState.ActiveAtStage(3);
             }
 

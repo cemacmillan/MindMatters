@@ -16,6 +16,32 @@ namespace MindMatters
         public const float AloneDistanceSquared = 9f * 9f;  // Adjust this to match the "alone" radius
 
 
+        public static class RoomRoleUtility
+        {
+            public static RoomRoleDef GetRoomRole(Room room)
+            {
+                if (room == null)
+                {
+                    return RoomRoleDefOf.None;
+                }
+
+                RoomRoleDef highestRole = RoomRoleDefOf.None;
+                float highestScore = 0f;
+
+                foreach (RoomRoleDef roleDef in DefDatabase<RoomRoleDef>.AllDefs)
+                {
+                    float score = roleDef.Worker.GetScore(room);
+                    if (score > highestScore)
+                    {
+                        highestScore = score;
+                        highestRole = roleDef;
+                    }
+                }
+
+                return highestRole;
+            }
+        }
+
         public static void AddExperience(Pawn pawn, string eventType, ExperienceValency valency)
         {
             // Get the MindMattersExperienceComponent

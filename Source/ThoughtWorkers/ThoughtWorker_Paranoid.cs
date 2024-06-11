@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq; // Add this directive
 using RimWorld;
 using Verse;
 
@@ -31,4 +32,3 @@ namespace MindMatters
         }
     }
 }
-

@@ -113,11 +113,8 @@
                     <SocialImpact>0.2</SocialImpact>
                 </statOffsets>
                 <skillGains>
-            <li>
-                <key>Social</key>
-                <value>3</value>
-            </li>
-            </skillGains>
+                    <Social>3</Social>
+                </skillGains>
             </li>
         </degreeDatas>
          <conflictingTraits>
@@ -227,12 +224,9 @@
                 <degree>0</degree>
                 <label>socialite</label>
                 <description>This person thrives on social interaction. They love attending events, meeting new people, and being in the middle of all the action. They are usually more skilled in social activities.</description>
-                <skillGains>
-            <li>
-                <key>Social</key>
-                <value>2</value>
-            </li>
-            </skillGains>
+                 <skillGains>
+                    <Social>2</Social>
+                </skillGains>
             </li>
         </degreeDatas>
         <requiredWorkTags>
@@ -292,11 +286,8 @@
                 <statOffsets>
                     <MentalBreakThreshold>0.15</MentalBreakThreshold>
                 </statOffsets>
-                <skillGains>
-                   <li>
-                <key>Artistic</key>
-                <value>2</value>
-                 </li>
+                 <skillGains>
+                    <Artistic>3</Artistic>
                 </skillGains>
             </li>
         </degreeDatas>
@@ -325,15 +316,11 @@
             <CertaintyLossFactor MayRequire="Ludeon.RimWorld.Ideology">1.5</CertaintyLossFactor>
              </statFactors>
               <skillGains>
-                <li>
-                    <key>Shooting</key>
-                    <value>3</value>
-                </li>
-                <li>
-                    <key>Melee</key>
-                    <value>3</value>
-                </li>
-            </skillGains>
+                <Shooting>3</Shooting>
+              
+                <Melee>3</Melee>
+                
+              </skillGains>
         </li>
     </degreeDatas>
     <conflictingTraits>

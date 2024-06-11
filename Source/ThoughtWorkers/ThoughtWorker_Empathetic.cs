@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using System.Linq; // Add this directive
+using RimWorld;
 using Verse;
 
 namespace MindMatters
@@ -14,7 +15,6 @@ namespace MindMatters
 
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
-
             if (!p.story.traits.HasTrait(MindMattersTraits.Empathetic))
             {
                 return ThoughtState.Inactive;
@@ -29,10 +29,13 @@ namespace MindMatters
             tickCounter = 0; // Reset the tick counter
 
             // Find all pawns within the defined nearby distance
-            var nearbyPawns = p.Map.mapPawns.AllPawnsSpawned.FindAll(pawn =>
-            pawn != p &&
-             pawn.Position.DistanceToSquared(p.Position) <= NearbyDistanceSquared &&
-              (pawn.Faction == p.Faction || pawn.HostFaction == p.Faction || pawn.guest != null));
+            var nearbyPawns = p.Map.mapPawns.AllPawnsSpawned
+                .Where(pawn =>
+                    pawn != p &&
+                    pawn.Position.DistanceToSquared(p.Position) <= NearbyDistanceSquared &&
+                    (pawn.Faction == p.Faction || pawn.HostFaction == p.Faction || pawn.guest != null))
+                .ToList();
+
             if (nearbyPawns.Count == 0)
             {
                 return ThoughtState.Inactive; // No nearby pawns, no thought

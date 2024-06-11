@@ -7,7 +7,7 @@ namespace MindMatters
     public class MentalState_CleaningFit : MentalState
     {
         private int cooldownTicks = 0; // Cooldown timer after cleaning
-        private int checkFrequency = 100; // Check for filth every 100 ticks
+        private int checkFrequency = 600; // Check for filth every 100 ticks
         private int ticksSinceLastCheck = 0; // Counter to keep track of ticks since the last filth check
 
         public override void MentalStateTick()
@@ -53,7 +53,7 @@ namespace MindMatters
 
         private void ResetCooldown()
         {
-            cooldownTicks = 600; // Or however long you want the cooldown to be.
+            cooldownTicks = 1800; // Or however long you want the cooldown to be.
         }
 
         private bool CanInterruptCurrentJob(Pawn pawn)

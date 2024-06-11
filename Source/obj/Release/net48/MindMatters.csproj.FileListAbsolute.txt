@@ -7,3 +7,12 @@
 /Users/cem/projects/MindMatters/Source/obj/Release/net48/MindMatters.csproj.CoreCompileInputs.cache
 /Users/cem/projects/MindMatters/Source/obj/Release/net48/MindMatters.dll
 /Users/cem/projects/MindMatters/Source/obj/Release/net48/MindMatters.pdb
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.csproj.AssemblyReference.cache
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.GeneratedMSBuildEditorConfig.editorconfig
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.AssemblyInfoInputs.cache
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.AssemblyInfo.cs
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.csproj.CoreCompileInputs.cache
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.dll
+/Volumes/expand/projects/rw/MindMatters/Source/obj/Release/net48/MindMatters.pdb
+/Volumes/expand/projects/rw/MindMatters/Assemblies/MindMatters.dll
+/Volumes/expand/projects/rw/MindMatters/Assemblies/MindMatters.pdb
