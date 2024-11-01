@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Authors>CEM</Authors>
+
+		<Copyright>Copyright (c) 2024 CEM</Copyright><!-- Optional copyright field -->
+
+		<!-- <Version>1.2.3</Version> --> <!-- Optional. Use this to mark an assembly with a version number of your choice -->
+
+		<TargetFramework>net48</TargetFramework> <!-- Rimworld only supports 4.7.2, 4.8 and 4.8.1. 5.x or newer and older versions do not work -->
+
+		<LangVersion>preview</LangVersion> <!-- This is the C# version. Preview is the newest version with the most features -->
+		<!-- Details here: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version -->
+
+		<OutDir>../1.5/Assemblies/</OutDir> <!-- The output path for dll files  -->
+
+		<Nullable>enable</Nullable>  <!-- Optional nullable analysis. -->
+		<!-- Details here: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-reference-types -->
+
+		<!-- Advanced configs. Keep these if you don't have a good reason for changes -->
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Optimize>true</Optimize>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<AnalysisLevel>preview-all</AnalysisLevel>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>none</DebugType>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>5</WarningLevel>
+	</PropertyGroup>
+
+	<!-- Down here we have references to dependencies -->
+	<ItemGroup>
+		<!-- RimWorld itself -->
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*"/>
+		<!-- Harmony -->
+		<PackageReference Include="Lib.Harmony" Version="2.*" ExcludeAssets="runtime"/>
+		<!-- https://harmony.pardeike.net/articles/intro.html -->
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Harmony\BuildingGrave\Building_Grave_Notify_CorpseBuried_Patch_1.4.cs" />
+	</ItemGroup>
+</Project>

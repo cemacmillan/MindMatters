@@ -1,0 +1,13 @@
+# Root EditorConfig file
+root = true
+
+[*.cs]
+# Disable warning for underscores in identifiers (CA1707)
+dotnet_diagnostic.CA1707.severity = none
+
+# Disable namespace suggestions if you know the diagnostic ID
+# For example, to disable IDE namespace recommendations:
+dotnet_diagnostic.IDE1006.severity = none
+
+# Add other suppressions as needed
+# dotnet_diagnostic.<DiagnosticID>.severity = none

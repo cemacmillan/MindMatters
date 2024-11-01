@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<ThoughtDef>
+    <defName>MM_BipolarMood</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>Bipolar</hediff>
+    <stages>
+      <li>
+        <label>severe depression</label>
+        <description>I can barely summon the energy to move. Everything feels hopeless.</description>
+        <baseMoodEffect>-20</baseMoodEffect>
+      </li>
+      <li>
+        <label>mild depression</label>
+        <description>I'm feeling down today. Everything seems harder than it should be.</description>
+        <baseMoodEffect>-10</baseMoodEffect>
+      </li>
+      <li>
+        <label>stable</label>
+        <description>I feel normal today. Not too high, not too low.</description>
+        <baseMoodEffect>0</baseMoodEffect>
+      </li>
+      <li>
+        <label>mild mania</label>
+        <description>I feel energized and motivated today. I can get so much done!</description>
+        <baseMoodEffect>10</baseMoodEffect>
+      </li>
+      <li>
+        <label>severe mania</label>
+        <description>I feel unstoppable! I can do anything!</description>
+        <baseMoodEffect>20</baseMoodEffect>
+      </li>
+    </stages>
+        <requiredTraits>
+            <li>MM_Bipolar</li>
+        </requiredTraits>
+</ThoughtDef>
+
+
+<ThoughtDef>
+  <defName>MM_EmpatheticThought</defName>
+  <workerClass>MindMatters.ThoughtWorker_Empathetic</workerClass>
+  <stages>
+    <li>
+      <label>feeling shared emotions</label>
+      <description>I can sense the emotions of those around me.</description>
+      <baseMoodEffect>0</baseMoodEffect>
+    </li>
+    <li>
+      <label>feeling shared joy</label>
+      <description>The joy of those around me lifts my spirits.</description>
+      <baseMoodEffect>5</baseMoodEffect>
+    </li>
+    <li>
+      <label>feeling shared pain</label>
+      <description>The pain of those around me weighs on my heart.</description>
+      <baseMoodEffect>-5</baseMoodEffect>
+    </li>
+  </stages>
+  <requiredTraits>
+    <li>MM_Empathetic</li>
+  </requiredTraits>
+</ThoughtDef>
+
+<ThoughtDef>
+    <defName>MM_Unstable</defName>
+    <stackLimit>1</stackLimit>
+    <stages>
+        <li>
+            <label>feeling calm</label>
+            <description>I feel oddly calm right now.</description>
+            <baseMoodEffect>0</baseMoodEffect>
+        </li>
+        <li>
+            <label>feeling happy</label>
+            <description>I feel inexplicably happy right now!</description>
+            <baseMoodEffect>5</baseMoodEffect>
+        </li>
+        <li>
+            <label>feeling sad</label>
+            <description>I feel inexplicably sad right now.</description>
+            <baseMoodEffect>-5</baseMoodEffect>
+        </li>
+    </stages>
+    <workerClass>MindMatters.ThoughtWorker_Unstable</workerClass>
+     <requiredTraits>
+    <li>MM_Unstable</li>
+  </requiredTraits>
+</ThoughtDef>
+
+<ThoughtDef>
+  <defName>MM_Paranoid</defName>
+  <stackLimit>1</stackLimit>
+  <stages>
+    <li>
+      <label>paranoid</label>
+      <baseMoodEffect>-10</baseMoodEffect>
+      <description>Strangers are here. I can't trust them...</description>
+    </li>
+    <li>
+      <label>alone</label>
+      <baseMoodEffect>-15</baseMoodEffect>
+      <description>I'm all alone... What if something happens?</description>
+    </li>
+  </stages>
+  <workerClass>MindMatters.ThoughtWorker_Paranoid</workerClass>
+        <requiredTraits>
+            <li>MM_Paranoid</li>
+        </requiredTraits>
+</ThoughtDef>
+
+<ThoughtDef>
+  <defName>AnxietyMood</defName>
+  <description>anxiety</description>
+  <workerClass>ThoughtWorker_Hediff</workerClass>
+  <hediff>Anxiety</hediff> 
+  <stages>
+    <li>
+      <label>mild anxiety</label>
+      <baseMoodEffect>-3</baseMoodEffect>
+      <description>I'm often feeling anxious.</description>
+    </li>
+    <li>
+      <label>moderate anxiety</label>
+      <baseMoodEffect>-6</baseMoodEffect>
+      <description>My anxiety is keeping me from functioning.</description>
+    </li>
+    <li>
+      <label>severe anxiety</label>
+      <baseMoodEffect>-12</baseMoodEffect>
+      <description>My fears pervade every aspect of my life. I cannot get away from them.</description>
+    </li>
+  </stages>
+</ThoughtDef>
+
+<ThoughtDef>
+  <defName>TraumaMood</defName>
+  <description>trauma</description>
+  <workerClass>ThoughtWorker_Hediff</workerClass>
+  <hediff>Trauma</hediff> 
+  <stages>
+    <li>
+      <label>mild trauma</label>
+      <baseMoodEffect>-3</baseMoodEffect>
+      <description>I am mildly traumatized.</description>
+    </li>
+    <li>
+      <label>moderate trauma</label>
+      <baseMoodEffect>-5</baseMoodEffect>
+      <description>I am seriously traumatized.</description>
+    </li>
+    <li>
+      <label>severe trauma</label>
+      <baseMoodEffect>-10</baseMoodEffect>
+      <description>I am deeply traumatized.</description>
+    </li>
+  </stages>
+</ThoughtDef>
+
+
+</Defs>

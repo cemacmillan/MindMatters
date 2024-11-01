@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Defs>
+
+    <InteractionDef>
+        <defName>BlameScapegoat</defName>
+        <workerClass>MindMatters.InteractionWorker_ScapegoatBlame</workerClass>
+        <interactionMote>Mote_Speech</interactionMote> 
+        <initiatorThought>MM_CalledSomeoneOut</initiatorThought> 
+        <recipientThought>MM_WasBlamed</recipientThought>   
+    </InteractionDef>
+
+</Defs>

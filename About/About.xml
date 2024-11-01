@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<name>Put a unique mod name here</name>
+	<name>Mind Matters</name>
 
-	<author>put your name here</author>
+	<author>cem</author>
 
-	<packageId>authorname.modname</packageId> <!-- a unique identifier for the mod. Special characters are not allowed, at least one dot is required. This is what gets saved in a player's mod list, and having two identical IDs leads to the mod manager becoming incapable of loading the correct mod. The game internally stores these IDs using lower case characters only -->
+	<packageId>cem.mindmatters</packageId>
 
-	<description>The description of the mod. Avoid having spaces inbetween text and the description tags at the start and end</description>
+	<description>Welcome to 'Mind Matters', a mod that adds a depth of psychology to your pawns in RimWorld. Pawns aren't just about their skills and traits anymore, their psychology matters too!
+
+Does your colony have a stoic individual who stays calm under pressure? Or maybe an empath who is adept at soothing tensions and disputes? With 'Mind Matters', every pawn's mind truly matters in shaping the narrative and development of your colony.
+
+As a player, you will have more factors to consider in managing your colony. The understanding of your pawns' psychological makeup will be crucial in making decisions.
+
+'Mind Matters' doesn't just add depth to the pawns, it adds depth to the stories you will experience in RimWorld. Are you ready to delve into the psyche of your pawns?</description>
 
 	<supportedVersions>
-		<li>1.4</li> <!-- Supported versions. Place rimworld versions in separate li nodes here -->
+		<li>1.4</li>
+		<li>1.5</li>
 	</supportedVersions>
 
-	<!-- More information is available here: https://rimworldwiki.com/wiki/Modding_Tutorials/About.xml -->
 </ModMetaData>

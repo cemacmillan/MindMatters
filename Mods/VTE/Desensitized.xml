@@ -1,0 +1,8 @@
+<Operation Class="PatchOperationAdd">
+  <xpath>Defs/TraitDef[defName="MM_Desensitized"]/conflictingTraits</xpath>
+  <value>
+    <li>VTE_Desensitized</li>
+    <li>VTE_Coward</li>
+    <li>VTE_Brave</li>
+  </value>
+</Operation>

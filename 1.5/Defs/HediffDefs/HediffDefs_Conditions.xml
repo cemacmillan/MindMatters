@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <HediffDef>
+        <defName>Bipolar</defName>
+        <label>bipolar</label>
+        <description>A variation of human mind characterized by periods of depression and periods of abnormally elevated mood.</description>
+        <hediffClass>MindMatters.Hediff_Bipolar</hediffClass>
+        <stages>
+            <li>
+                <label>severely depressed</label>
+                <minSeverity>0.0</minSeverity>
+            </li>
+            <li>
+                <label>mildly depressed</label>
+                <minSeverity>0.2</minSeverity>
+            </li>
+            <li>
+                <label>stable</label>
+                <minSeverity>0.4</minSeverity>
+            </li>
+            <li>
+                <label>mildly manic</label>
+                <minSeverity>0.6</minSeverity>
+            </li>
+            <li>
+                <label>severely manic</label>
+                <minSeverity>0.8</minSeverity>
+            </li>
+        </stages>
+        <isBad>true</isBad>
+    </HediffDef>
+    <HediffDef>
+        <defName>Empathetic</defName>
+        <label>empathetic</label>
+        <description>An empathetic person has a unique neurological wiring that allows them to deeply understand and resonate with the emotions and mental states of others. This heightened sensitivity can boost their social abilities but can also make them susceptible to the emotional state of those around them.</description>
+        <isBad>false</isBad>
+        <hediffClass>MindMatters.Hediff_Empathetic</hediffClass>
+        <stages>
+            <li>
+                <label>neutral</label>
+                <minSeverity>0.01</minSeverity>
+            </li>
+            <li>
+                <label>happy</label>
+                <minSeverity>0.5</minSeverity>
+                <statOffsets>
+                    <SocialImpact>1</SocialImpact>
+                    <TradePriceImprovement>0.05</TradePriceImprovement>
+                    <TameAnimalChance>0.1</TameAnimalChance>
+                    <TrainAnimalChance>0.1</TrainAnimalChance>
+                </statOffsets>
+            </li>
+            <li>
+                <label>unhappy</label>
+                <minSeverity>1</minSeverity>
+                <statOffsets>
+                    <SocialImpact>-0.5</SocialImpact>
+                </statOffsets>
+            </li>
+        </stages>
+    </HediffDef>
+    <HediffDef>
+        <defName>Anxiety</defName>
+        <label>anxiety</label>
+        <description>A mental condition characterized by excessive and persistent worry, fear, and unease.</description>
+        <hediffClass>MindMatters.Hediff_Anxiety</hediffClass>
+        <comps>
+             <li Class="HediffCompProperties_SeverityPerDay">
+                <severityPerDay>-0.1</severityPerDay>
+             </li>
+        </comps>
+        <stages>
+            <li>
+                <label>mild anxiety</label>
+                <minSeverity>0.1</minSeverity>
+                <painFactor>0.05</painFactor>
+            </li>
+            <li>
+                <label>moderate anxiety</label>
+                <minSeverity>0.4</minSeverity>
+                <painFactor>0.15</painFactor>
+            </li>
+            <li>
+                <label>severe anxiety</label>
+                <minSeverity>0.7</minSeverity>
+                <painFactor>0.25</painFactor>
+            </li>
+        </stages>
+    </HediffDef>
+    <HediffDef>
+        <defName>Trauma</defName>
+        <label>trauma</label>
+        <description>A deeply distressing or disturbing experience that has a lasting impact on mental well-being.</description>
+        <hediffClass>MindMatters.Hediff_Trauma</hediffClass>
+        <comps>
+             <li Class="HediffCompProperties_SeverityPerDay">
+                <severityPerDay>-0.1</severityPerDay>
+             </li>
+        </comps>
+        <stages>
+            <li>
+                <label>mild trauma</label>
+                <minSeverity>0.1</minSeverity>
+                <painFactor>0.1</painFactor>
+            </li>
+            <li>
+                <label>moderate trauma</label>
+                <minSeverity>0.4</minSeverity>
+                <painFactor>0.2</painFactor>
+                <capMods>
+            <li>
+                <capacity>Consciousness</capacity>
+                <offset>-0.1</offset>
+            </li>
+            </capMods>
+            </li>
+            <li>
+                <label>severe trauma</label>
+                <minSeverity>0.7</minSeverity>
+                <painFactor>0.3</painFactor>
+                <capMods>
+            <li>
+                <capacity>Consciousness</capacity>
+                <offset>-0.2</offset>
+            </li>
+            <li>
+                <capacity>Moving</capacity>
+                <offset>-0.2</offset>
+            </li>
+            </capMods>
+            </li>
+        </stages>
+    </HediffDef>
+</Defs>

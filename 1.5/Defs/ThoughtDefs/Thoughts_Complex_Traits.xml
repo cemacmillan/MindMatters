@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <ThoughtDef>
+        <defName>MM_Alone</defName>
+        <stackLimit>1</stackLimit>
+        <stages>
+            <li>
+                <label>feeling lonely</label>
+                <description>I'm all alone here. I need some company!</description>
+                <baseMoodEffect>-5</baseMoodEffect>
+            </li>
+            <li>
+                <label>enjoying solitude</label>
+                <description>Ahh, some peace and quiet at last.</description>
+                <baseMoodEffect>5</baseMoodEffect>
+            </li>
+            <li>
+                <label>blissfully alone</label>
+                <description>Finally, nobody to disturb my peace.</description>
+                <baseMoodEffect>10</baseMoodEffect>
+            </li>
+        </stages>
+        <workerClass>MindMatters.ThoughtWorker_Alone</workerClass>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_CautiousOutsideHomeArea</defName>
+        <stackLimit>1</stackLimit>
+        <stages>
+            <li>
+                <label>outside home area</label>
+                <description>I don't like straying too far from home.</description>
+                <baseMoodEffect>-5</baseMoodEffect>
+            </li>
+            <li>
+                <label>doing safe work</label>
+                <description>I feel more comfortable when I'm doing work that I know is safe.</description>
+                <baseMoodEffect>5</baseMoodEffect>
+            </li>
+        </stages>
+        <workerClass>MindMatters.ThoughtWorker_Cautious</workerClass>
+        <requiredTraits>
+            <li>MM_Cautious</li>
+        </requiredTraits>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_Adventurous</defName>
+        <durationDays>0</durationDays>
+        <stackLimit>1</stackLimit>
+        <stages>
+            <li>
+                <label>exploring</label>
+                <description>I love being out here, in the unknown. It's exciting!</description>
+                <baseMoodEffect>5</baseMoodEffect>
+            </li>
+            <li>
+                <label>daring</label>
+                <description>Adrenaline is pumping! This is what life is all about.</description>
+                <baseMoodEffect>10</baseMoodEffect>
+            </li>
+        </stages>
+        <workerClass>MindMatters.ThoughtWorker_Adventurous</workerClass>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_OrganizedThought</defName>
+        <workerClass>MindMatters.ThoughtWorker_Organized</workerClass>
+        <stages>
+            <li>
+                <label>organized</label>
+                <description>Everything is nice and tidy just as I like it.</description>
+                <baseMoodEffect>0</baseMoodEffect>
+            </li>
+            <li>
+                <label>cluttered environment</label>
+                <description>This place is a mess, I can't stand it!</description>
+                <baseMoodEffect>-3</baseMoodEffect>
+            </li>
+        </stages>
+        <requiredTraits>
+            <li>MM_Organized</li>
+        </requiredTraits>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_SelfCentered</defName>
+        <stackLimit>1</stackLimit>
+        <stages>
+            <li>
+                <label>all needs fulfilled</label>
+                <description>I'm feeling good. Everything is just about me, as it should be.</description>
+                <baseMoodEffect>5</baseMoodEffect>
+            </li>
+            <li>
+                <label>minor needs unfulfilled</label>
+                <description>Something is not right... I need to focus on myself more.</description>
+                <baseMoodEffect>-5</baseMoodEffect>
+            </li>
+            <li>
+                <label>major needs unfulfilled</label>
+                <description>Why does everything go wrong for me? It's unbearable!</description>
+                <baseMoodEffect>-15</baseMoodEffect>
+            </li>
+        </stages>
+        <workerClass>MindMatters.ThoughtWorker_SelfCentered</workerClass>
+        <requiredTraits>
+            <li>MM_SelfCentered</li>
+        </requiredTraits>
+    </ThoughtDef>
+</Defs>

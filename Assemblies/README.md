@@ -1,1 +1,0 @@
-dll files go here. This is usually done automatically when building from source files with an IDE like Visual Studio. Do try to verify that nothing not belonging to the mod gets placed here though, like Assembly-CSharp.dll or 0Harmony.dll for example. Duplicate files of this kind can in some cases cause issues.

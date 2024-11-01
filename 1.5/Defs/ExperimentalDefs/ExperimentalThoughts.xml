@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThoughtDef>
+    <defName>DIL_RecluseAlone</defName>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+        <li>
+            <label>recluse alone</label>
+            <description>Feels relieved and happy to be alone.</description>
+            <baseMoodEffect>12</baseMoodEffect>
+        </li>
+    </stages>
+</ThoughtDef>
+
+<ThoughtDef>
+    <defName>DIL_RecluseInGroup</defName>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+        <li>
+            <label>recluse in small group</label>
+            <description>Feels okay in a small group, but would prefer being alone.</description>
+            <baseMoodEffect>6</baseMoodEffect>
+        </li>
+    </stages>
+</ThoughtDef>
+
+<ThoughtDef>
+    <defName>DIL_RecluseCrowded</defName>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+        <li>
+            <label>recluse crowded</label>
+            <description>Feels stressed and overwhelmed in a large group.</description>
+            <baseMoodEffect>-4</baseMoodEffect>
+        </li>
+    </stages>
+</ThoughtDef>
+
+<ThoughtDef>
+    <defName>DIL_RecluseVeryCrowded</defName>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+        <li>
+            <label>recluse very crowded</label>
+            <description>Feels extremely stressed and anxious in a very crowded environment.</description>
+            <baseMoodEffect>-8</baseMoodEffect>
+        </li>
+    </stages>
+</ThoughtDef>
+</Defs>

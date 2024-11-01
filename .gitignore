@@ -3,6 +3,30 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+#OSX crap
+.DS_Store
+**/.DS_Store
+#Jetbrains stuff
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+# Generated files
+.idea/**/contentModel.xml
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
 # User-specific files
 *.rsuser
 *.suo
@@ -396,3 +420,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+About/.DS_Store
+.DS_Store
+1.5/Defs/.DS_Store
+Source/.DS_Store
+Source/errors.txt
+
+Source/obj

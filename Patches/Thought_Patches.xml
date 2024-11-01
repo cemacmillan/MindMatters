@@ -1,0 +1,164 @@
+<Patch>
+	<Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+        <!-- Test operation for "Ugly" thought -->
+        <li Class="PatchOperationTest">
+            <xpath>Defs/ThoughtDef[defName="Ugly"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
+            <success>Invert</success>
+        </li>
+        <li Class="PatchOperationAdd">
+            <xpath>Defs/ThoughtDef[defName="Ugly"]/nullifyingTraits</xpath>
+            <value>
+                <li>MM_OpenMinded</li>
+                <li>MM_TenderHearted</li>
+            </value>
+        </li>
+    </operations>
+   </Operation>
+
+   <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+        <!-- Test operation for "Ugly" thought -->
+        <li Class="PatchOperationTest">
+            <xpath>Defs/ThoughtDef[defName="Disfigured"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
+            <success>Invert</success>
+        </li>
+        <li Class="PatchOperationAdd">
+            <xpath>Defs/ThoughtDef[defName="Disfigured"]/nullifyingTraits</xpath>
+            <value>
+                <li>MM_OpenMinded</li>
+                <li>MM_TenderHearted</li>
+            </value>
+        </li>
+    </operations>
+   </Operation>
+
+   <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+        <!-- Test operation for "Ugly" thought -->
+        <li Class="PatchOperationTest">
+            <xpath>Defs/ThoughtDef[defName="AnnoyingVoice"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
+            <success>Invert</success>
+        </li>
+        <li Class="PatchOperationAdd">
+            <xpath>Defs/ThoughtDef[defName="AnnoyingVoice"]/nullifyingTraits</xpath>
+            <value>
+                <li>MM_OpenMinded</li>
+            </value>
+        </li>
+    </operations>
+   </Operation>
+
+   <Operation Class="PatchOperationSequence">
+    <success>Always</success>
+    <operations>
+        <!-- Test operation for "Ugly" thought -->
+        <li Class="PatchOperationTest">
+            <xpath>Defs/ThoughtDef[defName="CreepyBreathing"]/nullifyingTraits/li[text()="MM_OpenMinded"]</xpath>
+            <success>Invert</success>
+        </li>
+        <li Class="PatchOperationAdd">
+            <xpath>Defs/ThoughtDef[defName="CreepyBreathing"]/nullifyingTraits</xpath>
+            <value>
+                <li>MM_OpenMinded</li>
+            </value>
+        </li>
+    </operations>
+   </Operation>
+
+   <Operation Class="PatchOperationSequence">
+		<success>Always</success>
+		<operations>
+			<li Class="PatchOperationTest">
+			  <xpath>*/ThoughtDef[defName="ObservedLayingCorpse"]/nullifyingTraits</xpath>
+			  <success>Invert</success>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>*/ThoughtDef[defName="ObservedLayingCorpse"]</xpath>
+				<value>
+					<nullifyingTraits>
+						<li>MM_Desensitized</li>
+					</nullifyingTraits>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+	
+	<Operation Class="PatchOperationSequence">
+		<success>Always</success>
+		<operations>
+			<li Class="PatchOperationTest">
+			  <xpath>*/ThoughtDef[defName="DeadMansApparel"]/nullifyingTraits</xpath>
+			  <success>Invert</success>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>*/ThoughtDef[defName="DeadMansApparel"]</xpath>
+				<value>
+					<nullifyingTraits>
+						<li>MM_Desensitized</li>
+					</nullifyingTraits>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+	
+	<Operation Class="PatchOperationSequence">
+		<success>Always</success>
+		<operations>
+			<li Class="PatchOperationTest">
+			  <xpath>*/ThoughtDef[defName="WitnessedDeathAlly"]/nullifyingTraits</xpath>
+			  <success>Invert</success>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>*/ThoughtDef[defName="WitnessedDeathAlly"]</xpath>
+				<value>
+					<nullifyingTraits>
+						<li>MM_TenderHearted</li>
+						<li>MM_Desensitized</li>
+					</nullifyingTraits>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+	
+	<Operation Class="PatchOperationSequence">
+		<success>Always</success>
+		<operations>
+			<li Class="PatchOperationTest">
+			  <xpath>*/ThoughtDef[defName="WitnessedDeathNonAlly"]/nullifyingTraits</xpath>
+			  <success>Invert</success>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>*/ThoughtDef[defName="WitnessedDeathNonAlly"]</xpath>
+				<value>
+					<nullifyingTraits>
+						<li>MM_TenderHearted</li>
+						<li>MM_Desensitized</li>
+					</nullifyingTraits>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+	
+	<Operation Class="PatchOperationSequence">
+		<success>Always</success>
+		<operations>
+			<li Class="PatchOperationTest">
+			  <xpath>*/ThoughtDef[defName="ColonistLeftUnburied"]/nullifyingTraits</xpath>
+			  <success>Invert</success>
+			</li>
+			<li Class="PatchOperationAdd">
+				<xpath>*/ThoughtDef[defName="ColonistLeftUnburied"]</xpath>
+				<value>
+					<nullifyingTraits>
+						<li>MM_Desensitized</li>
+					</nullifyingTraits>
+				</value>
+			</li>
+		</operations>
+	</Operation>
+
+</Patch>
