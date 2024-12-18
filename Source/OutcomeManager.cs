@@ -82,30 +82,31 @@ namespace MindMatters
             var experienceManager = Current.Game.GetComponent<MindMattersExperienceComponent>();
             if (experienceManager == null)
             {
-                Log.Error("ExperienceManager is null.");
+                MindMattersUtilities.DebugWarn("ProcessOutcomes: ExperienceManager is null.");
                 return;
             }
 
             foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonists)
             {
-                if (experienceManager.pawnExperiences.TryGetValue(pawn, out List<Experience> experiences))
+                // Use the accessor method to get experiences
+                List<Experience> experiences = experienceManager.GetOrCreateExperiences(pawn);
+
+                if (HasImmunizingTrait(pawn))
                 {
-                    if (HasImmunizingTrait(pawn))
-                    {
-                        continue;
-                    }
-
-                    foreach (Experience experience in experiences)
-                    {
-                        ProcessExperienceForPawn(experience, pawn);
-                    }
-
-                    // Clear the list of experiences for the pawn
-                    experiences.Clear();
+                    continue;
                 }
+
+                foreach (Experience experience in experiences)
+                {
+                    ProcessExperienceForPawn(experience, pawn);
+                }
+
+                // Clear the list of experiences for the pawn after processing
+                experiences.Clear();
+                // MindMattersUtilities.DebugLog($"ProcessOutcomes: Cleared experiences for {pawn.LabelShort}.");
             }
         }
-
+        
         private void ProcessExperienceForPawn(Experience experience, Pawn pawn)
         {
             bool outcomeOccurred = false;
@@ -114,7 +115,7 @@ namespace MindMatters
             {
                 case "Therapy":
                     ApplyTherapyEffects(pawn);
-                    Log.Message("Therapizing!");
+                    MindMattersUtilities.DebugLog("Therapizing!");
                     outcomeOccurred = true;
                     break;
             }
@@ -204,7 +205,7 @@ namespace MindMatters
             Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
 
             // Log for debugging
-            Log.Message($"{pawn.Name} gained the {newTrait.Label} trait due to an experience.");
+            MindMattersUtilities.DebugLog($"{pawn.Name} gained the {newTrait.Label} trait due to an experience.");
         }
         private void LoseTrait(Pawn pawn)
         {
@@ -234,7 +235,7 @@ namespace MindMatters
                 Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
 
                 // Log for debugging
-                Log.Message($"{pawn.Name} lost the {traitToLose.Label} trait due to a negative experience.");
+                MindMattersUtilities.DebugLog($"{pawn.Name} lost the {traitToLose.Label} trait due to a negative experience.");
             }
         }
 
@@ -253,7 +254,7 @@ namespace MindMatters
                     hediff.Severity += Rand.Range(0.05f, 0.15f);
 
                     // Log for debugging
-                    Log.Message($"{pawn.Name}'s trauma worsened due to negative experience.");
+                    MindMattersUtilities.DebugLog($"{pawn.Name}'s trauma worsened due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Trauma Worsened";
@@ -267,7 +268,7 @@ namespace MindMatters
                     pawn.health.AddHediff(hediff);
 
                     // Log for debugging
-                    Log.Message($"{pawn.Name}'s trauma developed due to negative experience.");
+                    MindMattersUtilities.DebugLog($"{pawn.Name}'s trauma developed due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Trauma Developed";
@@ -295,10 +296,10 @@ namespace MindMatters
                     var hediff = pawn.health.hediffSet.GetFirstHediffOfDef(HediffDef.Named("Anxiety"));
 
                     // Increase the severity
-                    hediff.Severity += Rand.Range(0.05f, 0.15f);
+                    hediff.Severity += Rand.Range(0.1f, 0.30f);
 
                     // Log for debugging
-                    Log.Message($"{pawn.Name}'s anxiety worsened due to negative experience.");
+                    MindMattersUtilities.DebugLog($"{pawn.Name}'s anxiety worsened due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Anxiety Worsened";
@@ -312,7 +313,7 @@ namespace MindMatters
                     pawn.health.AddHediff(hediff);
 
                     // Log for debugging
-                    Log.Message($"{pawn.Name}'s anxiety developed due to negative experience.");
+                    MindMattersUtilities.DebugLog($"{pawn.Name}'s anxiety developed due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Anxiety Developed";

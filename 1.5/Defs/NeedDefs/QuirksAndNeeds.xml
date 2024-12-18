@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <!--
+    <NeedDef>
+        <defName>FreshFruit</defName>
+        <needClass>MindMatters.FreshFruitNeed</needClass>
+        <label>fresh fruit</label>
+        <description>The desire to consume fresh fruit regularly. Satisfying this need improves mood, while neglecting it causes discomfort and irritation.</description>
+        <minIntelligence>Humanlike</minIntelligence>
+        <colonistAndPrisonersOnly>true</colonistAndPrisonersOnly>
+        <listPriority>110</listPriority>
+        <freezeWhileSleeping>true</freezeWhileSleeping>
+    </NeedDef>
+    -->
+</Defs>

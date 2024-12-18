@@ -16,7 +16,7 @@ namespace MindMatters
             // Check if experience should be added based on probability
             if (UnityEngine.Random.Range(0f, 1f) < probability)
             {
-                Log.Message($"Adding experience for {initiator} with event type {eventType} and valency {valencyEnum}");
+                MindMattersUtilities.DebugLog($"Adding experience for {initiator} with event type {eventType} and valency {valencyEnum}");
                 // Add the experience to the initiator
                 MindMattersUtilities.AddExperience(initiator, eventType, valencyEnum);
             }

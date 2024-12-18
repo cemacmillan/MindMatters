@@ -14,6 +14,7 @@ Global
 		{EFA364C9-90D9-454C-87BF-DDCA0C615ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFA364C9-90D9-454C-87BF-DDCA0C615ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFA364C9-90D9-454C-87BF-DDCA0C615ECE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFA364C9-90D9-454C-87BF-DDCA0C615ECE}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

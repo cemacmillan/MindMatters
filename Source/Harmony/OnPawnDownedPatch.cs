@@ -20,7 +20,7 @@ public static class Pawn_HealthTracker_MakeDowned_Patch
             // If ExperienceManager is not null, then notify it that the pawn has been downed
             if (experienceManager != null)
             {
-                Log.Message("Downed and adding experience.");
+                MindMattersUtilities.DebugLog("Downed and adding experience.");
                 experienceManager.OnPawnDowned(pawn);
             }
             else
@@ -30,7 +30,7 @@ public static class Pawn_HealthTracker_MakeDowned_Patch
         }
         else
         {
-            //Log.Message("Something else was wrong.");
+            //MindMattersUtilities.DebugLog("Something else was wrong.");
         }
     }
 }

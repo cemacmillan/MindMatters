@@ -15,7 +15,23 @@ namespace MindMatters
 
         public const float AloneDistanceSquared = 9f * 9f;  // Adjust this to match the "alone" radius
 
+  
+        public static void DebugLog(string message)
+        {
+            if (MindMattersMod.settings?.enableLogging == true)
+            {
+                Log.Message($"<color=#00FF7F>[Mind Matters]</color> {message}");
+            }
+        }
 
+        public static void DebugWarn(string message)
+        {
+            if (MindMattersMod.settings?.enableLogging == true)
+            {
+                Log.Warning($"<color=#FFD700>[Mind Matters - Warning]</color> {message}");
+            }
+        }
+        
         public static class RoomRoleUtility
         {
             public static RoomRoleDef GetRoomRole(Room room)
@@ -45,26 +61,18 @@ namespace MindMatters
         public static void AddExperience(Pawn pawn, string eventType, ExperienceValency valency)
         {
             // Get the MindMattersExperienceComponent
-            MindMattersExperienceComponent gameComponent =
-                Current.Game.GetComponent<MindMattersExperienceComponent>();
+            MindMattersExperienceComponent gameComponent = Current.Game?.GetComponent<MindMattersExperienceComponent>();
 
-            // If the component exists, add the experience
-            if (gameComponent != null)
+            if (gameComponent == null)
             {
-                // Create a new experience
-                Experience newExperience = new Experience(eventType, valency);
-
-                // If the pawn doesn't have an entry in the dictionary yet, create it
-                if (!gameComponent.pawnExperiences.ContainsKey(pawn))
-                {
-                    gameComponent.pawnExperiences[pawn] = new List<Experience>();
-                }
-
-                // Add the experience to the pawn's list of experiences
-                gameComponent.pawnExperiences[pawn].Add(newExperience);
+                Log.Error("AddExperience: Failed to get MindMattersExperienceComponent.");
+                return;
             }
-        }
 
+            // Use the gameComponent's AddExperience method
+            gameComponent.AddExperience(pawn, new Experience(eventType, valency));
+        }
+        
         public static bool IsPawnAlone(Pawn pawn, List<Pawn> allPawns)
         {
             // Check if our game instance is null

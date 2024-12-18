@@ -64,25 +64,25 @@
     </ThoughtDef>
     <ThoughtDef>
         <defName>MM_KilledPatientTenderHearted</defName>
-        <durationDays>1</durationDays>
+        <durationDays>3</durationDays>
         <label>Killed Patient - Tender-Hearted</label>
-        <description>Witnessing the death of a patient brings [PAWN_nameDef] great sorrow, touching [PAWN_pronounPossessive] tender-hearted nature.</description>
+        <description>Witnessing the death of a patient brings [PAWN_nameDef] great sorrow for the next few days, touching [PAWN_pronounPossessive] tender-hearted nature.</description>
         <thoughtClass>Thought_Memory</thoughtClass>
         <stages>
             <li>
                 <label>killed patient (low)</label>
                 <description>I feel a deep sense of loss and regret for the loss of life.</description>
-                <baseMoodEffect>-3</baseMoodEffect>
+                <baseMoodEffect>-4</baseMoodEffect>
             </li>
             <li>
                 <label>killed patient (medium)</label>
                 <description>The weight of the patient's death weighs heavily on my heart.</description>
-                <baseMoodEffect>-6</baseMoodEffect>
+                <baseMoodEffect>-8</baseMoodEffect>
             </li>
             <li>
                 <label>killed patient (high)</label>
                 <description>The death of the patient haunts me, creating an overwhelming sadness within me.</description>
-                <baseMoodEffect>-9</baseMoodEffect>
+                <baseMoodEffect>-12</baseMoodEffect>
             </li>
         </stages>
     </ThoughtDef>
@@ -112,6 +112,11 @@
                 <label>someone I cared about died</label>
                 <description>The death of someone close to me has left me profoundly pained. It is hard to go on.</description>
                 <baseMoodEffect>-40</baseMoodEffect> <!-- This thought makes the pawn extremely unhappy -->
+            </li>
+            <li>
+                <label>someone died and now there is a bug</label>
+                <description>The death of someone close to me has combined with another mod to fuck up the savegame in which I exist.</description>
+                <baseMoodEffect>-80</baseMoodEffect> <!-- This thought makes the pawn extremely unhappy -->
             </li>
         </stages>
     </ThoughtDef>

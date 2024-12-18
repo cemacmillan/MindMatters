@@ -12,28 +12,28 @@ namespace MindMatters
         {
             if (!p.story.traits.HasTrait(MindMattersTraits.Socialite))
             {
-                //Log.Message("Pawn is not a Socialite.");
+                //MindMattersUtilities.DebugLog("Pawn is not a Socialite.");
                 return ThoughtState.Inactive;
             }
 
             // Check if they're attending a party or a ceremony.
             if (p.CurJobDef == JobDefOf.StandAndBeSociallyActive || p.CurJobDef == JobDefOf.SpectateCeremony)
             {
-               // Log.Message("Pawn is attending a social event.");
+               // MindMattersUtilities.DebugLog("Pawn is attending a social event.");
                 return ThoughtState.ActiveAtStage(0);
             }
 
             // Check if they're having a deep conversation.
             if (p.jobs.curDriver is JobDriver_ChatWithPrisoner || p.jobs.curDriver is JobDriver_SocialRelax)
             {
-                // Log.Message("Pawn is having a deep conversation.");
+                // MindMattersUtilities.DebugLog("Pawn is having a deep conversation.");
                 return ThoughtState.ActiveAtStage(1);
             }
 
             // Check if they're wearing high-quality clothes.
             if (p.apparel.WornApparel.Any(a => a.def.useHitPoints && a.HitPoints >= a.MaxHitPoints * 0.9f))
             {
-                // Log.Message("Pawn is wearing high-quality clothes.");
+                // MindMattersUtilities.DebugLog("Pawn is wearing high-quality clothes.");
                 return ThoughtState.ActiveAtStage(2);
             }
 
@@ -44,12 +44,12 @@ namespace MindMatters
             if (roomRole == RoomRoleDefOf_MindMatters.DiningRoom || roomRole == RoomRoleDefOf_MindMatters.RecRoom)
             {
                 // Log a message for debugging purposes
-                Log.Message("Pawn is in a social space.");
+                MindMattersUtilities.DebugLog("Pawn is in a social space.");
                 return ThoughtState.ActiveAtStage(3);
             }
 
             // If none of the conditions are met, the thought is inactive.
-            // Log.Message("No conditions met for Socialite activity.");
+            // MindMattersUtilities.DebugLog("No conditions met for Socialite activity.");
             return ThoughtState.Inactive;
         }
     }

@@ -64,7 +64,7 @@ namespace MindMatters
             {
                 hediff.Severity = newSeverity;
                 gameComponent.lastSeverity[p] = newSeverity;
-                Log.Message($"Setting new severity for pawn {p.Name.ToStringShort}: {newSeverity} (stage {newStage})");
+                MindMattersUtilities.DebugLog($"Setting new severity for pawn {p.Name.ToStringShort}: {newSeverity} (stage {newStage})");
             }, "UpdateBipolarSeverity", false, null);
 
             return ThoughtStateForSeverity(lastSeverity);

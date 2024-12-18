@@ -36,6 +36,9 @@ namespace MindMatters
         public static readonly TraitDef NightOwl = TraitDef.Named("NightOwl");
         public static readonly TraitDef Jealous = TraitDef.Named("Jealous");
         public static readonly TraitDef Nimble = TraitDef.Named("Nimble");
+        public static readonly TraitDef NaturalMood = TraitDef.Named("NaturalMood");
+        public static readonly TraitDef Submissive = TraitDef.Named("VTE_Submissive");
+        public static readonly TraitDef Perfectionist = TraitDef.Named("VTE_Perfectionist");
        
     }
 }

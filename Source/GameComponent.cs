@@ -10,6 +10,7 @@ namespace MindMatters
     public class MindMattersGameComponent : GameComponent
     {
         public static MindMattersGameComponent Instance;
+        private MindMattersNeedsMgr needsMgr;
         private OutcomeManager outcomeManager;
         public event Action<Pawn> OnPawnMoodChanged;
 
@@ -17,6 +18,7 @@ namespace MindMatters
         private List<int> moodValues;
         private List<Pawn> allPawns;
 
+        private Dictionary<Pawn, DynamicNeedsBitmap> pawnNeedsMap = new();
         private MindMattersVictimManager victimManager = MindMattersVictimManager.Instance;
 
         TraitDef recluseTrait;
@@ -40,6 +42,7 @@ namespace MindMatters
         {
             outcomeManager = new OutcomeManager();
             recluseTrait = MindMattersTraits.Recluse ?? null;
+            needsMgr = new MindMattersNeedsMgr();
             Instance = this;
         }
 
@@ -76,6 +79,21 @@ namespace MindMatters
             if (currentTick % 60000 == 0)
             {
                 CheckBipolarTraitsForAllPawns();
+            }
+            
+            // new stuff
+            // Example for periodic execution every ~5 seconds (300 ticks)
+            if (currentTick % 1200 == 0)
+            {
+                int pawnsCounted = 0;
+                foreach (var pawn in PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned)
+                {
+                    DynamicNeedRegistry.TryAddNeed<FreshFruitNeed>(pawn);
+                    DynamicNeedRegistry.TryAddNeed<FormalityNeed>(pawn);
+                    DynamicNeedRegistry.TryAddNeed<ConstraintNeed>(pawn);
+                    pawnsCounted++;
+                }
+                MindMattersUtilities.DebugLog($"Pawns Counted: {pawnsCounted}");
             }
         }
 

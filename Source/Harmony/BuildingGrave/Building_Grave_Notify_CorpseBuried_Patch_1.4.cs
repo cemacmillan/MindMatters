@@ -15,13 +15,13 @@ namespace MindMatters
         {
             try
             {
-                Log.Message("Entered FillGraveThought");
-                Log.Message($"Worker: {worker.Name}");
-                Log.Message($"Has TenderHearted Trait: {worker.story.traits.HasTrait(MindMattersTraits.TenderHearted)}");
+                MindMattersUtilities.DebugLog("Entered FillGraveThought");
+                MindMattersUtilities.DebugLog($"Worker: {worker.Name}");
+                MindMattersUtilities.DebugLog($"Has TenderHearted Trait: {worker.story.traits.HasTrait(MindMattersTraits.TenderHearted)}");
 
                 if (worker.story != null && worker.story.traits.HasTrait(MindMattersTraits.TenderHearted))
                 {
-                    Log.Message("Trying to add tender-hearted thought");
+                    MindMattersUtilities.DebugLog("Trying to add tender-hearted thought");
                     ThoughtDef thoughtDef = ThoughtDef.Named(ThoughtDefName);
                     Thought_Memory thought = (Thought_Memory)ThoughtMaker.MakeThought(thoughtDef);
 
@@ -29,17 +29,17 @@ namespace MindMatters
                     {
                         if (worker.needs.mood.CurLevel < 0.4f)
                         {
-                            Log.Message("Setting stage 0");
+                            MindMattersUtilities.DebugLog("Setting stage 0");
                             thought.SetForcedStage(0);
                         }
                         else if (worker.needs.mood.CurLevel < 0.7f)
                         {
-                            Log.Message("Setting stage 1");
+                            MindMattersUtilities.DebugLog("Setting stage 1");
                             thought.SetForcedStage(1);
                         }
                         else
                         {
-                            Log.Message("Setting stage 2");
+                            MindMattersUtilities.DebugLog("Setting stage 2");
                             thought.SetForcedStage(2);
                         }
                     }
@@ -49,7 +49,7 @@ namespace MindMatters
             }
             catch (Exception ex)
             {
-                Log.Message($"MindMatters: Not establishing connection. Exception: {ex.Message}");
+                MindMattersUtilities.DebugLog($"MindMatters: Not establishing connection. Exception: {ex.Message}");
             }
         }
     }

@@ -38,5 +38,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Harmony\BuildingGrave\Building_Grave_Notify_CorpseBuried_Patch_1.4.cs" />
+	  <Compile Remove="Harmony\GetDistinctMoodThoughtGroupsDebugPatch.cs" />
 	</ItemGroup>
 </Project>

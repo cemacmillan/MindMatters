@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
+	<!-- Cleaning Fit -->
 	<ThinkTreeDef>
 	  <defName>Humanlike_CleaningFit_Insert</defName>
 	  <insertTag>Humanlike_PreMain</insertTag>
@@ -27,5 +28,67 @@
 	    </subNodes>
 	  </thinkRoot>
 	</ThinkTreeDef>
+	
+	<!-- CryingJag Mental State -->
+	<ThinkTreeDef>
+		<defName>Humanlike_CryingJag_Insert</defName>
+		<insertTag>Humanlike_PostMentalState</insertTag>
+		<insertPriority>100</insertPriority>
+		<thinkRoot Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="ThinkNode_ConditionalMentalState">
+					<state>MentalState_CryingJag</state>
+					<subNodes>
+						<!-- Satisfy urgent needs -->
+						<li Class="ThinkNode_PrioritySorter">
+							<subNodes>
+								<li Class="JobGiver_GetFood">
+									<maxLevelPercentage>0.05</maxLevelPercentage>
+								</li>
+								<li Class="JobGiver_GetRest">
+									<maxLevelPercentage>0.3</maxLevelPercentage>
+								</li>
+							</subNodes>
+						</li>
+						<!-- Perform crying jag wandering job -->
+						<li Class="MindMatters.JobGiver_CryingJag" />
+						<!-- Fallback wander (optional, can be removed if not needed) -->
+						<!-- <li Class="JobGiver_WanderColony" /> -->
+					</subNodes>
+				</li>
+			</subNodes>
+		</thinkRoot>
+	</ThinkTreeDef>
 
+	<!-- SeekSolitude Mental State -->
+	<ThinkTreeDef>
+		<defName>Humanlike_SeekSolitude_Insert</defName>
+		<insertTag>Humanlike_PostMentalState</insertTag>
+		<insertPriority>100</insertPriority>
+		<thinkRoot Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="ThinkNode_ConditionalMentalState">
+					<state>MentalState_SeekSolitude</state>
+					<subNodes>
+						<!-- Satisfy urgent needs -->
+						<li Class="ThinkNode_PrioritySorter">
+							<subNodes>
+								<li Class="JobGiver_GetFood">
+									<maxLevelPercentage>0.05</maxLevelPercentage>
+								</li>
+								<li Class="JobGiver_GetRest">
+									<maxLevelPercentage>0.3</maxLevelPercentage>
+								</li>
+							</subNodes>
+						</li>
+						<!-- Seek solitude -->
+						<li Class="MindMatters.JobGiver_SeekSolitude" />
+						<!-- Fallback wander -->
+						<li Class="JobGiver_WanderColony" />
+					</subNodes>
+				</li>
+			</subNodes>
+		</thinkRoot>
+	</ThinkTreeDef>
+	
 </Defs>

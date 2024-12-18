@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using RimWorld;
-using RimWorld.Planet;
 using Verse;
 using Verse.AI;
+using RimWorld.Planet;
 
 namespace MindMatters
 {
-
     public class MentalState_CryingJag : MentalState_BabyFit
     {
         private const float CryingJagRadius = 5f;
@@ -18,7 +17,7 @@ namespace MindMatters
         protected override void AuraEffect(Thing source, Pawn hearer)
         {
             // Skip over psychopathic, desensitized pawns or pawns without mood
-            if (hearer.story != null && (hearer.story.traits.HasTrait(TraitDefOf.Psychopath)) || hearer.story.traits.HasTrait(MindMattersTraits.Desensitized) || hearer.needs?.mood == null)
+            if (hearer.story != null && (hearer.story.traits.HasTrait(TraitDefOf.Psychopath) || hearer.story.traits.HasTrait(MindMattersTraits.Desensitized)) || hearer.needs?.mood == null)
             {
                 return;
             }
@@ -36,15 +35,20 @@ namespace MindMatters
             }
         }
 
-        private void ApplyEffect(Thing source, Pawn hearer)
+        private void ApplyEffect(Thing source, Pawn? hearer)
         {
+            if (hearer == null)
+            {
+                return;
+            }
+
             if (hearer != source && !alreadyAffectedPawns.Contains(hearer))
             {
                 alreadyAffectedPawns.Add(hearer);
-                AuraEffect(source, hearer);
+                AuraEffect(source, hearer); // hearer is not null here
             }
         }
-
+        
         public override void ExposeData()
         {
             base.ExposeData();
@@ -52,7 +56,4 @@ namespace MindMatters
             Scribe_Collections.Look(ref alreadyAffectedPawns, "alreadyAffectedPawns", LookMode.Reference);
         }
     }
-
-
 }
-

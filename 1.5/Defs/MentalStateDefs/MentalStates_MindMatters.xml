@@ -1,89 +1,91 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-	<!-- Mental Break Def -->
-<MentalBreakDef>
+    <!-- Mental Break Def -->
+    <MentalBreakDef>
         <defName>MentalBreak_CleaningFit</defName>
         <mentalState>CleaningFit</mentalState>
         <baseCommonality>1</baseCommonality>
         <intensity>Minor</intensity>
-</MentalBreakDef>
+    </MentalBreakDef>
 
-<!-- Mental State Def -->
-<MentalStateDef ParentName="BaseMentalState">
-      <defName>CleaningFit</defName>
-      <stateClass>MindMatters.MentalState_CleaningFit</stateClass>
-      <workerClass>MindMatters.MentalStateWorker_CleaningFit</workerClass>
-      <label>cleaning fit</label>
-      <category>Misc</category>
-      <!--
-      <thinkTree>MentalState_CleaningFitTree</thinkTree>
-      -->
-      <blockRandomInteraction>false</blockRandomInteraction>
-      <blockNormalThoughts>false</blockNormalThoughts>
-      <recoverFromSleep>true</recoverFromSleep>
-      <moodRecoveryThought>MM_ThoughtRecoveredCleaning</moodRecoveryThought>
-      <nameColor>(0.8, 0.8, 1)</nameColor>
-      <minTicksBeforeRecovery>25000</minTicksBeforeRecovery>
-      <maxTicksBeforeRecovery>60000</maxTicksBeforeRecovery>
-      <recoveryMessage>{0} is no longer compulsively cleaning.</recoveryMessage>
-      <beginLetterLabel>cleaning fit</beginLetterLabel>
-      <beginLetter>{0} has become obsessed with cleanliness and is compulsively cleaning everything.</beginLetter>
-      <beginLetterDef>NegativeEvent</beginLetterDef>
-      <baseInspectLine>Mental state: Cleaning fit</baseInspectLine>
-</MentalStateDef>
+    <!-- Mental State Def -->
+    <MentalStateDef ParentName="BaseMentalState">
+        <defName>CleaningFit</defName>
+        <stateClass>MindMatters.MentalState_CleaningFit</stateClass>
+        <workerClass>MindMatters.MentalStateWorker_CleaningFit</workerClass>
+        <label>cleaning fit</label>
+        <category>Misc</category>
+        <!--
+        <thinkTree>MentalState_CleaningFitTree</thinkTree>
+        -->
+        <blockRandomInteraction>false</blockRandomInteraction>
+        <blockNormalThoughts>false</blockNormalThoughts>
+        <recoverFromSleep>true</recoverFromSleep>
+        <moodRecoveryThought>MM_ThoughtRecoveredCleaning</moodRecoveryThought>
+        <nameColor>(0.8, 0.8, 1)</nameColor>
+        <minTicksBeforeRecovery>25000</minTicksBeforeRecovery>
+        <maxTicksBeforeRecovery>60000</maxTicksBeforeRecovery>
+        <recoveryMessage>{0} is no longer compulsively cleaning.</recoveryMessage>
+        <beginLetterLabel>cleaning fit</beginLetterLabel>
+        <beginLetter>{0} has become obsessed with cleanliness and is compulsively cleaning everything.</beginLetter>
+        <beginLetterDef>NegativeEvent</beginLetterDef>
+        <baseInspectLine>Mental state: Cleaning fit</baseInspectLine>
+    </MentalStateDef>
 
-<MentalBreakDef>
-    <defName>Wander_SeekSolitude</defName>
-    <mentalState>MentalState_SeekSolitude</mentalState>
-    <baseCommonality>0.5</baseCommonality>
-    <intensity>Major</intensity>
-</MentalBreakDef>
+    <MentalBreakDef>
+        <defName>Wander_SeekSolitude</defName>
+        <mentalState>MentalState_SeekSolitude</mentalState>
+        <baseCommonality>0.5</baseCommonality>
+        <intensity>Major</intensity>
+    </MentalBreakDef>
 
-<MentalStateDef ParentName="BaseMentalState">
-    <defName>MentalState_SeekSolitude</defName>
-    <stateClass>MindMatters.MentalState_SeekSolitude</stateClass>
-    <label>seeking solitude</label>
-    <category>Misc</category>
-    <colonistsOnly>true</colonistsOnly>
-    <minTicksBeforeRecovery>10000</minTicksBeforeRecovery>
-    <maxTicksBeforeRecovery>45000</maxTicksBeforeRecovery>
-    <recoveryMtbDays>0.166</recoveryMtbDays>
-    <recoverFromSleep>true</recoverFromSleep>
-    <moodRecoveryThought>Catharsis</moodRecoveryThought>
-    <blockNormalThoughts>true</blockNormalThoughts>
-    <nameColor>(0.65, 0.9, 0.93)</nameColor>
-    <recoveryMessage>{0} is no longer seeking solitude.</recoveryMessage>
-    <beginLetterLabel>seeking solitude</beginLetterLabel>
-    <beginLetter>{0} is seeking solitude.</beginLetter>
-    <beginLetterDef>NegativeEvent</beginLetterDef>
-    <baseInspectLine>Mental state: Seeking solitude</baseInspectLine>
-    <allowBeatfire>true</allowBeatfire>
-    <escapingPrisonersIgnore>true</escapingPrisonersIgnore>
-</MentalStateDef>
+    <MentalStateDef ParentName="BaseMentalState">
+        <defName>MentalState_SeekSolitude</defName>
+        <stateClass>MindMatters.MentalState_SeekSolitude</stateClass>
+        <label>seeking solitude</label>
+        <category>Misc</category>
+        <colonistsOnly>true</colonistsOnly>
+        <minTicksBeforeRecovery>10000</minTicksBeforeRecovery>
+        <maxTicksBeforeRecovery>45000</maxTicksBeforeRecovery>
+        <recoveryMtbDays>0.166</recoveryMtbDays>
+        <recoverFromSleep>true</recoverFromSleep>
+        <moodRecoveryThought>Catharsis</moodRecoveryThought>
+        <blockNormalThoughts>true</blockNormalThoughts>
+        <nameColor>(0.65, 0.9, 0.93)</nameColor>
+        <recoveryMessage>{0} is no longer seeking solitude.</recoveryMessage>
+        <beginLetterLabel>seeking solitude</beginLetterLabel>
+        <beginLetter>{0} is seeking solitude.</beginLetter>
+        <beginLetterDef>NegativeEvent</beginLetterDef>
+        <baseInspectLine>Mental state: Seeking solitude</baseInspectLine>
+        <allowBeatfire>true</allowBeatfire>
+        <escapingPrisonersIgnore>true</escapingPrisonersIgnore>
+    </MentalStateDef>
 
-<MentalBreakDef>
-    <defName>CryingJag</defName>
-    <mentalState>MentalState_CryingJag</mentalState>
-    <baseCommonality>1</baseCommonality>
-    <intensity>Major</intensity>
-</MentalBreakDef>
-<MentalStateDef ParentName="BaseMentalState">
-    <defName>MentalState_CryingJag</defName>
-    <stateClass>MindMatters.MentalState_CryingJag</stateClass>
-    <label>crying jag</label>
-    <category>Misc</category>
-    <colonistsOnly>true</colonistsOnly>
-    <recoveryMtbDays>0.25</recoveryMtbDays>
-    <recoverFromSleep>true</recoverFromSleep>
-    <moodRecoveryThought>Catharsis</moodRecoveryThought>
-    <blockNormalThoughts>true</blockNormalThoughts>
-    <recoveryMessage>{0} has stopped crying.</recoveryMessage>
-    <beginLetterLabel>crying jag</beginLetterLabel>
-    <beginLetter>{0} has broken down and started crying.</beginLetter>
-    <beginLetterDef>NegativeEvent</beginLetterDef>
-    <baseInspectLine>Mental state: Crying jag</baseInspectLine>
-</MentalStateDef>
+    <!-- Crying Jag -->
+    <MentalBreakDef>
+        <defName>CryingJag</defName>
+        <mentalState>MentalState_CryingJag</mentalState>
+        <baseCommonality>1</baseCommonality>
+        <intensity>Major</intensity>
+    </MentalBreakDef>
 
+    <MentalStateDef ParentName="BaseMentalState">
+        <defName>MentalState_CryingJag</defName>
+        <stateClass>MindMatters.MentalState_CryingJag</stateClass>
+        <label>crying jag</label>
+        <category>Misc</category>
+        <colonistsOnly>true</colonistsOnly>
+        <recoveryMtbDays>0.25</recoveryMtbDays>
+        <recoverFromSleep>true</recoverFromSleep>
+        <moodRecoveryThought>Catharsis</moodRecoveryThought>
+        <blockRandomInteraction>false</blockRandomInteraction>
+        <blockNormalThoughts>true</blockNormalThoughts>
+        <recoveryMessage>{0} has stopped crying.</recoveryMessage>
+        <beginLetterLabel>crying jag</beginLetterLabel>
+        <beginLetter>{0} has broken down and started crying.</beginLetter>
+        <beginLetterDef>NegativeEvent</beginLetterDef>
+        <baseInspectLine>Mental state: Crying jag</baseInspectLine>
+    </MentalStateDef>
 
 
 </Defs>
