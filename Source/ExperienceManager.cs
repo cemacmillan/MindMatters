@@ -2,290 +2,231 @@
 using System.Linq;
 using RimWorld;
 using Verse;
-using Verse.Noise;
 
-namespace MindMatters
+namespace MindMatters;
+
+public enum ExperienceValency
 {
-    public class Experience : IExposable
+    Positive,     // Explicitly good events (compliments, achievements, gifts)
+    Negative,     // Explicitly bad events (insults, failures, trauma)
+    Neutral,      // Neutral events (routine work, non-controversial ceremonies)
+    Eldritch,     // Mysterious, unsettling, or reality-altering events
+    Affirming,    // Experiences reinforcing norms, roles, or ideoligions
+    Humiliating,  // Events that degrade dignity, self-worth, or social standing
+    Exhilarating, // Thrilling, adrenaline-pumping experiences (victories, near misses)
+    Transformative // Events that fundamentally change the pawn's self-concept
+}
+
+public class MindMattersExperienceComponent : GameComponent
+{
+    public static MindMattersExperienceComponent Instance { get; private set; } // Singleton instance
+
+    private Dictionary<Pawn, List<Experience>> pawnExperiences = new();
+
+    public MindMattersExperienceComponent(Game game)
     {
-        public string EventType;
-        public ExperienceValency Valency;
-        public int Timestamp;
+        Instance = this; // Initialize the singleton instance
+        MindMattersUtilities.DebugLog("[MindMattersExperienceComponent] Initialized.");
+    }
 
-        // Parameterless constructor for deserialization
-        public Experience() { }
-
-        public Experience(string eventType, ExperienceValency valency)
+    public override void FinalizeInit()
+    {
+        base.FinalizeInit();
+        if (Instance == null)
         {
-            EventType = eventType;
-            Valency = valency;
-            Timestamp = Find.TickManager.TicksGame;
+            Instance = this;
+            MindMattersUtilities.DebugLog("[MindMattersExperienceComponent] FinalizeInit completed, instance assigned.");
+        }
+    }
+    
+    public static MindMattersExperienceComponent GetOrCreateInstance()
+    {
+        if (Instance == null)
+        {
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] Instance is null. Initializing a new instance.");
+            Instance = new MindMattersExperienceComponent(Current.Game);
         }
 
-        public void ExposeData()
+        return Instance;
+    }
+
+    public override void GameComponentTick()
+    {
+        base.GameComponentTick();
+
+        // Every quarter day (3 hours)
+        if (Find.TickManager.TicksGame % 7500 == 0)
         {
-            Scribe_Values.Look(ref EventType, "EventType");
-            Scribe_Values.Look(ref Valency, "Valency");
-            Scribe_Values.Look(ref Timestamp, "Timestamp");
+            int expireThreshold = Find.TickManager.TicksGame - GenDate.TicksPerDay;
+            ExpireOldExperiences(expireThreshold);
+        }
+
+        // Check for therapy-related thoughts once a day
+        if (Find.TickManager.TicksGame % 60000 == 0)
+        {
+            CheckForTherapyThoughtsAndAddExperiences();
         }
     }
 
-    public enum ExperienceValency
+    private void ExpireOldExperiences(int expireThreshold, bool isReloaded = false)
     {
-        Positive,
-        Negative,
-        Neutral
+        foreach (var pair in pawnExperiences.ToList())
+        {
+            Pawn pawn = pair.Key;
+            List<Experience> experiences = pair.Value;
+
+            if (pawn == null || experiences == null)
+            {
+                pawnExperiences.Remove(pawn);
+                continue;
+            }
+
+            experiences.RemoveAll(exp => exp.Timestamp < expireThreshold);
+
+            if (experiences.Count == 0)
+            {
+                pawnExperiences.Remove(pawn);
+            }
+        }
+
+        if (!isReloaded)
+        {
+            MindMattersUtilities.DebugLog("[MindMattersExperienceComponent] Expired old experiences.");
+        }
     }
-    public class MindMattersExperienceComponent : GameComponent
+
+    public List<Experience> GetOrCreateExperiences(Pawn pawn)
     {
-       // private Dictionary<Pawn, List<Experience>> pawnExperiences;
-        private Dictionary<Pawn, List<Experience>> pawnExperiences = new Dictionary<Pawn, List<Experience>>();
-
-
-        public MindMattersExperienceComponent(Game game)
+        if (pawn == null)
         {
-           // pawnExperiences = new Dictionary<Pawn, List<Experience>>();
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] GetOrCreateExperiences called with null pawn.");
+            return new List<Experience>();
         }
 
-        public override void GameComponentTick()
+        List<Experience>? experiences;
+        if (!pawnExperiences.TryGetValue(pawn, out experiences))
         {
-            base.GameComponentTick();
-
-           
-            // Every quarter day (3 hours)
-            if (Find.TickManager.TicksGame % 7500 == 0)
-            {
-                int expireThreshold = Find.TickManager.TicksGame - GenDate.TicksPerDay;
-                ExpireOldExperiences(expireThreshold);
-            }
-
-            // Check for therapy-related thoughts once a day
-            if (Find.TickManager.TicksGame % 60000 == 0)
-            {
-                CheckForTherapyThoughtsAndAddExperiences();
-            }
+            experiences = new List<Experience>();
+            pawnExperiences[pawn] = experiences;
         }
-        
-        private void ExpireOldExperiences(int expireThreshold, bool isReloaded = false)
-        {
-            foreach (var pair in pawnExperiences.ToList()) // Work on a copy to avoid collection modification
-            {
-                Pawn pawn = pair.Key;
-                List<Experience> experiences = pair.Value;
 
-                if (pawn == null || experiences == null)
+        return experiences;
+    }
+
+    public void AddExperience(Pawn pawn, Experience experience)
+    {
+        if (pawn == null)
+        {
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null pawn.");
+            return;
+        }
+
+        if (experience == null)
+        {
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null experience.");
+            return;
+        }
+
+        var experiences = GetOrCreateExperiences(pawn);
+        experiences.Add(experience);
+
+        MindMattersUtilities.DebugLog($"[MindMattersExperienceComponent] Added experience {experience.EventType} ({experience.Valency}) for {pawn.LabelShort}");
+    }
+
+    private void CheckForTherapyThoughtsAndAddExperiences()
+    {
+        foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsSpawned)
+        {
+            List<Thought_Memory> pawnMemories = pawn.needs.mood.thoughts.memories.Memories;
+
+            foreach (Thought_Memory memory in pawnMemories)
+            {
+                if (IsTherapyRelated(memory))
                 {
-                    // Cleanup null references
-                    pawnExperiences.Remove(pawn);
-                    continue;
-                }
-
-                // Remove expired experiences
-                experiences.RemoveAll(exp => exp.Timestamp < expireThreshold);
-
-                // Optional: Log debug information
-                if (experiences.Count == 0)
-                {
-                    pawnExperiences.Remove(pawn); // Remove empty lists
-                    // MindMattersUtilities.DebugLog($"ExpireOldExperiences: Removed all experiences for {pawn.LabelShort}.");
-                }
-                else
-                {
-                    // MindMattersUtilities.DebugLog($"ExpireOldExperiences: {experiences.Count} experiences remain for {pawn.LabelShort}.");
-                }
-            }
-
-            if (!isReloaded)
-            {
-                // MindMattersUtilities.DebugLog("ExpireOldExperiences: Expiration completed for all pawns.");
-            }
-            else
-            {
-               // MindMattersUtilities.DebugLog("ExpireOldExperiences: Expiration deferred due to game reload.");
-            }
-        }
-        
-        public List<Experience> GetOrCreateExperiences(Pawn pawn)
-        {
-            if (pawn == null)
-            {
-                MindMattersUtilities.DebugWarn("GetOrCreateExperiences: Called with a null pawn.");
-                return new List<Experience>(); // Return an empty list for safety
-            }
-
-            if (!pawnExperiences.TryGetValue(pawn, out var experiences))
-            {
-                // If the pawn doesn't have a list of experiences yet, create one
-                experiences = new List<Experience>();
-                pawnExperiences[pawn] = experiences;
-                // MindMattersUtilities.DebugLog($"GetOrCreateExperiences: Created new experience list for {pawn.LabelShort}.");
-            }
-
-            return experiences;
-        }
-        
-        public void AddExperience(Pawn pawn, Experience experience)
-        {
-            if (pawn == null)
-            {
-                MindMattersUtilities.DebugWarn("AddExperience: Called with a null pawn.");
-                return;
-            }
-
-            if (experience == null)
-            {
-                MindMattersUtilities.DebugWarn("AddExperience: Called with a null experience.");
-                return;
-            }
-
-            // Use the accessor to safely retrieve or create the experiences list
-            var experiences = GetOrCreateExperiences(pawn);
-            experiences.Add(experience);
-
-            MindMattersUtilities.DebugLog($"Added experience {experience.EventType} ({experience.Valency}) for {pawn.LabelShort}");
-        }
-
-        private void CheckForTherapyThoughtsAndAddExperiences()
-        {
-            foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsSpawned) // Iterating over all spawned colonists across maps
-            {
-                List<Thought_Memory> pawnMemories = pawn.needs.mood.thoughts.memories.Memories;
-
-                foreach (Thought_Memory memory in pawnMemories)
-                {
-                    if (IsTherapyRelated(memory))
-                    {
-                        // Create an Experience and pass it to "Mind Matters"
-                        Experience newExperience = new Experience("Therapy", ExperienceValency.Positive );
-                        MindMattersUtilities.AddExperience(pawn, "Therapy", newExperience.Valency);
-                        break; // If you only want one experience per therapy session, exit loop early
-                    }
+                    AddExperience(pawn, new Experience("Therapy", ExperienceValency.Positive));
+                    break;
                 }
             }
         }
+    }
 
+    private bool IsTherapyRelated(Thought thought)
+    {
+        return thought.def.defName == "TherapyRelieved";
+    }
 
-        private bool IsTherapyRelated(Thought thought)
+    public void OnPawnDowned(Pawn? pawn)
+    {
+        if (pawn == null)
         {
-            return thought.def.defName == "TherapyRelieved";
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] OnPawnDowned called with null pawn.");
+            return;
         }
 
+        AddExperience(pawn, new Experience("PawnDowned", ExperienceValency.Negative));
+        MindMattersUtilities.DebugLog($"[MindMattersExperienceComponent] {pawn.LabelShort} has been downed.");
+    }
 
-
-        public void OnPawnDowned(Pawn pawn)
+    public void OnPawnKilled(Pawn killer)
+    {
+        if (killer == null)
         {
-            if (pawn == null)
-            {
-                MindMattersUtilities.DebugWarn("OnPawnDowned called with a null pawn.");
-                return;
-            }
-
-            // Create a new "PawnDowned" experience
-            Experience pawnDownedExperience = new Experience("PawnDowned", ExperienceValency.Negative);
-
-            // Use AddExperience method for consistent experience handling
-            AddExperience(pawn, pawnDownedExperience);
-
-            // Optional DebugLog for tracking
-            MindMattersUtilities.DebugLog($"OnPawnDowned: {pawn.LabelShort} has been downed. Experience added: {pawnDownedExperience.EventType} ({pawnDownedExperience.Valency}).");
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] OnPawnKilled called with null killer.");
+            return;
         }
 
-        public void OnPawnKilled(Pawn killer)
+        AddExperience(killer, new Experience("PawnKilled", ExperienceValency.Neutral));
+        MindMattersUtilities.DebugLog($"[MindMattersExperienceComponent] {killer.LabelShort} killed a pawn.");
+    }
+
+    public List<Experience> GetPawnExperiences(Pawn pawn)
+    {
+        return pawn == null ? new List<Experience>() : GetOrCreateExperiences(pawn);
+    }
+
+    public void OnColonistDied(Pawn colonist)
+    {
+        if (colonist == null)
         {
-            if (killer == null)
-            {
-                MindMattersUtilities.DebugWarn("OnPawnKilled: Called with a null killer.");
-                return;
-            }
-
-            MindMattersUtilities.DebugLog($"OnPawnKilled: {killer.Name} has killed a pawn.");
-
-            // Create a new "PawnKilled" experience
-            var experience = new Experience("PawnKilled", ExperienceValency.Neutral);
-
-            // Use AddExperience to add the new experience
-            AddExperience(killer, experience);
-
-            MindMattersUtilities.DebugLog($"OnPawnKilled: {killer.Name} now has {GetOrCreateExperiences(killer).Count} experiences recorded.");
+            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] OnColonistDied called with null colonist.");
+            return;
         }
 
-        public List<Experience> GetPawnExperiences(Pawn pawn)
+        foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonists)
         {
-            if (pawn == null)
-            {
-                MindMattersUtilities.DebugWarn("GetPawnExperiences: Called with a null pawn.");
-                return new List<Experience>();
-            }
+            if (pawn == colonist) continue;
 
-            // Use the accessor to safely retrieve or create the experiences for the pawn
-            return GetOrCreateExperiences(pawn);
+            bool isRelated = pawn.relations?.RelatedPawns?.Contains(colonist) == true;
+            string experienceType = isRelated ? "ColonistDiedRelation" : "ColonistDied";
+
+            AddExperience(pawn, new Experience(experienceType, ExperienceValency.Negative));
         }
-        
-        public void OnColonistDied(Pawn colonist)
+    }
+
+    public override void ExposeData()
+    {
+        base.ExposeData();
+
+        // Create lists for keys and values
+        List<Pawn> keys = pawnExperiences.Keys.ToList();
+        List<List<Experience>> values = pawnExperiences.Values.ToList();
+
+        // Use Scribe to look up keys and values
+        Scribe_Collections.Look(ref keys, "pawnExperienceKeys", LookMode.Reference);
+        Scribe_Collections.Look(ref values, "pawnExperienceValues", LookMode.Deep);
+
+        // Reconstruct dictionary on loading
+        if (Scribe.mode == LoadSaveMode.LoadingVars && keys != null && values != null)
         {
-            if (colonist == null)
-            {
-                MindMattersUtilities.DebugWarn("OnColonistDied: Called with a null colonist.");
-                return;
-            }
-
-            List<Pawn> allColonists = PawnsFinder.AllMaps_FreeColonists.ToList();
-
-            foreach (Pawn pawn in allColonists)
-            {
-                if (pawn == null)
-                {
-                    MindMattersUtilities.DebugWarn("OnColonistDied: Found a null pawn in the colonists list.");
-                    continue;
-                }
-
-                if (pawn == colonist) continue;
-
-                bool isRelated = pawn.relations?.RelatedPawns?.Contains(colonist) == true;
-                string experienceType = isRelated ? "ColonistDiedRelation" : "ColonistDied";
-
-                Experience newExperience = new Experience(experienceType, ExperienceValency.Negative);
-                AddExperience(pawn, newExperience);
-            }
-
-            MindMattersUtilities.DebugLog($"OnColonistDied: Added death experiences for {allColonists.Count} colonists.");
+            pawnExperiences = keys.Zip(values, (key, value) => new { key, value })
+                .ToDictionary(pair => pair.key, pair => pair.value);
         }
+    }
+    
+    public void NotExposeData()
+    {
+        base.ExposeData();
 
-        public override void ExposeData()
-        {
-            base.ExposeData();
-
-            List<Pawn> keys = new List<Pawn>();
-            List<List<Experience>> values = new List<List<Experience>>();
-
-            if (Scribe.mode == LoadSaveMode.Saving)
-            {
-                keys = pawnExperiences.Keys.ToList();
-                values = pawnExperiences.Values.Select(x => new List<Experience>(x)).ToList();
-            }
-
-            Scribe_Collections.Look(ref keys, "keys", LookMode.Reference);
-
-            if (Scribe.mode == LoadSaveMode.Saving)
-            {
-                for (int i = 0; i < values.Count; i++)
-                {
-                    List<Experience> experiences = values[i];
-                    Scribe_Collections.Look(ref experiences, $"values_{i}", LookMode.Deep);
-                }
-            }
-            else if (Scribe.mode == LoadSaveMode.LoadingVars)
-            {
-                values = new List<List<Experience>>(keys.Count);
-                for (int i = 0; i < keys.Count; i++)
-                {
-                    List<Experience> experiences = null;
-                    Scribe_Collections.Look(ref experiences, $"values_{i}", LookMode.Deep);
-                    values.Add(experiences);
-                }
-                pawnExperiences = keys.Zip(values, (k, v) => new { k, v })
-                                      .ToDictionary(x => x.k, x => x.v);
-            }
-        }
+        Scribe_Collections.Look(ref pawnExperiences, "pawnExperiences", LookMode.Reference, LookMode.Deep);
     }
 }

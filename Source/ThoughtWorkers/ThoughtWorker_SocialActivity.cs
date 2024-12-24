@@ -10,7 +10,7 @@ namespace MindMatters
     {
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
-            if (!p.story.traits.HasTrait(MindMattersTraits.Socialite))
+            if (!p.story.traits.HasTrait(MindMattersTraitDef.Socialite))
             {
                 //MindMattersUtilities.DebugLog("Pawn is not a Socialite.");
                 return ThoughtState.Inactive;

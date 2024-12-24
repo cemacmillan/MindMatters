@@ -8,7 +8,7 @@ namespace MindMatters
     {
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
-            if (p.story.traits.HasTrait(MindMattersTraits.Adventurous))
+            if (p.story.traits.HasTrait(MindMattersTraitDef.Adventurous))
             {
                 if (p.Map != null)
                 {

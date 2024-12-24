@@ -19,7 +19,7 @@ namespace MindMatters
             {
                 if (thing is Corpse corpse)
                 {
-                    if (hauler.story != null && hauler.story.traits.HasTrait(MindMattersTraits.TenderHearted))
+                    if (hauler.story != null && hauler.story.traits.HasTrait(MindMattersTraitDef.TenderHearted))
                     {
                         ThoughtDef thoughtDef = ThoughtDef.Named(ThoughtDefName);
                         Thought_Memory thought = (Thought_Memory)ThoughtMaker.MakeThought(thoughtDef);

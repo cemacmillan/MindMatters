@@ -14,66 +14,66 @@ namespace MindMatters
 
         private readonly List<TraitDef> gainableTraits = new List<TraitDef>
         {
-            MindMattersTraits.Abrasive,
-            MindMattersTraits.Ascetic,
-            MindMattersTraits.Bloodlust,
-            MindMattersTraits.Greedy,
-            MindMattersTraits.Nerves,
-            MindMattersTraits.Gourmand,
-            MindMattersTraits.TooSmart,
-            MindMattersTraits.Neurotic,
-            MindMattersTraits.Masochist,
-            MindMattersTraits.NightOwl,
-            MindMattersTraits.Jealous,
-            MindMattersTraits.Nimble,
-            MindMattersTraits.TenderHearted,
-            MindMattersTraits.Desensitized,
-            MindMattersTraits.Adventurous,
-            MindMattersTraits.Cautious,
-            MindMattersTraits.Outgoing,
-            MindMattersTraits.Pluviophile,
-            MindMattersTraits.Relaxed,
-            MindMattersTraits.Reserved,
-            MindMattersTraits.SelfCentered
+            MindMattersTraitDef.Abrasive,
+            MindMattersTraitDef.Ascetic,
+            MindMattersTraitDef.Bloodlust,
+            MindMattersTraitDef.Greedy,
+            MindMattersTraitDef.Nerves,
+            MindMattersTraitDef.Gourmand,
+            MindMattersTraitDef.TooSmart,
+            MindMattersTraitDef.Neurotic,
+            MindMattersTraitDef.Masochist,
+            MindMattersTraitDef.NightOwl,
+            MindMattersTraitDef.Jealous,
+            MindMattersTraitDef.Nimble,
+            MindMattersTraitDef.TenderHearted,
+            MindMattersTraitDef.Desensitized,
+            MindMattersTraitDef.Adventurous,
+            MindMattersTraitDef.Cautious,
+            MindMattersTraitDef.Outgoing,
+            MindMattersTraitDef.Pluviophile,
+            MindMattersTraitDef.Relaxed,
+            MindMattersTraitDef.Reserved,
+            MindMattersTraitDef.SelfCentered
             // Add the other traits here...
         };
 
         private readonly List<TraitDef> losableTraits = new List<TraitDef>
         {
-            MindMattersTraits.Abrasive,
-            MindMattersTraits.Ascetic,
-            MindMattersTraits.Greedy,
-            MindMattersTraits.Nerves,
-            MindMattersTraits.Gourmand,
-            MindMattersTraits.TooSmart,
-            MindMattersTraits.Neurotic,
-            MindMattersTraits.Masochist,
-            MindMattersTraits.NightOwl,
-            MindMattersTraits.Jealous,
-            MindMattersTraits.Nimble,
-            MindMattersTraits.TenderHearted,
-            MindMattersTraits.Adventurous,
-            MindMattersTraits.Cautious,
-            MindMattersTraits.Outgoing,
-            MindMattersTraits.Pluviophile,
-            MindMattersTraits.Relaxed,
-            MindMattersTraits.Reserved,
-            MindMattersTraits.SelfCentered
+            MindMattersTraitDef.Abrasive,
+            MindMattersTraitDef.Ascetic,
+            MindMattersTraitDef.Greedy,
+            MindMattersTraitDef.Nerves,
+            MindMattersTraitDef.Gourmand,
+            MindMattersTraitDef.TooSmart,
+            MindMattersTraitDef.Neurotic,
+            MindMattersTraitDef.Masochist,
+            MindMattersTraitDef.NightOwl,
+            MindMattersTraitDef.Jealous,
+            MindMattersTraitDef.Nimble,
+            MindMattersTraitDef.TenderHearted,
+            MindMattersTraitDef.Adventurous,
+            MindMattersTraitDef.Cautious,
+            MindMattersTraitDef.Outgoing,
+            MindMattersTraitDef.Pluviophile,
+            MindMattersTraitDef.Relaxed,
+            MindMattersTraitDef.Reserved,
+            MindMattersTraitDef.SelfCentered
             // Add the other traits here...
         };
         // List of traits that make a pawn prone to anxiety
         private readonly List<TraitDef> anxietyProneTraits = new List<TraitDef>
         {
-            MindMattersTraits.TenderHearted,
-            MindMattersTraits.Cautious,
-            MindMattersTraits.Nerves
+            MindMattersTraitDef.TenderHearted,
+            MindMattersTraitDef.Cautious,
+            MindMattersTraitDef.Nerves
         // Add other traits here
         };
 
         private readonly List<TraitDef> immunizingTraits = new List<TraitDef>
         {
             TraitDef.Named("Psychopath"),
-            MindMattersTraits.Desensitized
+            MindMattersTraitDef.Desensitized
             // Add other traits here
         };
 
@@ -333,7 +333,7 @@ namespace MindMatters
         private bool HasImmunizingTrait(Pawn pawn)
         {
             return pawn.story.traits.allTraits.Any(trait =>
-                (trait.def == MindMattersTraits.Nerves && (trait.Degree == -1 || trait.Degree == -2)) ||
+                (trait.def == MindMattersTraitDef.Nerves && (trait.Degree == -1 || trait.Degree == -2)) ||
                 immunizingTraits.Contains(trait.def));
         }
 
@@ -344,7 +344,7 @@ namespace MindMatters
                 if (anxietyProneTraits.Contains(trait.def))
                 {
                     // If the trait is Nerves, check the degree
-                    if (trait.def == MindMattersTraits.Nerves)
+                    if (trait.def == MindMattersTraitDef.Nerves)
                     {
                         if (trait.Degree == 1 || trait.Degree == 2)  // Adjust as needed
                         {

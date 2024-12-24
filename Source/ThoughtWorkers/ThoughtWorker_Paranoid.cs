@@ -9,7 +9,7 @@ namespace MindMatters
     {
         protected override ThoughtState CurrentStateInternal(Pawn pawn)
         {
-            if (!pawn.story.traits.HasTrait(MindMattersTraits.Paranoid))
+            if (!pawn.story.traits.HasTrait(MindMattersTraitDef.Paranoid))
             {
                 return ThoughtState.Inactive;
             }

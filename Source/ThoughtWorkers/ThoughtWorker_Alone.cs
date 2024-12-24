@@ -11,14 +11,14 @@ namespace MindMatters
             List<Pawn> allPawns = Current.Game.GetComponent<MindMattersGameComponent>().GetAllPawns();
             bool isAlone = MindMattersUtilities.IsPawnAlone(p,allPawns);
 
-            if (p.story.traits.HasTrait(MindMattersTraits.Outgoing) || p.story.traits.HasTrait(MindMattersTraits.Socialite))
+            if (p.story.traits.HasTrait(MindMattersTraitDef.Outgoing) || p.story.traits.HasTrait(MindMattersTraitDef.Socialite))
             {
                 // Outgoing and Socialite pawns are unhappy when alone
                 return isAlone ? ThoughtState.ActiveAtStage(0) : ThoughtState.Inactive;
             }
             else
             {
-                TraitDef reservedTrait = MindMattersTraits.Reserved;
+                TraitDef reservedTrait = MindMattersTraitDef.Reserved;
                 if (reservedTrait != null && p.story.traits.HasTrait(reservedTrait))
                 {
                     // Reserved pawns are happy when alone

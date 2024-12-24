@@ -10,7 +10,7 @@ namespace MindMatters
             if (!p.RaceProps.Humanlike || p.story == null || p.story.traits == null)
                 return ThoughtState.Inactive;
 
-            if (p.story.traits.HasTrait(MindMattersTraits.Prude))
+            if (p.story.traits.HasTrait(MindMattersTraitDef.Prude))
             {
                 if (p.Awake() && p.CurJob != null && p.CurJob.def == JobDefOf.LayDown && p.CurJob.targetA.Thing != null && p.CurJob.targetA.Thing.def.IsBed)
                 {

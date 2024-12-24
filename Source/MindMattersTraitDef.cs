@@ -3,7 +3,7 @@ using RimWorld;
 
 namespace MindMatters
 {
-    public static class MindMattersTraits
+    public static class MindMattersTraitDef
     {
         public static readonly TraitDef Adventurous = TraitDef.Named("MM_Adventurous");
         public static readonly TraitDef Cautious = TraitDef.Named("MM_Cautious");

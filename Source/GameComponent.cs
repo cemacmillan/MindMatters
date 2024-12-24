@@ -17,11 +17,12 @@ namespace MindMatters
         private List<Pawn> pawnKeys;
         private List<int> moodValues;
         private List<Pawn> allPawns;
-
-        private Dictionary<Pawn, DynamicNeedsBitmap> pawnNeedsMap = new();
+        
         private MindMattersVictimManager victimManager = MindMattersVictimManager.Instance;
 
         TraitDef recluseTrait;
+
+        private bool debugNeedsRegistry = true;
 
         public enum Mood
         {
@@ -41,7 +42,7 @@ namespace MindMatters
         public MindMattersGameComponent(Game game)
         {
             outcomeManager = new OutcomeManager();
-            recluseTrait = MindMattersTraits.Recluse ?? null;
+            recluseTrait = MindMattersTraitDef.Recluse ?? null;
             needsMgr = new MindMattersNeedsMgr();
             Instance = this;
         }
@@ -80,21 +81,29 @@ namespace MindMatters
             {
                 CheckBipolarTraitsForAllPawns();
             }
-            
-            // new stuff
-            // Example for periodic execution every ~5 seconds (300 ticks)
-            if (currentTick % 1200 == 0)
-            {
-                int pawnsCounted = 0;
-                foreach (var pawn in PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned)
-                {
-                    DynamicNeedRegistry.TryAddNeed<FreshFruitNeed>(pawn);
-                    DynamicNeedRegistry.TryAddNeed<FormalityNeed>(pawn);
-                    DynamicNeedRegistry.TryAddNeed<ConstraintNeed>(pawn);
-                    pawnsCounted++;
-                }
-                MindMattersUtilities.DebugLog($"Pawns Counted: {pawnsCounted}");
+
+            if(debugNeedsRegistry) {
+                MMToolkit.DebugLog("GameComponentTick: NeedDefs");
+                DynamicNeedFactory.DebugLogRegisteredDynamicNeeds(); // Ensures one-time call
+                debugNeedsRegistry = false;
             }
+            
+            if (currentTick % 300 == 0) // Every 5 seconds
+            {
+                needsMgr.ProcessNeeds(DynamicNeedCategory.Primal);
+            }
+
+            if (currentTick % 600 == 0) // Every 10 seconds
+            {
+                needsMgr.ProcessNeeds(DynamicNeedCategory.Secondary);
+            }
+
+            if (currentTick % 1200 == 0) // Every 20 seconds
+            {
+                needsMgr.ProcessAllNeeds();
+            }
+            
+
         }
 
         private void ProcessTraitsForAllPawns()
@@ -115,15 +124,15 @@ namespace MindMatters
 
                 var traits = pawn.story.traits;
 
-                if ((traits.HasTrait(MindMattersTraits.Outgoing) ||
-                     traits.HasTrait(MindMattersTraits.Reserved) ||
+                if ((traits.HasTrait(MindMattersTraitDef.Outgoing) ||
+                     traits.HasTrait(MindMattersTraitDef.Reserved) ||
                      (recluseTrait != null && traits.HasTrait(recluseTrait))) &&
                     MindMattersUtilities.IsPawnAlone(pawn,allPawns))
                 {
                     PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
                 }
 
-                if (traits.HasTrait(MindMattersTraits.Unstable) && pawn.MentalState != null)
+                if (traits.HasTrait(MindMattersTraitDef.Unstable) && pawn.MentalState != null)
                 {
                     ProcessUnstableTrait(pawn);
                 }
@@ -158,7 +167,7 @@ namespace MindMatters
                     continue;
                 }
 
-                if (pawn.story.traits.HasTrait(MindMattersTraits.Bipolar))
+                if (pawn.story.traits.HasTrait(MindMattersTraitDef.Bipolar))
                 {
                     MindMattersUtilities.UpdateBipolarPawnTicks(pawn, BipolarPawnLastCheckedTicks);
                 }
@@ -194,4 +203,6 @@ namespace MindMatters
             }
         }
     }
+    
+    
 }

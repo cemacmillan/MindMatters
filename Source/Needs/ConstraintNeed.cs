@@ -6,7 +6,20 @@ namespace MindMatters
 {
     public class ConstraintNeed : DynamicNeed
     {
-        public ConstraintNeed(Pawn pawn, NeedDef needDef) : base(pawn,needDef) { }
+        public ConstraintNeed() : base()
+        {
+        }
+
+        public ConstraintNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
+        {
+        }
+        
+        [JetBrains.Annotations.UsedImplicitlyAttribute]
+        public override void Initialize(Pawn pawn, NeedDef def)
+        {
+            base.Initialize(pawn, def);
+        }
+
 
         protected override void UpdateValue()
         {

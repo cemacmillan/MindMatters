@@ -7,11 +7,27 @@ namespace MindMatters;
 
 public class FreshFruitNeed : DynamicNeed
 {
-    public FreshFruitNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef) { }
+    public override DynamicNeedCategory Category => DynamicNeedCategory.Luxury; // Override the category if needed
+
+    public FreshFruitNeed() : base()
+    {
+        
+    }
+
+    public FreshFruitNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
+    {
+        
+    }
+
+    // Use DefaultNeedDef for fallback NeedDef assignment during initialization
+    protected override NeedDef DefaultNeedDef()
+    {
+        return DefDatabase<NeedDef>.GetNamed("FreshFruitNeed", errorOnFail: true); // Replace with the correct NeedDef name
+    }
 
     protected override void UpdateValue()
     {
-        // Update the need level based on fresh fruit presence
+        // Update need level based on fresh fruit presence
         if (pawn.inventory != null && pawn.inventory.innerContainer.Any(IsFreshFruit))
         {
             CurLevel += 0.1f;
@@ -32,6 +48,7 @@ public class FreshFruitNeed : DynamicNeed
 
     private bool IsFreshFruit(Thing thing)
     {
+        // Example logic: Replace "strawberry" with actual fruit labels or categories
         return thing.def.IsIngestible && thing.def.label.ToLowerInvariant().Contains("strawberry");
     }
 
@@ -41,11 +58,8 @@ public class FreshFruitNeed : DynamicNeed
         string tip = base.GetTipString();
 
         // Add fresh fruit-specific details
-        
         tip += "\n\n";
-               
-        tip += "MMNeedFreshFruit".Translate(CurInstantLevel.ToStringPercent());
-    
+        tip += "MMNeedFreshFruit".Translate(CurInstantLevel.ToStringPercent()); // Ensure translation key exists
 
         return tip;
     }

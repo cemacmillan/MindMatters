@@ -18,7 +18,7 @@ namespace MindMatters
 
                // MindMattersUtilities.DebugLog($"Checking ThoughtState for pawn {p.LabelShort}");
 
-                if (!p.story.traits.HasTrait(MindMattersTraits.Unstable))
+                if (!p.story.traits.HasTrait(MindMattersTraitDef.Unstable))
                 {
                    // MindMattersUtilities.DebugLog($"Pawn {p.LabelShort} does not have Unstable trait.");
                     return ThoughtState.Inactive;

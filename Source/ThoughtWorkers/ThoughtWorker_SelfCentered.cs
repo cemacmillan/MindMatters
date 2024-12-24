@@ -8,7 +8,7 @@ namespace MindMatters
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
             // A pawn without the SelfCentered trait is not affected
-            if (!p.story.traits.HasTrait(MindMattersTraits.SelfCentered))
+            if (!p.story.traits.HasTrait(MindMattersTraitDef.SelfCentered))
             {
                 return ThoughtState.Inactive;
             }

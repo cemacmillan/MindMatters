@@ -8,7 +8,7 @@ namespace MindMatters
     {
         protected override ThoughtState CurrentStateInternal(Pawn p)
         {
-            if (p?.Map == null || !p.story.traits.HasTrait(MindMattersTraits.Organized))
+            if (p?.Map == null || !p.story.traits.HasTrait(MindMattersTraitDef.Organized))
             {
                 return ThoughtState.Inactive;
             }

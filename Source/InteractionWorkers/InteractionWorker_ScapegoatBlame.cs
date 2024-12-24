@@ -21,7 +21,7 @@ namespace MindMatters
             if (initiator.needs.mood.CurLevelPercentage > 0.7f ||
                 victimManager.AlreadyBlamedThisCycle(initiator) ||
                 initiator.story.traits.HasTrait(TraitDefOf.Kind) ||
-                initiator.story.traits.HasTrait(MindMattersTraits.TenderHearted)) // Assuming TenderHearted is a defined TraitDef
+                initiator.story.traits.HasTrait(MindMattersTraitDef.TenderHearted)) // Assuming TenderHearted is a defined TraitDef
             {
                 return 0f;
             }

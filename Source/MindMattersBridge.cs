@@ -3,68 +3,88 @@ using System.Collections.Generic;
 using System.Reflection;
 using Verse;
 
-// Note: committed version before experiments
-
-namespace MindMatters;
-
-public class MindMattersBridge
+namespace MindMatters
 {
-    public static void HandlePositiveInteraction(Pawn initiator, float probability, string eventType, int valency)
+    public static class MindMattersBridge
     {
-        // Convert the int to ExperienceValency
-        ExperienceValency valencyEnum = (ExperienceValency)valency;
+        private static MindMattersExperienceComponent experienceComponent;
 
-        // Check if experience should be added based on probability
-        if (UnityEngine.Random.Range(0f, 1f) < probability)
-        {
-            MindMattersUtilities.DebugLog($"Adding experience for {initiator} with event type {eventType} and valency {valencyEnum}");
-            // Add the experience to the initiator
-            MindMattersUtilities.AddExperience(initiator, eventType, valencyEnum);
-        }
-    }
+        public static bool IsInitialized { get; private set; }
 
-    public static void Initialize()
-    {
-        if (MindMattersMod.IsPositiveConnectionsActive)
+        public static void Initialize()
         {
-            // List of interaction worker types and LordJobs
-            var interactionWorkerTypes = new List<string>
+            if (!ModsConfig.IsActive("cem.mindmatters"))
             {
-                "PositiveConnectionsNmSpc.InteractionWorker_Compliment",
-                "PositiveConnectionsNmSpc.InteractionWorker_DiscussIdeoligion",
-                "PositiveConnectionsNmSpc.InteractionWorker_Gift",
-                "PositiveConnectionsNmSpc.InteractionWorker_GiveComfort",
-                "PositiveConnectionsNmSpc.InteractionWorker_Mediation",
-                "PositiveConnectionsNmSpc.InteractionWorker_SharedPassion",
-                "PositiveConnectionsNmSpc.InteractionWorker_SkillShare",
-                "PositiveConnectionsNmSpc.InteractionWorker_Storytelling"
+                MindMattersUtilities.DebugWarn("[MindMattersBridge] Mind Matters is not active. Bridge initialization skipped.");
+                return;
+            }
+
+            experienceComponent = MindMattersExperienceComponent.GetOrCreateInstance();
+
+            if (experienceComponent == null)
+            {
+                Log.Error("[MindMattersBridge] Failed to retrieve MindMattersExperienceComponent. Initialization aborted.");
+                return;
+            }
+
+            MindMattersUtilities.DebugWarn("[MindMattersBridge] Successfully initialized with MindMattersExperienceComponent.");
+        }
+        
+        /*
+        public static void Initialize()
+        {
+            if (!ModsConfig.IsActive("cem.mindmatters"))
+            {
+                MindMattersUtilities.DebugWarn("[MindMattersBridge] Mind Matters is not active. Bridge initialization skipped.");
+                return;
+            }
+
+            // Directly retrieve the component using RimWorld's GameComponent system
+            experienceComponent = Current.Game.GetComponent<MindMattersExperienceComponent>();
+
+            if (experienceComponent == null)
+            {
+                throw new Exception("[MindMattersBridge] Failed to retrieve a valid MindMattersExperienceComponent. Ensure Mind Matters is loaded correctly.");
+            }
+
+            MindMattersUtilities.DebugLog("[MindMattersBridge] Successfully initialized with MindMattersExperienceComponent.");
+        }
+        */
+        
+        // Add an experience to a pawn
+        public static void AddExperience(Pawn pawn, string eventType, ExperienceValency valency, HashSet<string> tags = null)
+        {
+            if (pawn == null || string.IsNullOrEmpty(eventType))
+            {
+                throw new ArgumentException("[MindMattersBridge] Invalid parameters for AddExperience.");
+            }
+
+            if (experienceComponent == null)
+            {
+                throw new InvalidOperationException("[MindMattersBridge] Attempted to add an experience, but the bridge is not initialized.");
+            }
+
+            Experience experience = new Experience(eventType, valency)
+            { 
+                Flags = tags ?? new HashSet<string>()
             };
 
-            foreach (var workerType in interactionWorkerTypes)
+            experienceComponent.AddExperience(pawn, experience);
+            MindMattersUtilities.DebugLog($"[MindMattersBridge] Added experience '{eventType}' ({valency}) for {pawn.LabelShort}.");
+        }
+
+        // Example specific handler: Positive interactions from Positive Connections
+        public static void HandlePositiveInteraction(Pawn initiator, string eventType, ExperienceValency valency, float probability)
+        {
+            if (initiator == null || string.IsNullOrEmpty(eventType))
             {
-                // Get the InteractionWorker type from the Positive Connections assembly
-                Type interactionWorkerType = Type.GetType(workerType + ", PositiveConnections");
+                throw new ArgumentException("[MindMattersBridge] Invalid parameters for HandlePositiveInteraction.");
+            }
 
-                if (interactionWorkerType == null)
-                {
-                    Log.Error($"Failed to get type {workerType}");
-                    continue;  // Skip to the next worker type
-                }
-
-                // Get the OnPositiveInteraction event from the InteractionWorker type
-                EventInfo onPositiveInteractionEvent = interactionWorkerType.GetEvent("OnPositiveInteraction");
-
-                if (onPositiveInteractionEvent == null)
-                {
-                    Log.Error($"Failed to get OnPositiveInteraction event from {workerType}");
-                    continue;  // Skip to the next worker type
-                }
-
-                // Create a delegate that references the HandlePositiveInteraction method
-                Delegate handler = Delegate.CreateDelegate(onPositiveInteractionEvent.EventHandlerType, typeof(MindMattersBridge).GetMethod("HandlePositiveInteraction"));
-
-                // Use reflection to subscribe to the event
-                onPositiveInteractionEvent.AddEventHandler(null, handler);
+            if (UnityEngine.Random.Range(0f, 1f) < probability)
+            {
+                MindMattersUtilities.DebugLog($"[MindMattersBridge] Handling positive interaction '{eventType}' ({valency}) for {initiator.LabelShort}.");
+                AddExperience(initiator, eventType, valency, new HashSet<string> { "PositiveInteraction" });
             }
         }
     }

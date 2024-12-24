@@ -17,7 +17,7 @@ namespace MindMatters
         protected override void AuraEffect(Thing source, Pawn hearer)
         {
             // Skip over psychopathic, desensitized pawns or pawns without mood
-            if (hearer.story != null && (hearer.story.traits.HasTrait(TraitDefOf.Psychopath) || hearer.story.traits.HasTrait(MindMattersTraits.Desensitized)) || hearer.needs?.mood == null)
+            if (hearer.story != null && (hearer.story.traits.HasTrait(TraitDefOf.Psychopath) || hearer.story.traits.HasTrait(MindMattersTraitDef.Desensitized)) || hearer.needs?.mood == null)
             {
                 return;
             }

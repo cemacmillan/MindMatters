@@ -5,7 +5,7 @@ using RimWorld;
 using System.Linq;
 using UnityEngine;
 using static MindMatters.MindMattersGameComponent;
-using static MindMatters.MindMattersExperienceComponent;
+// using static MindMatters.MindMattersExperienceComponent;
 
 namespace MindMatters
 {
@@ -15,7 +15,18 @@ namespace MindMatters
 
         public const float AloneDistanceSquared = 9f * 9f;  // Adjust this to match the "alone" radius
 
-  
+        private static readonly HashSet<int> LoggedWarnings = new();
+
+        public static void GripeOnce(string message)
+        {
+            int hash = Animator.StringToHash(message);
+            if (!LoggedWarnings.Contains(hash))
+            {
+                LoggedWarnings.Add(hash);
+                Log.WarningOnce($"[MindMatters] {message}", hash);
+            }
+        }
+        
         public static void DebugLog(string message)
         {
             if (MindMattersMod.settings?.enableLogging == true)

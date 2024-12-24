@@ -10,5 +10,6 @@ public interface IDynamicNeed
     bool ShowOnNeedList { get; } // Determines if it's visible in the Need tab
     void NeedInterval(); // Called periodically for updates
     string GetTipString(); // Tooltip for the need in the UI
+    void Initialize(Pawn pawn, NeedDef def);
     void ExposeData(); // Save/load functionality
 }
