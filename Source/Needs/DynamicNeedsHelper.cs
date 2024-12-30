@@ -22,12 +22,13 @@ public static class DynamicNeedHelper
 
          */
      
-        RegisterNeed<FormalityNeed>(DynamicNeedsBitmap.Formality);
-        RegisterNeed<ConstraintNeed>(DynamicNeedsBitmap.Constraint);
-        RegisterNeed<FreshFruitNeed>(DynamicNeedsBitmap.FreshFruit);
+        //RegisterNeed<FormalityNeed>(DynamicNeedsBitmap.Formality);
+        //RegisterNeed<ConstraintNeed>(DynamicNeedsBitmap.Constraint);
+        // RegisterNeed<FreshFruitNeed>(DynamicNeedsBitmap.FreshFruit);
        
     }
 
+    /*
     public static void RegisterNeed<TNeed>(DynamicNeedsBitmap bitmap) where TNeed : IDynamicNeed
     {
         NeedBitmapMap[typeof(TNeed)] = bitmap;
@@ -48,6 +49,7 @@ public static class DynamicNeedHelper
             }
         }
     }
+    */
 
     public static DynamicNeedsBitmap AddNeed(DynamicNeedsBitmap current, DynamicNeedsBitmap toAdd)
     {

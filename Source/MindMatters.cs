@@ -8,15 +8,23 @@ namespace MindMatters;
 public class MindMattersMod : Mod
 {
     public static MindMattersSettings settings;
-    public static bool IsVTEActive;
+    public static bool IsVteActive { get; set; }
     public static bool IsPositiveConnectionsActive;
+    
+    // overall readiness to function, API readiness
+
+    public static bool IsSystemReady { get; set; }
+    public static bool ReadyToParley { get; set; }
 
     public MindMattersMod(ModContentPack content) : base(content)
     {
         // Initialize settings
         settings = GetSettings<MindMattersSettings>();
-        IsVTEActive = ModsConfig.IsActive("VanillaExpanded.VanillaTraitsExpanded");
+        
+        IsVteActive = ModsConfig.IsActive("VanillaExpanded.VanillaTraitsExpanded");
         IsPositiveConnectionsActive = ModsConfig.IsActive("cem.PositiveConnections");
+        IsSystemReady = false;
+        ReadyToParley = false;
 
         // Initialize MindMattersGameComponent
         Current.Game?.components.Add(new MindMattersGameComponent(Current.Game));
@@ -54,12 +62,19 @@ public class MindMattersSettings : ModSettings
     // ReSharper disable once MemberCanBePrivate.Global
     public float someSetting = 1.0f;
     public bool enableLogging = false; // Add EnableLogging toggle
+    public bool enableAPI;
+    public bool NeedsApplyToGuests;
+    public bool DoNotAddNeeds;
 
     public override void ExposeData()
     {
         base.ExposeData();
-        Scribe_Values.Look(ref someSetting, "someSetting", 1.0f);
-        Scribe_Values.Look(ref enableLogging, "EnableLogging", false); // Save/Load EnableLogging
+        
+        Scribe_Values.Look(ref someSetting, "DummySlider", 1.0f);
+        Scribe_Values.Look(ref enableAPI, "EnableAPI", true);
+        Scribe_Values.Look(ref enableLogging, "EnableLogging", false);
+        Scribe_Values.Look(ref NeedsApplyToGuests, "NeedsApplyToGuests", false);
+        Scribe_Values.Look(ref DoNotAddNeeds, "DoNotAddNeeds", true);
     }
 
     public void DoWindowContents(Rect inRect)
@@ -68,11 +83,14 @@ public class MindMattersSettings : ModSettings
         listingStandard.Begin(inRect);
 
         // Existing slider setting
-        listingStandard.Label("Some setting: " + someSetting.ToString("0.0"));
+        listingStandard.Label("Slider if you get bored: " + someSetting.ToString("0.0"));
         someSetting = listingStandard.Slider(someSetting, 0f, 2f);
 
         // Add EnableLogging checkbox
         listingStandard.CheckboxLabeled("Enable detailed logging", ref enableLogging, "Toggle detailed logging output for debugging purposes.");
+        listingStandard.CheckboxLabeled("Enable API for other mods", ref enableAPI, "Toggle interaction with other mods via the API.");
+        listingStandard.CheckboxLabeled("Guests have transient Needs like other pawns", ref NeedsApplyToGuests, "Toggle interaction with other mods via the API.");
+        listingStandard.CheckboxLabeled("Do not touch Needs directly: Trust The Game", ref DoNotAddNeeds, "Toggle interaction with other mods via the API.");
 
         listingStandard.End();
         LoadedModManager.GetMod<MindMattersMod>().WriteSettings();

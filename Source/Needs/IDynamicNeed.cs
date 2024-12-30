@@ -12,4 +12,5 @@ public interface IDynamicNeed
     string GetTipString(); // Tooltip for the need in the UI
     void Initialize(Pawn pawn, NeedDef def);
     void ExposeData(); // Save/load functionality
+    NeedDef NeedDef { get; } // Expose the NeedDef as a property
 }

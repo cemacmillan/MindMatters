@@ -103,7 +103,8 @@ public class MindMattersExperienceComponent : GameComponent
             return new List<Experience>();
         }
 
-        List<Experience>? experiences;
+        // Fixme Inline or verify declaration sense.
+        List<Experience> experiences;
         if (!pawnExperiences.TryGetValue(pawn, out experiences))
         {
             experiences = new List<Experience>();

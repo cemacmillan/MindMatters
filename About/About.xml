@@ -4,18 +4,11 @@
 
 	<author>cem</author>
 
-	<packageId>cem.mindmatters</packageId>
+	<packageId>cem.mindmatterspr</packageId>
 
-	<description>Welcome to 'Mind Matters', a mod that adds a depth of psychology to your pawns in RimWorld. Pawns aren't just about their skills and traits anymore, their psychology matters too!
-
-Does your colony have a stoic individual who stays calm under pressure? Or maybe an empath who is adept at soothing tensions and disputes? With 'Mind Matters', every pawn's mind truly matters in shaping the narrative and development of your colony.
-
-As a player, you will have more factors to consider in managing your colony. The understanding of your pawns' psychological makeup will be crucial in making decisions.
-
-'Mind Matters' doesn't just add depth to the pawns, it adds depth to the stories you will experience in RimWorld. Are you ready to delve into the psyche of your pawns?</description>
+	<description>Mind Matters aims to transform pawn individuality into a deeper, more dynamic experience. It redefines pawns as adaptive beings, shaped not just by Traits, Skills, Stats, and Gear, but by their personal encounters and evolving responses to life on the Rim.</description>
 
 	<supportedVersions>
-		<li>1.4</li>
 		<li>1.5</li>
 	</supportedVersions>
 

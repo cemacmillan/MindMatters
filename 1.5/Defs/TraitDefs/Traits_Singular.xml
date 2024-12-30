@@ -57,6 +57,29 @@
       <li>Violent</li>
     </requiredWorkTags>
 </TraitDef>
+<TraitDef>
+  <defName>MM_Assertive</defName>
+  <commonality>0.4</commonality>
+  <degreeDatas>
+    <li>
+      <degree>1</degree>
+      <label>assertive</label>
+      <description>[PAWN_nameDef] is confident and direct, often taking charge of situations and expressing [PAWN_possessive] opinions clearly. While [PAWN_pronoun] thrives in leadership roles, [PAWN_pronoun] may come across as domineering in group settings.</description>
+      <statOffsets>
+        <SocialImpact>0.15</SocialImpact>
+        <NegotiationAbility>0.2</NegotiationAbility>
+        <MentalBreakThreshold>-0.05</MentalBreakThreshold>
+      </statOffsets>
+    </li>
+  </degreeDatas>
+  <conflictingTraits>
+    <li>MM_Submissive</li>
+    <li>Wimp</li>
+    <li>MM_Relaxed</li>
+    <li>MM_TenderHearted</li>
+    <li>Neurotic</li>
+  </conflictingTraits>
+</TraitDef>
     <TraitDef>
     <defName>MM_OpenMinded</defName>
     <commonality>0.5</commonality>
@@ -135,6 +158,31 @@
             </li>
         </degreeDatas>
     </TraitDef>
+    <TraitDef>
+  <defName>MM_Perfectionist</defName>
+  <commonality>0.4</commonality>
+  <degreeDatas>
+    <li>
+      <degree>1</degree>
+      <label>perfectionist</label>
+      <description>[PAWN_nameDef] is highly detail-oriented and driven to do everything perfectly, which can slow [PAWN_objective] down but results in exceptional quality when [PAWN_pronoun] succeeds. [PAWN_pronoun] becomes upset when [PAWN_possessive] high standards aren’t met.</description>
+      <statOffsets>
+        <WorkSpeedGlobal>-0.15</WorkSpeedGlobal>
+        <ConstructionSpeed>-0.15</ConstructionSpeed>
+        <ShootingAccuracyPawn>0.1</ShootingAccuracyPawn>
+      </statOffsets>
+    </li>
+  </degreeDatas>
+  <conflictingTraits>
+    <li>MM_Relaxed</li>
+      <!--
+       <li>MM_Carefree</li>
+      -->
+    <li>Industriousness</li>
+    <li>Neurotic</li>
+  </conflictingTraits>
+</TraitDef>
+
     <TraitDef>
         <defName>MM_Prude</defName>
         <label>Prude</label>
@@ -238,6 +286,30 @@
             <li MayRequire="Ludeon.RimWorld.Biotech">Recluse</li>
         </conflictingTraits>
     </TraitDef>
+    <TraitDef>
+  <defName>MM_Submissive</defName>
+  <commonality>0.5</commonality>
+  <degreeDatas>
+    <li>
+      <degree>1</degree>
+      <label>submissive</label>
+      <description>[PAWN_nameDef] tends to defer to others, often looking for guidance and preferring to avoid conflict. [PAWN_pronoun] works better when directed by others, but may struggle with leadership roles.</description>
+      <statOffsets>
+        <WorkSpeedGlobal>-0.1</WorkSpeedGlobal>
+        <NegotiationAbility>-0.2</NegotiationAbility>
+      </statOffsets>
+    </li>
+  </degreeDatas>
+  <conflictingTraits>
+    <li>Psychopath</li>
+    <li>Bloodlust</li>
+    <li>TooSmart</li>
+    <li>Masochist</li>
+    <li>Industriousness</li>
+    <li>MM_Assertive</li>
+    <li>MM_TenderHearted</li>
+  </conflictingTraits>
+</TraitDef>
     <TraitDef>
         <defName>MM_Bipolar</defName>
         <commonality>0.1</commonality>

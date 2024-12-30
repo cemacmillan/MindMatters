@@ -37,8 +37,8 @@ namespace MindMatters
         public static readonly TraitDef Jealous = TraitDef.Named("Jealous");
         public static readonly TraitDef Nimble = TraitDef.Named("Nimble");
         public static readonly TraitDef NaturalMood = TraitDef.Named("NaturalMood");
-        public static readonly TraitDef Submissive = TraitDef.Named("VTE_Submissive");
-        public static readonly TraitDef Perfectionist = TraitDef.Named("VTE_Perfectionist");
+        public static readonly TraitDef Submissive = TraitDef.Named("MM_Submissive");
+        public static readonly TraitDef Perfectionist = TraitDef.Named("MM_Perfectionist");
        
     }
 }

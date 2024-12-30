@@ -13,9 +13,9 @@ namespace MindMatters
 
         public static void Initialize()
         {
-            if (!ModsConfig.IsActive("cem.mindmatters"))
+            if (!ModsConfig.IsActive("cem.mindmatters") && !ModsConfig.IsActive("cem.mindmatterspr"))
             {
-                MindMattersUtilities.DebugWarn("[MindMattersBridge] Mind Matters is not active. Bridge initialization skipped.");
+                MindMattersUtilities.GripeOnce("[MindMattersBridge] Mind Matters is not active because no Mind Matters Candidate Mod. Bridge initialization skipped.");
                 return;
             }
 

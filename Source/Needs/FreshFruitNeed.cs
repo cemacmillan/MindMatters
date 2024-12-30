@@ -7,32 +7,63 @@ namespace MindMatters;
 
 public class FreshFruitNeed : DynamicNeed
 {
-    public override DynamicNeedCategory Category => DynamicNeedCategory.Luxury; // Override the category if needed
-
+    private float curLevel;
     public FreshFruitNeed() : base()
     {
-        
     }
 
+    // The reflection-friendly constructor:
+    public FreshFruitNeed(Pawn pawn) : base(pawn)
+    {
+    }
+
+    // The existing two-arg constructor:
     public FreshFruitNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
     {
-        
     }
 
-    // Use DefaultNeedDef for fallback NeedDef assignment during initialization
+    // Provide a fallback def in case the reflection path uses (Pawn) only:
     protected override NeedDef DefaultNeedDef()
     {
-        return DefDatabase<NeedDef>.GetNamed("FreshFruitNeed", errorOnFail: true); // Replace with the correct NeedDef name
+        return DefDatabase<NeedDef>.GetNamedSilentFail("FreshFruitNeed");
     }
 
+    public override void Initialize(Pawn pawn, NeedDef def)
+    {
+        base.Initialize(pawn, def);
+    }
+
+    // The new override to control who "should" have this need:
+    public override bool ShouldPawnHaveThisNeed(Pawn pawn)
+    {
+        if (pawn?.story?.traits == null)
+        {
+           // MMToolkit.GripeOnce($"[MindMatters] Pawn {pawn?.LabelShort} has no traits. FreshFruitNeed => false");
+            return false;
+        }
+
+        bool hasSelfCentered = pawn.story.traits.HasTrait(MindMattersTraitDef.SelfCentered);
+        int moodDegree = pawn.story.traits.DegreeOfTrait(MindMattersTraitDef.NaturalMood);
+
+        if (hasSelfCentered && moodDegree >= 1)
+        {
+            //MindMattersUtilities.DebugLog($"[MindMatters] Pawn {pawn.LabelShort} meets FreshFruitNeed trait criteria => true");
+            return true;
+        }
+
+        // MindMattersUtilities.DebugLog($"[MindMatters] Pawn {pawn.LabelShort} does NOT meet FreshFruitNeed trait criteria => false");
+        return false;
+    }
+
+    // Core loop for adjusting the need each interval:
     protected override void UpdateValue()
     {
-        // Update need level based on fresh fruit presence
-        if (pawn.inventory != null && pawn.inventory.innerContainer.Any(IsFreshFruit))
+        // Adjust need level based on fresh fruit presence
+        if (pawn.inventory?.innerContainer.Any(IsFreshFruit) == true)
         {
             CurLevel += 0.1f;
         }
-        else if (pawn.needs.mood?.thoughts?.memories?.Memories
+        else if (pawn.needs?.mood?.thoughts?.memories?.Memories
                      .Any(m => m.def.defName == "AteFreshFruit") == true)
         {
             CurLevel += 0.05f;
@@ -42,25 +73,28 @@ public class FreshFruitNeed : DynamicNeed
             CurLevel -= 0.01f;
         }
 
-        // Clamp CurLevel between 0 and 1
+        // Clamp between 0 and 1
         CurLevel = Mathf.Clamp01(CurLevel);
+        curLevel = CurLevel;
     }
 
     private bool IsFreshFruit(Thing thing)
     {
-        // Example logic: Replace "strawberry" with actual fruit labels or categories
         return thing.def.IsIngestible && thing.def.label.ToLowerInvariant().Contains("strawberry");
     }
 
+    // Additional text in the hover tooltip
     public override string GetTipString()
     {
-        // Start with the base tip string
         string tip = base.GetTipString();
-
-        // Add fresh fruit-specific details
-        tip += "\n\n";
-        tip += "MMNeedFreshFruit".Translate(CurInstantLevel.ToStringPercent()); // Ensure translation key exists
-
+        tip += "\n\n" + "MMNeedFreshFruit".Translate(CurInstantLevel.ToStringPercent());
         return tip;
+    }
+    
+    public override void ExposeData()
+    {
+        base.ExposeData(); 
+        Scribe_Defs.Look(ref def, "def");
+        Scribe_Values.Look(ref curLevel, "curLevel", 0.5f); 
     }
 }

@@ -1,16 +1,118 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-    <!--
     <NeedDef>
-        <defName>FreshFruit</defName>
+        <defName>FreshFruitNeed</defName>
         <needClass>MindMatters.FreshFruitNeed</needClass>
+
         <label>fresh fruit</label>
-        <description>The desire to consume fresh fruit regularly. Satisfying this need improves mood, while neglecting it causes discomfort and irritation.</description>
+        <description>This pawn craves fresh fruit during the morning to stay happy.</description>
+
+        <!-- Typical "Humanlike only" setting, plus only colonists/prisoners -->
         <minIntelligence>Humanlike</minIntelligence>
         <colonistAndPrisonersOnly>true</colonistAndPrisonersOnly>
-        <listPriority>110</listPriority>
+
+        <!-- Whether the need is "frozen" (not updated) while sleeping or in a mental state -->
         <freezeWhileSleeping>true</freezeWhileSleeping>
+        <freezeInMentalState>true</freezeInMentalState>
+
+        <!-- Rate at which the need rises/falls when seeking/falling behind -->
+        <seekerRisePerHour>0.10</seekerRisePerHour>
+        <seekerFallPerHour>0.01</seekerFallPerHour>
+
+        <!-- The priority at which this need is displayed in the Needs tab (lower = shown earlier) -->
+        <listPriority>51</listPriority>
+
+        <!-- If you want Ideology-based precepts that nullify this need, define them here -->
+        <nullifyingPrecepts>
+            <!-- 'MayRequire="Ludeon.RimWorld.Ideology"' is typical so it only applies if Ideology is active -->
+            <li MayRequire="Ludeon.RimWorld.Ideology">Comfort_Ignored</li>
+        </nullifyingPrecepts>
+        <modExtensions>
+            <li Class="MindMatters.DynamicNeedModExtension">
+                <Category>Luxury</Category>
+                <BitmapOverride>FreshFruit</BitmapOverride>
+            </li>
+        </modExtensions>
     </NeedDef>
-    -->
+
+    <NeedDef>
+        <defName>FormalityNeed</defName>
+
+        <!-- The fully qualified class name for your dynamic need. -->
+        <needClass>MindMatters.FormalityNeed</needClass>
+
+        <label>formality</label>
+        <description>This pawn values presenting themselves with proper attire, posture, and etiquette. They gain satisfaction from wearing formal clothing, adhering to social protocols, and maintaining a dignified demeanor.</description>
+
+        <!-- Typical intelligence requirement and colonist/prisoner limitation. -->
+        <minIntelligence>Humanlike</minIntelligence>
+        <colonistAndPrisonersOnly>true</colonistAndPrisonersOnly>
+
+        <!-- Adjust these flags according to how you want the need to behave while sleeping or in mental breaks. -->
+        <freezeWhileSleeping>true</freezeWhileSleeping>
+        <freezeInMentalState>false</freezeInMentalState>
+
+        <!-- Rates at which the need rises (when the pawn is able to be "formal") or falls (when wearing tattered or informal apparel, etc.). -->
+        <seekerRisePerHour>0.15</seekerRisePerHour>
+        <seekerFallPerHour>0.02</seekerFallPerHour>
+
+        <!-- Priority for display in the Needs tab; 
+             set higher or lower relative to your other dynamic needs as you see fit. -->
+        <listPriority>52</listPriority>
+        
+        <nullifyingPrecepts>
+            <!-- 'MayRequire="Ludeon.RimWorld.Ideology"' is typical so it only applies if Ideology is active -->
+            <li MayRequire="Ludeon.RimWorld.Ideology">Comfort_Ignored</li>
+        </nullifyingPrecepts>
+        
+        <modExtensions>
+            <li Class="MindMatters.DynamicNeedModExtension">
+                <Category>Secondary</Category>
+                <!-- <BitmapOverride>Formality</BitmapOverride> -->
+            </li>
+        </modExtensions>
+    </NeedDef>
+
+    <NeedDef>
+        <defName>ConstraintNeed</defName>
+        
+        <needClass>MindMatters.ConstraintNeed</needClass>
+
+        <label>constraint</label>
+        <description>This pawn gains satisfaction from apparel and conditions that limit movement or senses.
+            Extremely tight or shaping clothing (e.g. tight-lacing) gives them a sense of comfort
+            and security. They feel uneasy when clothes are too loose or environments lack
+            any form of restriction.</description>
+
+        
+        <minIntelligence>Humanlike</minIntelligence>
+        <colonistAndPrisonersOnly>true</colonistAndPrisonersOnly>
+
+        <developmentalStageFilter>Adult</developmentalStageFilter>
+        
+        <freezeWhileSleeping>true</freezeWhileSleeping>
+        <freezeInMentalState>false</freezeInMentalState>
+        
+        <seekerRisePerHour>0.20</seekerRisePerHour>
+        <seekerFallPerHour>0.03</seekerFallPerHour>
+        
+        <listPriority>53</listPriority>
+        
+        <nullifyingPrecepts>
+            <!-- 'MayRequire="Ludeon.RimWorld.Ideology"' is typical so it only applies if Ideology is active -->
+            <li MayRequire="Ludeon.RimWorld.Ideology">Comfort_Ignored</li>
+        </nullifyingPrecepts>
+        
+        <modExtensions>
+            <li Class="MindMatters.DynamicNeedModExtension">
+                <Category>Quirk</Category>
+                <!-- <BitmapOverride>Constraint</BitmapOverride> -->
+            </li>
+        </modExtensions>
+    </NeedDef>
+    
+    
+    
+    
 </Defs>

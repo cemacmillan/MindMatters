@@ -64,7 +64,7 @@ namespace MindMatters
             {
                 hediff.Severity = newSeverity;
                 gameComponent.lastSeverity[p] = newSeverity;
-                MindMattersUtilities.DebugLog($"Setting new severity for pawn {p.Name.ToStringShort}: {newSeverity} (stage {newStage})");
+                MMToolkit.DebugLog($"Setting new severity for pawn {p.Name.ToStringShort}: {newSeverity} (stage {newStage})");
             }, "UpdateBipolarSeverity", false, null);
 
             return ThoughtStateForSeverity(lastSeverity);
@@ -74,7 +74,7 @@ namespace MindMatters
         {
             if (severity > 1.0f || severity < 0.0f)
             {
-                Log.Warning($"Unexpected severity value: {severity}. Defaulting to stage 2.");
+                MMToolkit.GripeOnce($"Unexpected severity value: {severity}. Defaulting to stage 2.");
                 return ThoughtState.ActiveAtStage(2);
             }
             else if (severity >= 0.8)
@@ -102,7 +102,7 @@ namespace MindMatters
 
             if (!possibleStages.Any())
             {
-                Log.Warning("No valid stages for bipolar thought.");
+                MMToolkit.GripeOnce("No valid stages for bipolar thought.");
                 return currentStage;
             }
 

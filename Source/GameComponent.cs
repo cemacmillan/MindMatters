@@ -10,19 +10,34 @@ namespace MindMatters
     public class MindMattersGameComponent : GameComponent
     {
         public static MindMattersGameComponent Instance;
+        
         private MindMattersNeedsMgr needsMgr;
         private OutcomeManager outcomeManager;
         public event Action<Pawn> OnPawnMoodChanged;
+        
+        // Misc fields
+        private bool readyToParley = false;
+        private bool isInitialized = false;
+        private bool shouldRetryApiSetup = true;
+        
+        private int delayBeforeProcessing = 500;
 
+        private int tickCounter = 0;
+        private int longTickCounter = 0;
+        
+        // Possibly to track or store pawn data
         private List<Pawn> pawnKeys;
         private List<int> moodValues;
         private List<Pawn> allPawns;
-        
+
+        // Required in case we have pawns appear after load
+        private List<Pawn> pendingPawnQueue = new List<Pawn>(); 
+
         private MindMattersVictimManager victimManager = MindMattersVictimManager.Instance;
 
-        TraitDef recluseTrait;
-
         private bool debugNeedsRegistry = true;
+
+        TraitDef recluseTrait;
 
         public enum Mood
         {
@@ -32,14 +47,16 @@ namespace MindMatters
         }
 
         public Dictionary<Pawn, float> lastSeverity = new Dictionary<Pawn, float>();
-        public Dictionary<Pawn, Mood> PawnMoods = new Dictionary<Pawn, Mood>();
+        private Dictionary<Pawn, Mood> PawnMoods = new Dictionary<Pawn, Mood>();
         public Dictionary<int, int> BipolarPawnLastCheckedTicks = new Dictionary<int, int>();
         public Dictionary<int, int> PawnLastAloneTicks = new Dictionary<int, int>();
-        public Dictionary<int, int> UnstablePawnLastMentalBreakTicks = new Dictionary<int, int>();
+        private Dictionary<int, int> UnstablePawnLastMentalBreakTicks = new Dictionary<int, int>();
         public Dictionary<int, int> UnstablePawnLastMoodSwitchTicks = new Dictionary<int, int>();
         public Dictionary<int, int> UnstablePawnLastMoodState = new Dictionary<int, int>();
 
+        #pragma warning disable CS8618, CS9264
         public MindMattersGameComponent(Game game)
+        #pragma warning restore CS8618, CS9264
         {
             outcomeManager = new OutcomeManager();
             recluseTrait = MindMattersTraitDef.Recluse ?? null;
@@ -51,87 +68,184 @@ namespace MindMatters
         {
             return allPawns;
         }
-
+        
         public override void GameComponentTick()
         {
             base.GameComponentTick();
 
-            int currentTick = Find.TickManager.TicksGame;
-
-            // Every game hour (testing for now)
-            if (currentTick % 900000 == 0)
+            // If we haven't waited enough ticks after game load, do nothing
+            if (delayBeforeProcessing > 0)
             {
-                victimManager.DesignateNewVictim();
+                delayBeforeProcessing--;
+                return;
             }
 
-            // Every 5 seconds or so
-            if (currentTick % 300 == 0)
+            // If environment is not ready, skip
+            if (!IsEnvironmentReady())
             {
+                return;
+            }
+
+            // If we haven't done the one-time init
+            if (!isInitialized)
+            {
+                isInitialized = true;
+                MindMattersMod.IsSystemReady = true;
+                
+                // Populate registry after environment is ready
+                DynamicNeedsRegistry.PopulateRegistryFromDefDatabase();
+                MMToolkit.DebugLog("<color=#00CCAA>[Mind Matters]</color> DynamicNeed registry populated.");
+
+                // If user’s settings allow the API
+                if (MindMattersMod.settings.enableAPI)
+                {
+                    readyToParley = true;
+                    MindMattersMod.ReadyToParley = true;
+                    MMToolkit.DebugLog("<color=#00CCAA>[Mind Matters]</color> Ready for action and ready to parley.");
+                }
+                else
+                {
+                    readyToParley = false;
+                    MindMattersMod.ReadyToParley = false;
+                    MMToolkit.DebugLog("<color=#00CCAA>[Mind Matters]</color> Ready for action, but API disabled in settings.");
+                }
+
+                InitializePendingPawns();
+            }
+
+            // Log and debug dynamic needs once
+            if (debugNeedsRegistry)
+            {
+                //MMToolkit.DebugLog("GameComponentTick: NeedDefs");
+                DynamicNeedsRegistry.DebugLogRegisteredDynamicNeeds();
+                debugNeedsRegistry = false;
+            }
+
+            // Minor ticks (every 250 ticks)
+            if (SimulateRareTick(600))
+            {
+                ProcessPendingPawns(); // Add dynamic needs for newly spawned or pending pawns
+                needsMgr.ProcessNeeds(null,DynamicNeedCategory.Primal);
+            }
+
+            // Medium ticks (every 1200 ticks)
+            if (SimulateLongTick(1200))
+            {
+                // If we had delayed the API setup, check again
+                if (shouldRetryApiSetup && readyToParley)
+                {
+                    readyToParley = true;
+                    shouldRetryApiSetup = false;
+                }
+
                 ProcessTraitsForAllPawns();
+                needsMgr.ProcessNeeds(null, DynamicNeedCategory.Secondary);
+                outcomeManager.ProcessOutcomes(); // e.g. experiences
             }
 
-            // Every quarter game day (6 hours)
-            if (currentTick % 15000 == 0)
+            // Longer tick (every 3600)
+            if (SimulateLongTick(3600))
             {
-                outcomeManager.ProcessOutcomes();
-            }
-
-            // Every day
-            if (currentTick % 60000 == 0)
-            {
+                // If you want a pass that ensures *all* dynamic needs are up to date:
+                needsMgr.ProcessNeeds(null,null); // no category => process all categories
                 CheckBipolarTraitsForAllPawns();
             }
 
-            if(debugNeedsRegistry) {
-                MMToolkit.DebugLog("GameComponentTick: NeedDefs");
-                DynamicNeedFactory.DebugLogRegisteredDynamicNeeds(); // Ensures one-time call
-                debugNeedsRegistry = false;
-            }
-            
-            if (currentTick % 300 == 0) // Every 5 seconds
+            // Very long (90k) => once a day or so
+            if (SimulateLongTick(90000))
             {
-                needsMgr.ProcessNeeds(DynamicNeedCategory.Primal);
+                victimManager.DesignateNewVictim();
+            }
+        }
+
+        private bool SimulateRareTick(int interval)
+        {
+            tickCounter++;
+            if (tickCounter >= interval)
+            {
+                tickCounter = 0;
+                return true;
+            }
+            return false;
+        }
+
+        private bool SimulateLongTick(int interval)
+        {
+            longTickCounter++;
+            if (longTickCounter >= interval)
+            {
+                longTickCounter = 0;
+                return true;
+            }
+            return false;
+        }
+
+        // Decide how to define readiness
+        private bool IsEnvironmentReady()
+        {
+            // Must have at least one map loaded
+            if (Find.CurrentMap == null || Find.Maps == null || Find.Maps.Count == 0)
+                return false;
+
+            // Must have at least one playable pawn
+            if (!Find.CurrentMap.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any())
+                return false;
+
+            // Ensure managers are not null
+            if (needsMgr == null || outcomeManager == null)
+                return false;
+
+            return true;
+        }
+
+        private void InitializePendingPawns()
+        {
+            pendingPawnQueue.AddRange(PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned);
+            ProcessPendingPawns(); // immediate pass
+        }
+        
+        // pendingPawnQueue is correct name
+        private void ProcessPendingPawns()
+        {
+            if (pendingPawnQueue.Count == 0)
+                return;
+
+            var processedPawns = new List<Pawn>();
+
+            foreach (var pawn in pendingPawnQueue)
+            {
+                if (pawn.Spawned && pawn.needs != null)
+                {
+                    // Initialize dynamic needs for this pawn
+                    needsMgr.InitializePawnNeeds(pawn);
+                    processedPawns.Add(pawn);
+                }
             }
 
-            if (currentTick % 600 == 0) // Every 10 seconds
-            {
-                needsMgr.ProcessNeeds(DynamicNeedCategory.Secondary);
-            }
-
-            if (currentTick % 1200 == 0) // Every 20 seconds
-            {
-                needsMgr.ProcessAllNeeds();
-            }
-            
-
+            // Remove processed pawns from the queue
+            pendingPawnQueue = pendingPawnQueue.Except(processedPawns).ToList();
         }
 
         private void ProcessTraitsForAllPawns()
         {
             allPawns = PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned;
-
-            if (allPawns == null)
-            {
-                return;
-            }
+            if (allPawns == null) return;
 
             foreach (Pawn pawn in allPawns)
             {
-                if (pawn == null || pawn.story == null || pawn.story.traits == null)
-                {
-                    continue;
-                }
-
+                if (pawn?.story?.traits == null) continue;
                 var traits = pawn.story.traits;
 
+                // Example: If certain traits + "pawn alone" => do something
                 if ((traits.HasTrait(MindMattersTraitDef.Outgoing) ||
                      traits.HasTrait(MindMattersTraitDef.Reserved) ||
                      (recluseTrait != null && traits.HasTrait(recluseTrait))) &&
-                    MindMattersUtilities.IsPawnAlone(pawn,allPawns))
+                    MindMattersUtilities.IsPawnAlone(pawn, allPawns))
                 {
                     PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
                 }
 
+                // Example: if Unstable => handle logic
                 if (traits.HasTrait(MindMattersTraitDef.Unstable) && pawn.MentalState != null)
                 {
                     ProcessUnstableTrait(pawn);
@@ -160,21 +274,17 @@ namespace MindMatters
 
         private void CheckBipolarTraitsForAllPawns()
         {
+            if (allPawns == null) return;
+
             foreach (Pawn pawn in allPawns)
             {
-                if (pawn == null || pawn.story == null || pawn.story.traits == null)
-                {
-                    continue;
-                }
-
+                if (pawn?.story?.traits == null) continue;
                 if (pawn.story.traits.HasTrait(MindMattersTraitDef.Bipolar))
                 {
                     MindMattersUtilities.UpdateBipolarPawnTicks(pawn, BipolarPawnLastCheckedTicks);
                 }
             }
         }
-
-
 
         public override void ExposeData()
         {
@@ -195,14 +305,18 @@ namespace MindMatters
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
-                PawnMoods = pawnKeys.Zip(moodValues, (key, value) => new { Key = key, Value = (Mood)value })
-                    .ToDictionary(x => x.Key, x => x.Value);
+                // Rebuild PawnMoods
+                PawnMoods = new Dictionary<Pawn, Mood>();
+                if (pawnKeys != null && moodValues != null)
+                {
+                    PawnMoods = pawnKeys
+                        .Zip(moodValues, (key, value) => new { Key = key, Value = (Mood)value })
+                        .ToDictionary(x => x.Key, x => x.Value);
+                }
 
-                UnstablePawnLastMentalBreakTicks = UnstablePawnLastMentalBreakTicks ?? new Dictionary<int, int>();
-                UnstablePawnLastMoodSwitchTicks = UnstablePawnLastMoodSwitchTicks ?? new Dictionary<int, int>();
+                UnstablePawnLastMentalBreakTicks ??= new Dictionary<int, int>();
+                UnstablePawnLastMoodSwitchTicks ??= new Dictionary<int, int>();
             }
         }
     }
-    
-    
 }

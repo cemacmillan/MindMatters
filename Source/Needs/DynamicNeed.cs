@@ -7,83 +7,96 @@ namespace MindMatters
 {
     public enum DynamicNeedCategory
     {
-        Primal, // Core, instinctual needs (e.g., Hunger, Thirst)
-        Secondary, // Acquired needs from experiences (e.g., addictive pollen)
-        Quirk, // Individualized behaviors or preferences (e.g., StableViceNeed)
-        Phobia, // Fear-based needs or aversions (e.g., FireAvoidance)
-        Luxury, // Optional high-level needs (e.g., fine dining, aesthetics)
-        Animal, // Needs exclusive to animals (e.g., RearingDisplay)
-        Machine, // Needs exclusive to machines (e.g., MaintenanceCheck)
-        Eldritch // Mystical, anomalous, or supernatural needs (e.g., DryadFocus)
+        Primal,
+        Secondary,
+        Quirk,
+        Phobia,
+        Luxury,
+        Animal,
+        Machine,
+        Eldritch
     }
 
-    // this is meant to be a reusable class - redesign export or something so pragma can be removed and warning gone
-#pragma warning disable CA1012
     public abstract class DynamicNeed : Need, IDynamicNeed
-#pragma warning restore CA1012
     {
         public virtual DynamicNeedCategory Category => DynamicNeedCategory.Secondary;
 
         private float value;
         private int updateCounter;
-        private const int UpdateFrequency = 4; // Throttle updates to avoid performance hits
+        private const int UpdateFrequency = 4;
 
+        public NeedDef def;
+
+        // This property remains as before:
+        public NeedDef NeedDef
+        {
+            get => def;
+            private set
+            {
+                if (value == null)
+                {
+                    MindMattersUtilities.GripeOnce("[MindMatters] Attempted to assign a null NeedDef. Skipping assignment.");
+                    return; // Soft handling; do not crash
+                }
+                def = value;
+            }
+        }
+
+        // Pawn reference remains as before
         public Pawn Pawn { get; }
 
-        /// <summary>
-        /// Parameterless constructor with this quirky sig is required due to Reflection being used in derived classes.
-        /// This is why the warning is shut off. It will not be explained in derived classes
-        /// 
-        /// </summary>
-        public DynamicNeed() : base()
+        protected DynamicNeed() : base()
         {
+            // InitializeDefaults();
+        }
+
+        protected DynamicNeed(Pawn pawn) : base(pawn)
+        {
+            def = NeedDef;
             InitializeDefaults();
         }
 
-        public DynamicNeed(Pawn pawn) : base(pawn)
+        protected DynamicNeed(Pawn pawn, NeedDef needDef) : base(pawn)
         {
-            InitializeDefaults();
+            def = needDef;
+           // InitializeDefaults();
         }
 
-        public DynamicNeed(Pawn pawn, NeedDef needDef) : base(pawn)
-        {
-            this.def = needDef; // Assign the NeedDef
-            InitializeDefaults();
-        }
-
-// Initialize shared default values
         private void InitializeDefaults()
         {
-            this.threshPercents = new List<float> { 0.25f, 0.5f, 0.75f }; // Default thresholds
-            this.def ??= DefaultNeedDef(); // Assign a default NeedDef if none provided
+            this.threshPercents = new List<float> { 0.25f, 0.5f, 0.75f };
+            // If def is null, we let the subclass provide something in DefaultNeedDef().
+            this.def ??= DefaultNeedDef();
         }
 
-// Helper method for providing a default NeedDef
+        // Subclasses typically override this:
         protected virtual NeedDef DefaultNeedDef()
         {
-            return null; // Override in subclasses or provide a fallback if required
+            return null; // base does nothing
         }
 
-
-        // Initialize method to set up the pawn and def
+        // Overridable init method (as before):
         public virtual void Initialize(Pawn pawn, NeedDef def)
         {
             this.pawn = pawn;
             this.def = def;
         }
 
-
-        public virtual void Initialize(NeedDef def)
+        // The new virtual method:
+        //   Called by Harmony patch or external code to decide if a Pawn "qualifies" for this dynamic need.
+        public virtual bool ShouldPawnHaveThisNeed(Pawn pawn)
         {
-            this.def = def;
+            // Default is just "true" so that if a subclass doesn't override, it won't block anything.
+            // Logging optional—leaving it minimal here.
+            // MindMattersUtilities.DebugLog("[MindMatters] DynamicNeed: default ShouldPawnHaveThisNeed => true for pawn " + pawn);
+            return true;
         }
-
+        
         public override float CurLevel
         {
             get => value;
-            set => this.value = Mathf.Clamp01(value); // Clamp between 0 and 1
+            set => this.value = Mathf.Clamp01(value);
         }
-
         public override bool ShowOnNeedList => true;
 
         public override void NeedInterval()
@@ -92,26 +105,34 @@ namespace MindMatters
             if (updateCounter >= UpdateFrequency)
             {
                 updateCounter = 0;
-                UpdateValue(); // Delegate to derived class for specific logic
+                UpdateValue();
             }
         }
 
-        protected abstract void UpdateValue(); // To be implemented by subclasses
+        protected abstract void UpdateValue();
 
         public override string GetTipString()
         {
-            return $"{def.label}: {(CurLevel * 100f).ToString("F0")}%";
-        }
-
-        public virtual string GetCategorySpecificTip()
-        {
-            return string.Empty; // Override in derived classes
+            return $"{def?.label ?? "Undefined Need"}: {(CurLevel * 100f).ToString("F0")}%";
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Values.Look(ref value, $"curLevel_{def.defName}", 0f);
+
+            // Use defName as a key for serialization
+            string defNameKey = def?.defName ?? "undefined";
+            string curLevelKey = $"curLevel_{defNameKey}";
+            // float oldValue = curLevel;
+
+            // Serialize the current level with a unique key
+            Scribe_Values.Look(ref value, curLevelKey, 0.5f);
+
+            /*if (MindMattersMod.settings.EnableDebugLogging)
+            {
+                string pawnName = pawn?.LabelShort ?? "Unknown Pawn";
+                Log.Message($"[Mind Matters] ExposeData for {pawnName} (ID: {pawn?.thingIDNumber}). Old Value: {oldValue}, New Value: {curLevel}, Key: {curLevelKey}");
+            }*/
         }
     }
 }

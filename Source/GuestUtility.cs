@@ -10,30 +10,42 @@ public static class GuestUtility
     /// </summary>
     public static bool IsGuestOrEquivalent(Pawn pawn)
     {
-        if (pawn == null || pawn.Dead || pawn.Faction == Faction.OfPlayer)
+        if (pawn == null || pawn.Dead) 
+            return false;
+
+        // Instead of `pawn.Faction == Faction.OfPlayer`, do a safer null check:
+        // If the player's faction isn't loaded yet, skip or fallback
+        if (pawn.Faction == null || IsPlayerFaction(pawn.Faction))
         {
-            return false; // Exclude null, dead, or player faction pawns
+            // e.g. if it's the player's faction, treat them as not "guest"
+            return false;
         }
 
-        // Check Hospitality-style guest logic (simulate `IsGuest`)
         if (pawn.guest?.IsPrisoner == false && pawn.guest?.GuestStatus == GuestStatus.Guest)
         {
-            return true; // Recognize non-prisoner guests
+            return true;
         }
-
-        // Slaves
         if (pawn.guest?.GuestStatus == GuestStatus.Slave)
         {
-            return true; // Slaves are "guest-like" in some contexts
+            return true;
         }
-
-        // Quest Lodgers
         if (pawn.IsQuestLodger())
         {
-            return false; // Exclude quest lodgers unless overridden
+            return false;
         }
+        return false;
+    }
 
-        return false; // Fallback
+// Possibly a helper that safely checks if faction is the player's
+    private static bool IsPlayerFaction(Faction faction)
+    {
+        // If 'faction' is null or if player faction isn't known, just return false or skip
+        if (faction == null || Faction.OfPlayerSilentFail == null)
+        {
+            // fallback => not recognized
+            return false;
+        }
+        return faction == Faction.OfPlayerSilentFail;
     }
 
     /// <summary>

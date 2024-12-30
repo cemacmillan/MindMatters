@@ -6,21 +6,49 @@ namespace MindMatters;
 
 public class FormalityNeed : DynamicNeed
 {
-    // Parameterless constructor for serialization
-    public FormalityNeed() : base() 
+    
+    private float curLevel;
+    
+    public FormalityNeed() : base()
     {
     }
+
+    // The reflection-friendly constructor:
+    public FormalityNeed(Pawn pawn) : base(pawn)
+    {
+    }
+
+    // The existing two-arg constructor:
+    public FormalityNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
+    {
+    }
+
+    // Provide a fallback def in case the reflection path uses (Pawn) only:
+    protected override NeedDef DefaultNeedDef()
+    {
+        return DefDatabase<NeedDef>.GetNamedSilentFail("FormalityNeed");
+    }
     
-    [JetBrains.Annotations.UsedImplicitlyAttribute]
+   
     public override void Initialize(Pawn pawn, NeedDef def)
     {
         base.Initialize(pawn, def);
     }
     
-    public FormalityNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef) 
+  
+    public override bool ShouldPawnHaveThisNeed(Pawn pawn)
     {
-    }
+        // Check if the pawn is valid and in a proper state
+        if (pawn == null || pawn.Dead || pawn.Destroyed || pawn.story?.traits == null)
+        {
+            MMToolkit.GripeOnce($"FormalityNeed: Invalid or incomplete pawn detected in ShouldPawnHaveThisNeed. Label: {pawn?.LabelShort ?? "Unknown"}");
+            return false;
+        }
 
+        // Check if the pawn has the relevant traits
+        return pawn.story.traits.HasTrait(MindMattersTraitDef.Reserved) ||
+               pawn.story.traits.HasTrait(MindMattersTraitDef.Prude);
+    }
     // Handles periodic updates to the need value
     protected override void UpdateValue()
     {
@@ -45,10 +73,10 @@ public class FormalityNeed : DynamicNeed
                + "This pawn gains satisfaction from wearing formal or restrictive attire.";
     }
 
-    // Serialize/deserialize custom fields (if needed)
     public override void ExposeData()
     {
-        base.ExposeData();
-        // Add any custom fields here, if necessary
+        base.ExposeData(); 
+        Scribe_Defs.Look(ref def, "def");
+        Scribe_Values.Look(ref curLevel, "curLevel", 0.5f); 
     }
 }

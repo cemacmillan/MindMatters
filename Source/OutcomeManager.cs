@@ -35,7 +35,7 @@ namespace MindMatters
             MindMattersTraitDef.Relaxed,
             MindMattersTraitDef.Reserved,
             MindMattersTraitDef.SelfCentered
-            // Add the other traits here...
+            // Needs updating
         };
 
         private readonly List<TraitDef> losableTraits = new List<TraitDef>
@@ -59,7 +59,7 @@ namespace MindMatters
             MindMattersTraitDef.Relaxed,
             MindMattersTraitDef.Reserved,
             MindMattersTraitDef.SelfCentered
-            // Add the other traits here...
+            // Needs Updating
         };
         // List of traits that make a pawn prone to anxiety
         private readonly List<TraitDef> anxietyProneTraits = new List<TraitDef>
@@ -67,12 +67,12 @@ namespace MindMatters
             MindMattersTraitDef.TenderHearted,
             MindMattersTraitDef.Cautious,
             MindMattersTraitDef.Nerves
-        // Add other traits here
+        // Also update FFS
         };
 
         private readonly List<TraitDef> immunizingTraits = new List<TraitDef>
         {
-            TraitDef.Named("Psychopath"),
+            MindMattersTraitDef.Psychopath,
             MindMattersTraitDef.Desensitized
             // Add other traits here
         };
@@ -169,7 +169,7 @@ namespace MindMatters
         private void ApplyTherapyEffects(Pawn patient)
         {
             // Specify the hediffs associated with trauma and anxiety
-            List<string> hediffNames = new List<string> { "Trauma", "Anxiety" };  // Add or modify the list to match your hediff defNames
+            List<string> hediffNames = new List<string> { "Trauma", "Anxiety" }; // Update FFS
 
             // Gradually reduce the severity of the specified hediffs
             var hediffsToTreat = patient.health.hediffSet.hediffs
@@ -180,13 +180,15 @@ namespace MindMatters
                 hediff.Severity -= 0.1f;
                 if (hediff.Severity <= 0) // Remove the hediff if the severity drops to 0 or below
                 {
+                    // Feature Request: Hold Down on Trauma and Anxiety Hediff after removal
                     patient.health.RemoveHediff(hediff);
                 }
             }
         }
+        // Feature Request - GainTrait with explanation of why....
         private void GainTrait(Pawn pawn)
         {
-            // Choose a random trait to gain, weighted by the defined probabilities
+            // Pick a random Trait among the possible
             TraitDef traitToGain = gainableTraits.RandomElement();
 
             // Determine a valid degree for the trait
@@ -207,6 +209,7 @@ namespace MindMatters
             // Log for debugging
             MindMattersUtilities.DebugLog($"{pawn.Name} gained the {newTrait.Label} trait due to an experience.");
         }
+        // Feature Request - GainTrait with explanation of why....
         private void LoseTrait(Pawn pawn)
         {
             // If the pawn has only one trait, do not remove it
@@ -224,6 +227,8 @@ namespace MindMatters
             {
                 // Choose a random trait to lose
                 Trait traitToLose = pawnLosableTraits.RandomElement();
+                
+                // Feature Request - Precious Traits - lose rarely or never. Kind is a good example
 
                 // Remove the chosen trait from the pawn's traits
                 pawn.story.traits.allTraits.Remove(traitToLose);
@@ -239,6 +244,8 @@ namespace MindMatters
             }
         }
 
+        
+        // Can we track Experiences into a history, so we can pretend to tie trauma to event?
         private bool TryDevelopTrauma(Pawn pawn, float chance)
         {
             if (Rand.Value < chance)
