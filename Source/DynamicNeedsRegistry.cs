@@ -11,8 +11,48 @@ public static class DynamicNeedsRegistry
 {
     private static readonly Dictionary<Type, DynamicNeedProperties> Registry = new();
     private static readonly Dictionary<Type, DynamicNeedsBitmap> BitmapMap = new();
+    private static Dictionary<DynamicNeedsBitmap, NeedDef> bitmapToNeedDefMap = new();
+    
+    
+    // 
+    // used via MindMattersNeedMgr
+    private static readonly Dictionary<DynamicNeedsBitmap, DynamicNeedState> globalStateMap = new();
+    
     private static bool debugLogCalled = false;
+    
+    
+    public static DynamicNeedState GetStateForNeed(DynamicNeedsBitmap bitmap)
+    {
+        // This assumes the registry contains a mapping of bitmaps to global states
+        if (DynamicNeedsRegistry.TryGetGlobalState(bitmap, out var globalState))
+        {
+            return globalState;
+        }
 
+        // If no state is found, return default (None)
+        return DynamicNeedState.None;
+    }
+    
+    public static bool TryGetGlobalState(DynamicNeedsBitmap bitmap, out DynamicNeedState globalState)
+    {
+        return globalStateMap.TryGetValue(bitmap, out globalState);
+    }
+
+  
+    // API Related
+    public static NeedDef? GetNeedDefFromName(string defName)
+    {
+        DynamicNeedProperties? properties = Registry.Values.FirstOrDefault(p => p.DefName.Equals(defName));
+        if (properties != null)
+        {
+            return GetNeedDef(properties.NeedClass);
+        }
+
+        // Fall back to DefDatabase for XML-defined needs
+        return DefDatabase<NeedDef>.GetNamedSilentFail(defName);
+    }
+    
+    
     /// <summary>
     /// Populate the registry from the DefDatabase.
     /// Called during game initialization.
@@ -45,12 +85,14 @@ public static class DynamicNeedsRegistry
         DebugLogRegisteredDynamicNeeds();
     }
 
+    
     /// <summary>
     /// Register a new dynamic need into the registry.
     /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
     public static void Register(DynamicNeedProperties properties)
     {
-        if (Registry.ContainsKey(properties.NeedClass))
+        if (properties != null && Registry.ContainsKey(properties.NeedClass))
             return; // Already registered
 
         Registry[properties.NeedClass] = properties;
@@ -100,17 +142,21 @@ public static class DynamicNeedsRegistry
     private static DynamicNeedsBitmap ResolveBitmapFromDefName(string defName)
     {
         // Validate the defName and ensure it ends with "Need"
-        if (string.IsNullOrEmpty(defName))
+        if (string.IsNullOrEmpty(defName) || !defName.EndsWith("Need"))
         {
-            MindMattersUtilities.GripeOnce("[MindMatters] ResolveBitmapFromDefName received a null or empty defName.");
-            return DynamicNeedsBitmap.None; // Default fallback
+            if (null == defName)
+            {
+                MMToolkit.GripeOnce($"[MindMatters] Null defName provided for bitmap resolution. This is a serious problem. Review any recent changes to mod list. If this doesn't clarify things, please contact the developer.");
+            }
+            else
+            {
+                MMToolkit.GripeOnce(
+                    $"[MindMatters] Invalid defName format for bitmap resolution: {defName}. Expected names ending with 'Need'.");
+            }
+
+            return DynamicNeedsBitmap.None;
         }
 
-        if (!defName.EndsWith("Need"))
-        {
-            MindMattersUtilities.GripeOnce($"[MindMatters] Unexpected defName format for bitmap resolution: {defName}. Expected names ending with 'Need'.");
-            return DynamicNeedsBitmap.None; // Default fallback
-        }
 
         // Extract the bitmap name by removing the "Need" suffix
         string bitmapName = defName.Substring(0, defName.Length - 4);
@@ -122,8 +168,28 @@ public static class DynamicNeedsRegistry
         }
 
         // Log the issue and return a fallback value
-        MindMattersUtilities.GripeOnce($"[MindMatters] No matching bitmap found for defName: {defName}. Check for typos or missing enum values.");
+        MMToolkit.GripeOnce($"[MindMatters] No matching bitmap found for defName: {defName}. Check for typos or missing enum values.");
         return DynamicNeedsBitmap.None; // Default fallback
+    }
+    
+    // Used by API, eventually by NeedsMgr
+    /// <summary>
+    /// Sets the global state for a specified DynamicNeed bitmap.
+    /// Updates the global state map with the provided state.
+    /// </summary>
+    /// <param name="bitmap">The bitmap representing the DynamicNeed.</param>
+    /// <param name="state">The state to set for the DynamicNeed.</param>
+    public static void SetGlobalState(DynamicNeedsBitmap bitmap, DynamicNeedState state)
+    {
+        if (bitmap == DynamicNeedsBitmap.None)
+        {
+            MMToolkit.GripeOnce($"[DynamicNeedsRegistry] Attempted to set state for an invalid bitmap: {bitmap}");
+            return;
+        }
+
+        globalStateMap[bitmap] = state;
+
+        MMToolkit.DebugLog($"[DynamicNeedsRegistry] Global state for bitmap '{bitmap}' set to '{state}'");
     }
 
     /// <summary>
@@ -136,12 +202,12 @@ public static class DynamicNeedsRegistry
 
         debugLogCalled = true;
 
-        MindMattersUtilities.DebugLog("[DynamicNeedsRegistry] Registered Dynamic Needs:");
+        MMToolkit.DebugLog("[DynamicNeedsRegistry] Registered Dynamic Needs:");
 
         foreach (KeyValuePair<Type, DynamicNeedProperties> kvp in Registry)
         {
             DynamicNeedProperties props = kvp.Value;
-            MindMattersUtilities.DebugLog($"  - {props.DefName} ({props.NeedClass.Name}): {props.Label}");
+            MMToolkit.DebugLog($"  - {props.DefName} ({props.NeedClass.Name}): {props.Label}");
         }
     }
     
@@ -198,20 +264,48 @@ public static class DynamicNeedsRegistry
         return needProps?.PawnFilter?.Invoke(pawn) ?? true;
     }
     
+    public static NeedDef GetNeedDefForBitmap(DynamicNeedsBitmap bitmap)
+    {
+        if (bitmapToNeedDefMap.TryGetValue(bitmap, out var needDef))
+        {
+            return needDef;
+        }
+
+        MMToolkit.GripeOnce($"[MindMatters] Could not find NeedDef for bitmap: {bitmap}");
+        return null;
+    }
+    
+    public static void RegisterNeedDef(DynamicNeedsBitmap bitmap, NeedDef needDef)
+    {
+        if (!bitmapToNeedDefMap.ContainsKey(bitmap))
+        {
+            bitmapToNeedDefMap[bitmap] = needDef;
+        }
+    }
+
+
     /// <summary>
-    /// Return the NeedDef (from DefDatabase) associated with a dynamic-need type.
+    /// Return the NeedDef (from DefDatabase or DynamicNeedsRegistry) associated with a dynamic-need type.
     /// Example usage: if you want to do 'pawn.needs.TryGetNeed(...)'.
     /// </summary>
-    public static NeedDef GetNeedDef(Type needType)
+    public static NeedDef? GetNeedDef(Type needType)
     {
-        if (Registry.TryGetValue(needType, out var _))
+        // First, try to resolve from the registry
+        if (Registry.TryGetValue(needType, out var properties))
         {
-            // We default to naming the defName after the Type name
-            // (e.g. "FreshFruitNeed"), as set in RegisterNeed<TNeed>
-            string defName = needType.Name;
-            return DefDatabase<NeedDef>.GetNamedSilentFail(defName);
+            return DefDatabase<NeedDef>.GetNamedSilentFail(properties.DefName);
         }
-        return null;
+
+        // Fallback: Assume defName matches the type name (e.g., "FreshFruitNeed")
+        string fallbackDefName = needType.Name;
+        var needDef = DefDatabase<NeedDef>.GetNamedSilentFail(fallbackDefName);
+
+        if (needDef == null)
+        {
+            MMToolkit.GripeOnce($"[DynamicNeedsRegistry] NeedDef for type '{needType}' not found in registry or DefDatabase.");
+        }
+
+        return needDef;
     }
     
     /// <summary>
@@ -225,8 +319,8 @@ public static class DynamicNeedsRegistry
 
     
     /// <summary>
-    /// Convert dynamic-need type => the associated bit in your enum.
-    /// Typically used by your manager to track which needs a pawn has in pawnNeedsMap.
+    /// Convert dynamic-need type => the associated bit
+    /// Typically used by NeedsMgr to track which needs a pawn has in pawnNeedsMap.
     /// </summary>
     public static DynamicNeedsBitmap GetBitmapForNeed(Type needClass)
     {
@@ -241,16 +335,13 @@ public static class DynamicNeedsRegistry
     /// Overload that takes a Type. 
     /// If the type is found in the registry, we get the NeedDef 
     /// and run VanillaDisablingChecks(...) on it.
-    /// 
-    /// This was your old "ShouldPawnHaveNeed(pawn, needType)" 
-    /// that you used in the aggregator approach.
     /// </summary>
     public static bool ShouldPawnHaveNeed(Pawn pawn, Type needType)
     {
         if (!Registry.TryGetValue(needType, out _))
             return false;
 
-        var needDef = GetNeedDef(needType);
+        NeedDef? needDef = GetNeedDef(needType);
         if (needDef == null)
             return false;
 
@@ -258,6 +349,18 @@ public static class DynamicNeedsRegistry
         return VanillaDisablingChecks(pawn, needDef);
     }
     
+    public static void Initialize()
+    {
+        // Example: Populate the bitmapToNeedDefMap here
+        foreach (NeedDef? needDef in DefDatabase<NeedDef>.AllDefs)
+        {
+            DynamicNeedsBitmap bitmap = GetBitmapForNeed(needDef.needClass);
+            if (bitmap != DynamicNeedsBitmap.None)
+            {
+                RegisterNeedDef(bitmap, needDef);
+            }
+        }
+    }
 }
 
 /// <summary>

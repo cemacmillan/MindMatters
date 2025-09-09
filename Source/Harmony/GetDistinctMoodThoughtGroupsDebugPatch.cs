@@ -49,7 +49,7 @@ public static class Patch_GetDistinctMoodThoughtGroups
                 {
                     if (current.GroupsWith(other))
                     {
-                        MindMattersUtilities.DebugLog($"[Mind Matters] Thought {current.def.defName} (index {i}) groups with {other.def.defName} (index {num}). Total thoughts: {outThoughts.Count}");
+                        MMToolkit.DebugLog($"[Mind Matters] Thought {current.def.defName} (index {i}) groups with {other.def.defName} (index {num}). Total thoughts: {outThoughts.Count}");
                         break;
                     }
                 }

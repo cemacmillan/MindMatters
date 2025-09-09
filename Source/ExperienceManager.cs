@@ -2,31 +2,26 @@
 using System.Linq;
 using RimWorld;
 using Verse;
+using MindMattersInterface;
 
 namespace MindMatters;
 
-public enum ExperienceValency
-{
-    Positive,     // Explicitly good events (compliments, achievements, gifts)
-    Negative,     // Explicitly bad events (insults, failures, trauma)
-    Neutral,      // Neutral events (routine work, non-controversial ceremonies)
-    Eldritch,     // Mysterious, unsettling, or reality-altering events
-    Affirming,    // Experiences reinforcing norms, roles, or ideoligions
-    Humiliating,  // Events that degrade dignity, self-worth, or social standing
-    Exhilarating, // Thrilling, adrenaline-pumping experiences (victories, near misses)
-    Transformative // Events that fundamentally change the pawn's self-concept
-}
 
-public class MindMattersExperienceComponent : GameComponent
+public class MindMattersExperienceComponent : GameComponent, IMindMattersExperienceComponent
 {
     public static MindMattersExperienceComponent Instance { get; private set; } // Singleton instance
 
     private Dictionary<Pawn, List<Experience>> pawnExperiences = new();
+    private MindMattersPsyche psycheSystem;
+
+    // Interface events
+    public event System.Action<Pawn, MindMattersInterface.Experience> OnExperienceAdded;
+    public event System.Action<Pawn, MindMattersInterface.Experience> OnExperienceRemoved;
 
     public MindMattersExperienceComponent(Game game)
     {
         Instance = this; // Initialize the singleton instance
-        MindMattersUtilities.DebugLog("[MindMattersExperienceComponent] Initialized.");
+        //MMToolkit.DebugLog("[MindMattersExperienceComponent] Initialized.");
     }
 
     public override void FinalizeInit()
@@ -35,15 +30,18 @@ public class MindMattersExperienceComponent : GameComponent
         if (Instance == null)
         {
             Instance = this;
-            MindMattersUtilities.DebugLog("[MindMattersExperienceComponent] FinalizeInit completed, instance assigned.");
+            //MMToolkit.DebugLog("[MindMattersExperienceComponent] FinalizeInit completed, instance assigned.");
         }
+        
+        // Initialize Psyche system
+        InitializePsycheSystem();
     }
     
     public static MindMattersExperienceComponent GetOrCreateInstance()
     {
         if (Instance == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] Instance is null. Initializing a new instance.");
+           //MMToolkit.DebugWarn("[MindMattersExperienceComponent] Instance is null. Initializing a new instance.");
             Instance = new MindMattersExperienceComponent(Current.Game);
         }
 
@@ -58,7 +56,7 @@ public class MindMattersExperienceComponent : GameComponent
         if (Find.TickManager.TicksGame % 7500 == 0)
         {
             int expireThreshold = Find.TickManager.TicksGame - GenDate.TicksPerDay;
-            ExpireOldExperiences(expireThreshold);
+            ExpireOldExperiencesInternal(expireThreshold);
         }
 
         // Check for therapy-related thoughts once a day
@@ -68,9 +66,9 @@ public class MindMattersExperienceComponent : GameComponent
         }
     }
 
-    private void ExpireOldExperiences(int expireThreshold, bool isReloaded = false)
+    private void ExpireOldExperiencesInternal(int expireThreshold, bool isReloaded = false)
     {
-        foreach (var pair in pawnExperiences.ToList())
+        foreach (KeyValuePair<Pawn, List<Experience>> pair in pawnExperiences.ToList())
         {
             Pawn pawn = pair.Key;
             List<Experience> experiences = pair.Value;
@@ -91,7 +89,7 @@ public class MindMattersExperienceComponent : GameComponent
 
         if (!isReloaded)
         {
-            MindMattersUtilities.DebugLog("[MindMattersExperienceComponent] Expired old experiences.");
+            MMToolkit.DebugLog("[MindMattersExperienceComponent] Expired old experiences.");
         }
     }
 
@@ -99,7 +97,7 @@ public class MindMattersExperienceComponent : GameComponent
     {
         if (pawn == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] GetOrCreateExperiences called with null pawn.");
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] GetOrCreateExperiences called with null pawn.");
             return new List<Experience>();
         }
 
@@ -118,20 +116,88 @@ public class MindMattersExperienceComponent : GameComponent
     {
         if (pawn == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null pawn.");
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null pawn.");
             return;
         }
 
         if (experience == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null experience.");
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null experience.");
             return;
         }
 
-        var experiences = GetOrCreateExperiences(pawn);
+        List<Experience> experiences = GetOrCreateExperiences(pawn);
         experiences.Add(experience);
 
-        MindMattersUtilities.DebugLog($"[MindMattersExperienceComponent] Added experience {experience.EventType} ({experience.Valency}) for {pawn.LabelShort}");
+        // Trigger the interface event
+        OnExperienceAdded?.Invoke(pawn, ConvertToInterfaceExperience(experience));
+
+                // Process experience through Psyche system
+                if (psycheSystem != null)
+                {
+                    psycheSystem.ProcessExperience(pawn, ConvertToInterfaceExperience(experience));
+                }
+
+        MMToolkit.DebugLog($"[MindMattersExperienceComponent] Added experience {experience.EventType} ({experience.Valency}) for {pawn.LabelShort}");
+    }
+
+    // Interface method: AddExperience for MindMattersInterface.Experience
+    public void AddExperience(Pawn pawn, MindMattersInterface.Experience experience)
+    {
+        if (pawn == null)
+        {
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null pawn.");
+            return;
+        }
+
+        if (experience == null)
+        {
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] AddExperience called with null experience.");
+            return;
+        }
+
+        // Convert to internal Experience type
+        Experience internalExperience = ConvertFromInterfaceExperience(experience);
+        List<Experience> experiences = GetOrCreateExperiences(pawn);
+        experiences.Add(internalExperience);
+
+        // Trigger the interface event
+        OnExperienceAdded?.Invoke(pawn, experience);
+
+        MMToolkit.DebugLog($"[MindMattersExperienceComponent] Added experience {experience.EventType} ({experience.Valency}) for {pawn.LabelShort}");
+    }
+
+    // Interface method: RemoveExperience
+    public bool RemoveExperience(Pawn pawn, string eventType)
+    {
+        if (pawn == null || string.IsNullOrEmpty(eventType))
+        {
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] RemoveExperience called with invalid parameters.");
+            return false;
+        }
+
+        if (!pawnExperiences.TryGetValue(pawn, out var experiences))
+        {
+            return false;
+        }
+
+        var experienceToRemove = experiences.FirstOrDefault(exp => exp.EventType == eventType);
+        if (experienceToRemove != null)
+        {
+            experiences.Remove(experienceToRemove);
+            OnExperienceRemoved?.Invoke(pawn, ConvertToInterfaceExperience(experienceToRemove));
+            return true;
+        }
+
+        return false;
+    }
+
+    // Interface method: GetPawnExperiences (already exists below, just need to make it public)
+
+    // Interface method: ExpireOldExperiences (public wrapper for the private method)
+    public void ExpireOldExperiences(int expireThreshold)
+    {
+        ExpireOldExperiencesInternal(expireThreshold, false);
     }
 
     private void CheckForTherapyThoughtsAndAddExperiences()
@@ -151,45 +217,44 @@ public class MindMattersExperienceComponent : GameComponent
         }
     }
 
-    private bool IsTherapyRelated(Thought thought)
-    {
-        return thought.def.defName == "TherapyRelieved";
-    }
 
     public void OnPawnDowned(Pawn? pawn)
     {
         if (pawn == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] OnPawnDowned called with null pawn.");
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] OnPawnDowned called with null pawn.");
             return;
         }
 
         AddExperience(pawn, new Experience("PawnDowned", ExperienceValency.Negative));
-        MindMattersUtilities.DebugLog($"[MindMattersExperienceComponent] {pawn.LabelShort} has been downed.");
+        MMToolkit.DebugLog($"[MindMattersExperienceComponent] {pawn.LabelShort} has been downed.");
     }
 
     public void OnPawnKilled(Pawn killer)
     {
         if (killer == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] OnPawnKilled called with null killer.");
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] OnPawnKilled called with null killer.");
             return;
         }
 
         AddExperience(killer, new Experience("PawnKilled", ExperienceValency.Neutral));
-        MindMattersUtilities.DebugLog($"[MindMattersExperienceComponent] {killer.LabelShort} killed a pawn.");
+        MMToolkit.DebugLog($"[MindMattersExperienceComponent] {killer.LabelShort} killed a pawn.");
     }
 
-    public List<Experience> GetPawnExperiences(Pawn pawn)
+    public List<MindMattersInterface.Experience> GetPawnExperiences(Pawn pawn)
     {
-        return pawn == null ? new List<Experience>() : GetOrCreateExperiences(pawn);
+        if (pawn == null) return new List<MindMattersInterface.Experience>();
+        
+        var internalExperiences = GetOrCreateExperiences(pawn);
+        return internalExperiences.Select(ConvertToInterfaceExperience).ToList();
     }
 
     public void OnColonistDied(Pawn colonist)
     {
         if (colonist == null)
         {
-            MindMattersUtilities.DebugWarn("[MindMattersExperienceComponent] OnColonistDied called with null colonist.");
+            MMToolkit.DebugWarn("[MindMattersExperienceComponent] OnColonistDied called with null colonist.");
             return;
         }
 
@@ -202,6 +267,63 @@ public class MindMattersExperienceComponent : GameComponent
 
             AddExperience(pawn, new Experience(experienceType, ExperienceValency.Negative));
         }
+    }
+
+    // Interface method: IsTherapyRelated (already exists, just need to make it public)
+    public bool IsTherapyRelated(Thought thought)
+    {
+        return thought.def.defName == "TherapyRelieved";
+    }
+
+    // Conversion methods between MindMatters.Experience and MindMattersInterface.Experience
+    private MindMattersInterface.Experience ConvertToInterfaceExperience(Experience experience)
+    {
+        return new MindMattersInterface.Experience(experience.EventType, ConvertToInterfaceValency(experience.Valency))
+        {
+            Flags = experience.Flags,
+            Timestamp = experience.Timestamp
+        };
+    }
+
+    private Experience ConvertFromInterfaceExperience(MindMattersInterface.Experience experience)
+    {
+        return new Experience(experience.EventType, ConvertFromInterfaceValency(experience.Valency), experience.Flags)
+        {
+            Timestamp = experience.Timestamp
+        };
+    }
+
+    // Conversion methods for ExperienceValency enums
+    private MindMattersInterface.ExperienceValency ConvertToInterfaceValency(ExperienceValency valency)
+    {
+        return valency switch
+        {
+            ExperienceValency.Positive => MindMattersInterface.ExperienceValency.Positive,
+            ExperienceValency.Negative => MindMattersInterface.ExperienceValency.Negative,
+            ExperienceValency.Neutral => MindMattersInterface.ExperienceValency.Neutral,
+            ExperienceValency.Eldritch => MindMattersInterface.ExperienceValency.Eldritch,
+            ExperienceValency.Affirming => MindMattersInterface.ExperienceValency.Affirming,
+            ExperienceValency.Humiliating => MindMattersInterface.ExperienceValency.Humiliating,
+            ExperienceValency.Exhilarating => MindMattersInterface.ExperienceValency.Exhilarating,
+            ExperienceValency.Transformative => MindMattersInterface.ExperienceValency.Transformative,
+            _ => MindMattersInterface.ExperienceValency.Neutral
+        };
+    }
+
+    private ExperienceValency ConvertFromInterfaceValency(MindMattersInterface.ExperienceValency valency)
+    {
+        return valency switch
+        {
+            MindMattersInterface.ExperienceValency.Positive => ExperienceValency.Positive,
+            MindMattersInterface.ExperienceValency.Negative => ExperienceValency.Negative,
+            MindMattersInterface.ExperienceValency.Neutral => ExperienceValency.Neutral,
+            MindMattersInterface.ExperienceValency.Eldritch => ExperienceValency.Eldritch,
+            MindMattersInterface.ExperienceValency.Affirming => ExperienceValency.Affirming,
+            MindMattersInterface.ExperienceValency.Humiliating => ExperienceValency.Humiliating,
+            MindMattersInterface.ExperienceValency.Exhilarating => ExperienceValency.Exhilarating,
+            MindMattersInterface.ExperienceValency.Transformative => ExperienceValency.Transformative,
+            _ => ExperienceValency.Neutral
+        };
     }
 
     public override void ExposeData()
@@ -229,5 +351,20 @@ public class MindMattersExperienceComponent : GameComponent
         base.ExposeData();
 
         Scribe_Collections.Look(ref pawnExperiences, "pawnExperiences", LookMode.Reference, LookMode.Deep);
+    }
+    
+    private void InitializePsycheSystem()
+    {
+        if (psycheSystem == null)
+        {
+            psycheSystem = Current.Game.GetComponent<MindMattersPsyche>();
+            if (psycheSystem == null)
+            {
+                // Create and add the Psyche system if it doesn't exist
+                psycheSystem = new MindMattersPsyche(Current.Game);
+                Current.Game.components.Add(psycheSystem);
+                MMToolkit.DebugLog("[MindMattersExperienceComponent] Created MindMattersPsyche system");
+            }
+        }
     }
 }

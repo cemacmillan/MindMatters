@@ -79,13 +79,13 @@ namespace MindMatters
             if (roll < 1 / 3f)
             {
                 DesignatedVictim = null;
-                MindMattersUtilities.DebugLog("Scapegoat: Did not choose a scapegoat");
+                MMToolkit.DebugLog("Scapegoat: Did not choose a scapegoat");
             }
             else
             {
                 // Weight the selection towards pawns with higher scores
                 DesignatedVictim = topVictims.RandomElementByWeight(x => x.Score).Pawn;
-                MindMattersUtilities.DebugLog($"Scapegoat: {DesignatedVictim.Label}");
+                MMToolkit.DebugLog($"Scapegoat: {DesignatedVictim.Label}");
             }
 
             // Add the victim thought to the designated victim, if there is one

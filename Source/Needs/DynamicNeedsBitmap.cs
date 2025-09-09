@@ -17,6 +17,4 @@ public enum DynamicNeedsBitmap : ulong
     MountAnimals = 1 << 8,
     CareForAnimals = 1 << 9,
     CareForHumanLike = 1 << 10,
-    // Add more as needed, up to 64 bits
-    // ...
 }

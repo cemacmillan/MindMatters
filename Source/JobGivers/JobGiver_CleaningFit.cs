@@ -9,11 +9,11 @@ namespace MindMatters
     {
         protected override Job TryGiveJob(Pawn pawn)
         {
-            MindMattersUtilities.DebugLog($"[CleaningFit] Pawn {pawn.Name} entering JobGiver_CleaningFit.");
+            MMToolkit.DebugLog($"[CleaningFit] Pawn {pawn.Name} entering JobGiver_CleaningFit.");
 
             if (pawn == null || pawn.Map == null)
             {
-                MindMattersUtilities.DebugLog("[CleaningFit] Pawn or Map is null.");
+                MMToolkit.DebugLog("[CleaningFit] Pawn or Map is null.");
                 return null;
             }
 
@@ -26,7 +26,7 @@ namespace MindMatters
 
                 if (valid)
                 {
-                    MindMattersUtilities.DebugLog($"[CleaningFit] Valid filth found at {t.Position}.");
+                    MMToolkit.DebugLog($"[CleaningFit] Valid filth found at {t.Position}.");
                 }
 
                 return valid;
@@ -44,7 +44,7 @@ namespace MindMatters
 
             if (filth != null)
             {
-                MindMattersUtilities.DebugLog($"[CleaningFit] Assigning cleaning job for filth at {filth.Position}.");
+                MMToolkit.DebugLog($"[CleaningFit] Assigning cleaning job for filth at {filth.Position}.");
 
                 Job job = JobMaker.MakeJob(JobDefOf.Clean);
                 job.AddQueuedTarget(TargetIndex.A, filth);
@@ -86,7 +86,7 @@ namespace MindMatters
                 return job;
             }
 
-            MindMattersUtilities.DebugLog("[CleaningFit] No filth found to clean.");
+            MMToolkit.DebugLog("[CleaningFit] No filth found to clean.");
             // No filth found; return null to allow other ThinkNodes to run
             return null;
         }

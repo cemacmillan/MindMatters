@@ -28,30 +28,32 @@ public class FreshFruitNeed : DynamicNeed
         return DefDatabase<NeedDef>.GetNamedSilentFail("FreshFruitNeed");
     }
 
-    public override void Initialize(Pawn pawn, NeedDef def)
+    public override void Initialize(Pawn instPawn, NeedDef instDef)
     {
-        base.Initialize(pawn, def);
+        base.Initialize(instPawn, instDef);
     }
 
     // The new override to control who "should" have this need:
-    public override bool ShouldPawnHaveThisNeed(Pawn pawn)
+    public override bool ShouldPawnHaveThisNeed(Pawn instPawn)
     {
-        if (pawn?.story?.traits == null)
+        if (instPawn?.story?.traits == null)
         {
-           // MMToolkit.GripeOnce($"[MindMatters] Pawn {pawn?.LabelShort} has no traits. FreshFruitNeed => false");
+           // MMToolkit.GripeOnce($"[MindMatters] Pawn {instPawn?.LabelShort} has no traits. FreshFruitNeed => false");
             return false;
         }
 
-        bool hasSelfCentered = pawn.story.traits.HasTrait(MindMattersTraitDef.SelfCentered);
-        int moodDegree = pawn.story.traits.DegreeOfTrait(MindMattersTraitDef.NaturalMood);
+        bool hasSelfCentered = instPawn.story.traits.HasTrait(MindMattersTraitDef.SelfCentered);
+        int moodDegree = instPawn.story.traits.DegreeOfTrait(MindMattersTraitDef.NaturalMood);
 
+        // debugging
+        return false;
         if (hasSelfCentered && moodDegree >= 1)
         {
-            //MindMattersUtilities.DebugLog($"[MindMatters] Pawn {pawn.LabelShort} meets FreshFruitNeed trait criteria => true");
+            //MMToolkit.DebugLog($"[MindMatters] Pawn {instPawn.LabelShort} meets FreshFruitNeed trait criteria => true");
             return true;
         }
 
-        // MindMattersUtilities.DebugLog($"[MindMatters] Pawn {pawn.LabelShort} does NOT meet FreshFruitNeed trait criteria => false");
+        // MMToolkit.DebugLog($"[MindMatters] Pawn {instPawn.LabelShort} does NOT meet FreshFruitNeed trait criteria => false");
         return false;
     }
 

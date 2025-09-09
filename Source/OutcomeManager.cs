@@ -82,7 +82,7 @@ namespace MindMatters
             var experienceManager = Current.Game.GetComponent<MindMattersExperienceComponent>();
             if (experienceManager == null)
             {
-                MindMattersUtilities.DebugWarn("ProcessOutcomes: ExperienceManager is null.");
+                MMToolkit.DebugWarn("ProcessOutcomes: ExperienceManager is null.");
                 return;
             }
 
@@ -103,7 +103,7 @@ namespace MindMatters
 
                 // Clear the list of experiences for the pawn after processing
                 experiences.Clear();
-                // MindMattersUtilities.DebugLog($"ProcessOutcomes: Cleared experiences for {pawn.LabelShort}.");
+                // MMToolkit.DebugLog($"ProcessOutcomes: Cleared experiences for {pawn.LabelShort}.");
             }
         }
         
@@ -115,7 +115,7 @@ namespace MindMatters
             {
                 case "Therapy":
                     ApplyTherapyEffects(pawn);
-                    MindMattersUtilities.DebugLog("Therapizing!");
+                    MMToolkit.DebugLog("Therapizing!");
                     outcomeOccurred = true;
                     break;
             }
@@ -207,7 +207,7 @@ namespace MindMatters
             Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
 
             // Log for debugging
-            MindMattersUtilities.DebugLog($"{pawn.Name} gained the {newTrait.Label} trait due to an experience.");
+            MMToolkit.DebugLog($"{pawn.Name} gained the {newTrait.Label} trait due to an experience.");
         }
         // Feature Request - GainTrait with explanation of why....
         private void LoseTrait(Pawn pawn)
@@ -240,7 +240,7 @@ namespace MindMatters
                 Find.LetterStack.ReceiveLetter(title, text, letterDef, pawn);
 
                 // Log for debugging
-                MindMattersUtilities.DebugLog($"{pawn.Name} lost the {traitToLose.Label} trait due to a negative experience.");
+                MMToolkit.DebugLog($"{pawn.Name} lost the {traitToLose.Label} trait due to a negative experience.");
             }
         }
 
@@ -261,7 +261,7 @@ namespace MindMatters
                     hediff.Severity += Rand.Range(0.05f, 0.15f);
 
                     // Log for debugging
-                    MindMattersUtilities.DebugLog($"{pawn.Name}'s trauma worsened due to negative experience.");
+                    MMToolkit.DebugLog($"{pawn.Name}'s trauma worsened due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Trauma Worsened";
@@ -275,7 +275,7 @@ namespace MindMatters
                     pawn.health.AddHediff(hediff);
 
                     // Log for debugging
-                    MindMattersUtilities.DebugLog($"{pawn.Name}'s trauma developed due to negative experience.");
+                    MMToolkit.DebugLog($"{pawn.Name}'s trauma developed due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Trauma Developed";
@@ -306,7 +306,7 @@ namespace MindMatters
                     hediff.Severity += Rand.Range(0.1f, 0.30f);
 
                     // Log for debugging
-                    MindMattersUtilities.DebugLog($"{pawn.Name}'s anxiety worsened due to negative experience.");
+                    MMToolkit.DebugLog($"{pawn.Name}'s anxiety worsened due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Anxiety Worsened";
@@ -320,7 +320,7 @@ namespace MindMatters
                     pawn.health.AddHediff(hediff);
 
                     // Log for debugging
-                    MindMattersUtilities.DebugLog($"{pawn.Name}'s anxiety developed due to negative experience.");
+                    MMToolkit.DebugLog($"{pawn.Name}'s anxiety developed due to negative experience.");
 
                     // Notify the player via a letter
                     title = "Anxiety Developed";

@@ -16,7 +16,7 @@ static class Patch_Pawn_NeedsTracker_ShouldHaveNeed
             return true; // Proceed with vanilla logic
         }
         
-        MMToolkit.GripeOnce("ShouldHaveNeedPatch: We do pass IsAssignableFrom");
+        // MMToolkit.GripeOnce("ShouldHaveNeedPatch: We do pass IsAssignableFrom");
 
         // Handle dynamic needs logic
         bool shouldHave = MindMattersNeedsMgr.CanPawnHaveDynamicNeed(___pawn, nd);
@@ -25,9 +25,13 @@ static class Patch_Pawn_NeedsTracker_ShouldHaveNeed
         if (!CanPawnHaveDynamicNeed_Exclusions(___pawn))
         {
             shouldHave = false; // Exclude these pawns
-            MMToolkit.GripeOnce($"ShouldHaveNeedPatch: Excluding {___pawn.LabelShort}");
+            // MMToolkit.GripeOnce($"ShouldHaveNeedPatch: Excluding {___pawn.LabelShort}"); // Disabled - exclusions are for non-real pawns (templates, incomplete pawns)
         }
 
+        if (shouldHave)
+        {
+            MMToolkit.DebugLog($"ShouldHaveNeedPatch: shouldHave == true: {___pawn.LabelShort} for {nd.defName}");
+        }
         __result = shouldHave;
         return false; // Skip vanilla logic
     }

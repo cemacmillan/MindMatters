@@ -7,9 +7,9 @@ namespace MindMatters
     public class MentalState_SeekSolitude : MentalState
     {
 
-        public override void MentalStateTick()
+        public override void MentalStateTick(int delta)
         {
-            base.MentalStateTick();
+            base.MentalStateTick(delta);
             
         }
     }

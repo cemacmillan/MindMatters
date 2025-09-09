@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <ThoughtDef>
+        <defName>MM_ThoughtRecoveredCleaning</defName>
+        <durationDays>1</durationDays>
+        <stages>
+            <li>
+                <label>cleaned up</label>
+                <description>I've just spent some time cleaning everything. It feels good to have everything in order.</description>
+                <baseMoodEffect>5</baseMoodEffect>
+            </li>
+        </stages>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_WatchingSomeoneCry</defName>
+        <durationDays>0.25</durationDays>
+        <stackLimit>1</stackLimit>
+        <stages>
+            <li>
+                <label>watched someone cry</label>
+                <baseMoodEffect>-3</baseMoodEffect>
+                <description>I saw someone breaking down and crying. It's a distressing sight.</description>
+            </li>
+        </stages>
+    </ThoughtDef>
+
+    <ThoughtDef>
+    <defName>MM_DesignatedVictim</defName>
+    <durationDays>1.5</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+        <li>
+            <!-- Customize these values as needed -->
+            <label>scapegoat</label>
+            <baseMoodEffect>-3</baseMoodEffect>
+            <description>I feel like everyone's blaming me for everything that goes wrong.</description>
+        </li>
+    </stages>
+    
+</ThoughtDef>
+
+  <ThoughtDef>
+    <defName>MM_WasBlamed</defName>
+    <durationDays>3.0</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>was blamed</label>
+        <baseMoodEffect>-10.0</baseMoodEffect>
+        <description>I was blamed for something that wasn't my fault. It's not fair!</description>
+      </li>
+    </stages>
+  </ThoughtDef>
+  <ThoughtDef>
+    <defName>MM_CalledSomeoneOut</defName>
+    <durationDays>3.0</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>called someone out</label>
+        <baseMoodEffect>6.0</baseMoodEffect>
+        <description>I called out someone for their shortcomings. It felt good to vent.</description>
+      </li>
+    </stages>
+  </ThoughtDef>
+  
+  
+</Defs>

@@ -12,6 +12,15 @@ public static class SomeoneDiedPatch
     [HarmonyPostfix]
     public static void AppendThoughts(Pawn victim, DamageInfo? dinfo, PawnDiedOrDownedThoughtsKind thoughtsKind, ref List<IndividualThoughtToAdd> outIndividualThoughts)
     {
+        // FIXED: Only process actual deaths, not downing events
+        // This prevents the confusion where overdoses/fainting trigger "someone died" thoughts
+        if (thoughtsKind != PawnDiedOrDownedThoughtsKind.Died)
+        {
+            // TODO: Handle downing events separately with appropriate near-death experiences
+            // For now, we'll let the OnPawnDownedPatch handle downing events
+            return;
+        }
+
         // Skip if the victim is null or belongs to a hostile faction
         if (victim?.Faction == null || victim.Faction.HostileTo(Faction.OfPlayer))
             return;
@@ -19,7 +28,7 @@ public static class SomeoneDiedPatch
         // Check for surgery or anesthesia
         if (victim.health != null && victim.health.hediffSet.HasHediff(HediffDefOf.Anesthetic))
         {
-            MindMattersUtilities.DebugLog($"[MindMatters] Skipping thought for {victim.LabelShort}: Undergoing surgery or anesthetized.");
+            MMToolkit.DebugLog($"[MindMatters] Skipping thought for {victim.LabelShort}: Undergoing surgery or anesthetized.");
             return;
         }
 
@@ -29,19 +38,19 @@ public static class SomeoneDiedPatch
             // Exclude non-lethal damage or self-inflicted damage
             if (dinfo.Value.Def == DamageDefOf.SurgicalCut || dinfo.Value.Instigator == victim)
             {
-                MindMattersUtilities.DebugLog($"[MindMatters] Skipping thought for {victim.LabelShort}: Downed due to non-lethal cause (e.g., surgery or self-inflicted).");
+                MMToolkit.DebugLog($"[MindMatters] Skipping thought for {victim.LabelShort}: Downed due to non-lethal cause (e.g., surgery or self-inflicted).");
                 return;
             }
 
             // Check if the cause is combat-related
             if (dinfo.Value.Weapon != null || dinfo.Value.Instigator is Pawn)
             {
-                MindMattersUtilities.DebugLog($"[MindMatters] {victim.LabelShort} was downed in combat; processing thought.");
+                MMToolkit.DebugLog($"[MindMatters] {victim.LabelShort} was downed in combat; processing thought.");
             }
         }
 
         var tenderHeartedTrait = TraitDef.Named("MM_TenderHearted");
-        foreach (var pawn in PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive)
+        foreach (var pawn in PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive)
         {
             // Skip if the pawn is null, the victim itself, or lacks the Tender-Hearted trait
             if (pawn == null || pawn == victim || pawn.story?.traits == null || !pawn.story.traits.HasTrait(tenderHeartedTrait))
@@ -85,8 +94,8 @@ public static class SomeoneDiedPatch
             }
 
             // Apply the thought
-            pawn.needs.mood.thoughts.memories.TryGainMemory(newThought);
-            MindMattersUtilities.DebugLog($"[MindMatters] Added 'MM_SomeoneDied' to {pawn.LabelShort} for {victim.LabelShort}'s death.");
+            pawn.needs.mood.thoughts.memories.TryGainMemory(newThought, victim);
+            MMToolkit.DebugLog($"[MindMatters] Added 'MM_SomeoneDied' to {pawn.LabelShort} for {victim.LabelShort}'s death.");
         }
     }
 }

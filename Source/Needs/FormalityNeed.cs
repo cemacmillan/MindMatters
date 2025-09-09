@@ -8,6 +8,10 @@ public class FormalityNeed : DynamicNeed
 {
     
     private float curLevel;
+    private float baselineFormalityFromApparel = 0f;
+    private const int checkApparelInterval = 20;
+    private int checkApparelIntervalCounter;
+    
     
     public FormalityNeed() : base()
     {
@@ -21,6 +25,7 @@ public class FormalityNeed : DynamicNeed
     // The existing two-arg constructor:
     public FormalityNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
     {
+        //this.checkApparelIntervalCounter = checkApparelIntervalCounter;
     }
 
     // Provide a fallback def in case the reflection path uses (Pawn) only:
@@ -30,41 +35,72 @@ public class FormalityNeed : DynamicNeed
     }
     
    
-    public override void Initialize(Pawn pawn, NeedDef def)
+    public override void Initialize(Pawn instPawn, NeedDef instDef)
     {
-        base.Initialize(pawn, def);
+        base.Initialize(instPawn, instDef);
     }
     
-  
-    public override bool ShouldPawnHaveThisNeed(Pawn pawn)
-    {
-        // Check if the pawn is valid and in a proper state
-        if (pawn == null || pawn.Dead || pawn.Destroyed || pawn.story?.traits == null)
-        {
-            MMToolkit.GripeOnce($"FormalityNeed: Invalid or incomplete pawn detected in ShouldPawnHaveThisNeed. Label: {pawn?.LabelShort ?? "Unknown"}");
-            return false;
-        }
-
-        // Check if the pawn has the relevant traits
-        return pawn.story.traits.HasTrait(MindMattersTraitDef.Reserved) ||
-               pawn.story.traits.HasTrait(MindMattersTraitDef.Prude);
-    }
-    // Handles periodic updates to the need value
     protected override void UpdateValue()
     {
-        if (pawn?.apparel?.WornApparel == null || !pawn.apparel.WornApparel.Any())
+        // Periodically update the baseline
+        if (checkApparelIntervalCounter % checkApparelInterval == 0)
         {
-            CurLevel = 0f; // No formal wear, need is unsatisfied
+            UpdateBaselineFormality();
+        }
+        checkApparelIntervalCounter = (checkApparelIntervalCounter + 1) % checkApparelInterval;
+
+        // If no apparel is worn, reset the need
+        if (baselineFormalityFromApparel == 0f)
+        {
+            CurLevel = 0f;
             return;
         }
 
-        // Calculate formality satisfaction based on the beauty of worn apparel
-        CurLevel = pawn.apparel.WornApparel
-            .Sum(a => a.def.GetStatValueAbstract(StatDefOf.Beauty, null)) / 10f;
+        // Calculate the new level by combining the baseline and any external contributions
+        float externalContributions = CurLevel - baselineFormalityFromApparel;
+        CurLevel = baselineFormalityFromApparel + externalContributions;
 
-        // FIXTHIS generalized clamping 01 method so we don't bring in Mathf every fucking time
+        // Clamp the value between 0 and 1
         CurLevel = UnityEngine.Mathf.Clamp01(CurLevel);
     }
+    
+    private void UpdateBaselineFormality()
+    {
+        if (pawn.apparel?.WornApparel == null || !pawn.apparel.WornApparel.Any())
+        {
+            baselineFormalityFromApparel = 0f;
+            return;
+        }
+
+        float totalBeauty = 0f;
+
+        foreach (var apparel in pawn.apparel.WornApparel)
+        {
+            if (apparel?.Stuff == null) continue; 
+            // Get the beauty of the apparel, factoring in the Stuff it is made from
+            float apparelBeauty = apparel.def.GetStatValueAbstract(StatDefOf.Beauty, apparel.Stuff);
+
+            // Accumulate the total beauty
+            totalBeauty += apparelBeauty;
+        }
+
+        // Divide by 10 as in the original logic to normalize
+        baselineFormalityFromApparel = totalBeauty / 10f;
+    }
+  
+    public override bool ShouldPawnHaveThisNeed(Pawn instPawn)
+    {
+        if (instPawn == null || instPawn.Dead || instPawn.Destroyed || instPawn.story?.traits == null)
+        {
+            MMToolkit.GripeOnce($"FormalityNeed: Invalid or incomplete instPawn detected in ShouldPawnHaveThisNeed. Label: {instPawn?.LabelShort ?? "Unknown"}");
+            return false;
+        }
+        
+        return instPawn.story.traits.HasTrait(MindMattersTraitDef.Reserved) ||
+               instPawn.story.traits.HasTrait(MindMattersTraitDef.Prude);
+    }
+    
+    
 
     // Tooltip string for UI display
     public override string GetTipString()

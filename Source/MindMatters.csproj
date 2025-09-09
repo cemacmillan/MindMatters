@@ -12,7 +12,7 @@
 		<LangVersion>preview</LangVersion> <!-- This is the C# version. Preview is the newest version with the most features -->
 		<!-- Details here: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version -->
 
-		<OutDir>../1.5/Assemblies/</OutDir> <!-- The output path for dll files  -->
+		<OutDir>../1.6/Assemblies/</OutDir> <!-- The output path for dll files  -->
 
 		<Nullable>enable</Nullable>  <!-- Optional nullable analysis. -->
 		<!-- Details here: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-reference-types -->
@@ -31,7 +31,7 @@
 	<!-- Down here we have references to dependencies -->
 	<ItemGroup>
 		<!-- RimWorld itself -->
-		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*"/>
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*"/>
 		<!-- Harmony -->
 		<PackageReference Include="Lib.Harmony" Version="2.*" ExcludeAssets="runtime"/>
 		<!-- https://harmony.pardeike.net/articles/intro.html -->
@@ -40,5 +40,11 @@
 	  <Compile Remove="Harmony\BuildingGrave\Building_Grave_Notify_CorpseBuried_Patch_1.4.cs" />
 	  <Compile Remove="Harmony\GetDistinctMoodThoughtGroupsDebugPatch.cs" />
 	  <Compile Remove="Harmony\PatchAdaptToHospitalityToGetOurNeedsMet.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="MindMattersInterface">
+	    <HintPath>..\..\MindMattersInterface\Assemblies\MindMattersInterface.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 </Project>

@@ -15,7 +15,7 @@ namespace MindMatters
         {
             if (!ModsConfig.IsActive("cem.mindmatters") && !ModsConfig.IsActive("cem.mindmatterspr"))
             {
-                MindMattersUtilities.GripeOnce("[MindMattersBridge] Mind Matters is not active because no Mind Matters Candidate Mod. Bridge initialization skipped.");
+                MMToolkit.GripeOnce("[MindMattersBridge] Mind Matters is not active because no Mind Matters Candidate Mod. Bridge initialization skipped.");
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace MindMatters
                 return;
             }
 
-            MindMattersUtilities.DebugWarn("[MindMattersBridge] Successfully initialized with MindMattersExperienceComponent.");
+            MMToolkit.DebugWarn("[MindMattersBridge] Successfully initialized with MindMattersExperienceComponent.");
         }
         
         /*
@@ -35,7 +35,7 @@ namespace MindMatters
         {
             if (!ModsConfig.IsActive("cem.mindmatters"))
             {
-                MindMattersUtilities.DebugWarn("[MindMattersBridge] Mind Matters is not active. Bridge initialization skipped.");
+                MMToolkit.DebugWarn("[MindMattersBridge] Mind Matters is not active. Bridge initialization skipped.");
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace MindMatters
                 throw new Exception("[MindMattersBridge] Failed to retrieve a valid MindMattersExperienceComponent. Ensure Mind Matters is loaded correctly.");
             }
 
-            MindMattersUtilities.DebugLog("[MindMattersBridge] Successfully initialized with MindMattersExperienceComponent.");
+            MMToolkit.DebugLog("[MindMattersBridge] Successfully initialized with MindMattersExperienceComponent.");
         }
         */
         
@@ -70,7 +70,7 @@ namespace MindMatters
             };
 
             experienceComponent.AddExperience(pawn, experience);
-            MindMattersUtilities.DebugLog($"[MindMattersBridge] Added experience '{eventType}' ({valency}) for {pawn.LabelShort}.");
+            MMToolkit.DebugLog($"[MindMattersBridge] Added experience '{eventType}' ({valency}) for {pawn.LabelShort}.");
         }
 
         // Example specific handler: Positive interactions from Positive Connections
@@ -83,7 +83,7 @@ namespace MindMatters
 
             if (UnityEngine.Random.Range(0f, 1f) < probability)
             {
-                MindMattersUtilities.DebugLog($"[MindMattersBridge] Handling positive interaction '{eventType}' ({valency}) for {initiator.LabelShort}.");
+                MMToolkit.DebugLog($"[MindMattersBridge] Handling positive interaction '{eventType}' ({valency}) for {initiator.LabelShort}.");
                 AddExperience(initiator, eventType, valency, new HashSet<string> { "PositiveInteraction" });
             }
         }

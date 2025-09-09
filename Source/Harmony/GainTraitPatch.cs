@@ -5,6 +5,13 @@ using Verse;
 
 namespace MindMatters
 {
+    /* XXX RUBBISH!
+     
+    Unchanged but still working from 1.3. Problems:
+    - This code is unaware of core components like NeedsMgr which very likely should deal with everything bipopo
+     
+     */
+    
     [HarmonyPatch(typeof(TraitSet))]
     [HarmonyPatch("GainTrait")]
     public static class TraitSet_GainTrait_Patch
@@ -20,7 +27,7 @@ namespace MindMatters
                 pawn.health.AddHediff(hediff);
 
                 // Register the pawn in the MindMattersGameComponent
-                var gameComponent = Current.Game.GetComponent<MindMattersGameComponent>();
+                MindMattersGameComponent? gameComponent = Current.Game.GetComponent<MindMattersGameComponent>();
                 if (gameComponent != null)
                 {
                     // Only do this if Map is not null

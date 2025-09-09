@@ -10,28 +10,28 @@ namespace MindMatters
     public class MindMattersGameComponent : GameComponent
     {
         public static MindMattersGameComponent Instance;
-        
+
         private MindMattersNeedsMgr needsMgr;
         private OutcomeManager outcomeManager;
         public event Action<Pawn> OnPawnMoodChanged;
-        
+
         // Misc fields
         private bool readyToParley = false;
         private bool isInitialized = false;
         private bool shouldRetryApiSetup = true;
-        
+
         private int delayBeforeProcessing = 500;
 
         private int tickCounter = 0;
         private int longTickCounter = 0;
-        
+
         // Possibly to track or store pawn data
         private List<Pawn> pawnKeys;
         private List<int> moodValues;
         private List<Pawn> allPawns;
 
-        // Required in case we have pawns appear after load
-        private List<Pawn> pendingPawnQueue = new List<Pawn>(); 
+        // pendingPawnQueue is now touched by the NeedsMgr quite early in the lifecycle. Beware!
+        protected internal List<Pawn> pendingPawnQueue = new List<Pawn>();
 
         private MindMattersVictimManager victimManager = MindMattersVictimManager.Instance;
 
@@ -54,9 +54,9 @@ namespace MindMatters
         public Dictionary<int, int> UnstablePawnLastMoodSwitchTicks = new Dictionary<int, int>();
         public Dictionary<int, int> UnstablePawnLastMoodState = new Dictionary<int, int>();
 
-        #pragma warning disable CS8618, CS9264
+#pragma warning disable CS8618, CS9264
         public MindMattersGameComponent(Game game)
-        #pragma warning restore CS8618, CS9264
+#pragma warning restore CS8618, CS9264
         {
             outcomeManager = new OutcomeManager();
             recluseTrait = MindMattersTraitDef.Recluse ?? null;
@@ -68,7 +68,7 @@ namespace MindMatters
         {
             return allPawns;
         }
-        
+
         public override void GameComponentTick()
         {
             base.GameComponentTick();
@@ -91,8 +91,9 @@ namespace MindMatters
             {
                 isInitialized = true;
                 MindMattersMod.IsSystemReady = true;
-                
+
                 // Populate registry after environment is ready
+                DynamicNeedsRegistry.Initialize();
                 DynamicNeedsRegistry.PopulateRegistryFromDefDatabase();
                 MMToolkit.DebugLog("<color=#00CCAA>[Mind Matters]</color> DynamicNeed registry populated.");
 
@@ -107,25 +108,25 @@ namespace MindMatters
                 {
                     readyToParley = false;
                     MindMattersMod.ReadyToParley = false;
-                    MMToolkit.DebugLog("<color=#00CCAA>[Mind Matters]</color> Ready for action, but API disabled in settings.");
+                    MMToolkit.DebugLog(
+                        "<color=#00CCAA>[Mind Matters]</color> Ready for action. API disabled in Mod Settings.");
                 }
 
                 InitializePendingPawns();
             }
 
             // Log and debug dynamic needs once
+            debugNeedsRegistry = true;
             if (debugNeedsRegistry)
             {
-                //MMToolkit.DebugLog("GameComponentTick: NeedDefs");
                 DynamicNeedsRegistry.DebugLogRegisteredDynamicNeeds();
                 debugNeedsRegistry = false;
             }
 
-            // Minor ticks (every 250 ticks)
+            // Minor ticks (every 600 ticks)
             if (SimulateRareTick(600))
             {
                 ProcessPendingPawns(); // Add dynamic needs for newly spawned or pending pawns
-                needsMgr.ProcessNeeds(null,DynamicNeedCategory.Primal);
             }
 
             // Medium ticks (every 1200 ticks)
@@ -139,19 +140,18 @@ namespace MindMatters
                 }
 
                 ProcessTraitsForAllPawns();
-                needsMgr.ProcessNeeds(null, DynamicNeedCategory.Secondary);
-                outcomeManager.ProcessOutcomes(); // e.g. experiences
+                outcomeManager.ProcessOutcomes(); // e.g., experiences
             }
 
             // Longer tick (every 3600)
             if (SimulateLongTick(3600))
             {
-                // If you want a pass that ensures *all* dynamic needs are up to date:
-                needsMgr.ProcessNeeds(null,null); // no category => process all categories
+                // Ensure all dynamic needs are up to date
+                needsMgr.ProcessNeeds(null, null); // no category => process all categories
                 CheckBipolarTraitsForAllPawns();
             }
 
-            // Very long (90k) => once a day or so
+            // Very long tick (90k) => once a day or so
             if (SimulateLongTick(90000))
             {
                 victimManager.DesignateNewVictim();
@@ -166,6 +166,7 @@ namespace MindMatters
                 tickCounter = 0;
                 return true;
             }
+
             return false;
         }
 
@@ -177,6 +178,7 @@ namespace MindMatters
                 longTickCounter = 0;
                 return true;
             }
+
             return false;
         }
 
@@ -203,7 +205,7 @@ namespace MindMatters
             pendingPawnQueue.AddRange(PawnsFinder.AllMaps_FreeColonistsAndPrisonersSpawned);
             ProcessPendingPawns(); // immediate pass
         }
-        
+
         // pendingPawnQueue is correct name
         private void ProcessPendingPawns()
         {
@@ -298,10 +300,13 @@ namespace MindMatters
 
             Scribe_Collections.Look(ref pawnKeys, "pawnKeys", LookMode.Reference);
             Scribe_Collections.Look(ref moodValues, "moodValues", LookMode.Value);
-            Scribe_Collections.Look(ref BipolarPawnLastCheckedTicks, "BipolarPawnLastCheckedTicks", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref BipolarPawnLastCheckedTicks, "BipolarPawnLastCheckedTicks", LookMode.Value,
+                LookMode.Value);
             Scribe_Collections.Look(ref PawnLastAloneTicks, "PawnLastAloneTicks", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref UnstablePawnLastMentalBreakTicks, "UnstablePawnLastMentalBreakTicks", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref UnstablePawnLastMoodSwitchTicks, "UnstablePawnLastMoodSwitchTicks", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref UnstablePawnLastMentalBreakTicks, "UnstablePawnLastMentalBreakTicks",
+                LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref UnstablePawnLastMoodSwitchTicks, "UnstablePawnLastMoodSwitchTicks",
+                LookMode.Value, LookMode.Value);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

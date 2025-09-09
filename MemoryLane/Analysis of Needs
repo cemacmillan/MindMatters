@@ -1,0 +1,67 @@
+Analysis of Needs
+
+Need_Joy
+
+	On NeedInterval:
+		 if ! IsFrozen
+		 set tolerances (complex object)
+
+		if(!GainingJoy)
+			CurLevel -: FallPerInterval, etc.
+
+	On GainJoy:
+		// negative amount is a noop
+		otherwise:
+		amount is multiplied against tolerances member
+		amount = Mathf.Min(amount, 1f - CurLevel) <--- Why?
+		curLevelInt += amount; <-- so, raise amount it is curLevelInt that changes
+		if joyKind is not null, twiddle tolerances for this joyKind
+		reset lastGainTick
+
+Need_ChemicalAny
+
+		public override void NeedInterval()
+		{
+			if (Disabled)
+			{
+				SetInitialLevel();
+			}
+			else if (!IsFrozen)
+			{
+				CurLevel -= FallPerNeedIntervalTick;
+			}
+		}
+
+		Direct modification of CurLevel
+		CurLevel is a direct call to the base class CurLevel.
+
+
+Need_Beauty (Need_Seeker)
+
+	public override float CurInstantLevel
+		{
+			get
+			{
+				if (lastInstantBeautyCheckTick != Find.TickManager.TicksGame)
+				{
+					if (!pawn.Spawned)
+					{
+						lastInstantBeauty = 0.5f;
+					}
+					else if (PawnUtility.IsBiologicallyOrArtificiallyBlind(pawn))
+					{
+						lastInstantBeauty = 0.5f;
+					}
+					else
+					{
+						lastInstantBeauty = LevelFromBeauty(CurrentInstantBeauty());
+					}
+					lastInstantBeautyCheckTick = Find.TickManager.TicksGame;
+				}
+				return lastInstantBeauty;
+			}
+		}
+
+			Cache manages
+
+	

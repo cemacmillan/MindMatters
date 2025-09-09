@@ -1,72 +1,151 @@
-using System.Linq;
+using System;
 using RimWorld;
 using Verse;
+
 
 namespace MindMatters;
 
 public class ConstraintNeed : DynamicNeed
 {
-    private float curLevel;
-    public ConstraintNeed() : base()
+    //protected const float FallFactor = 4f;
+   //private const float RiseFactor = 1f;
+    
+    protected override bool IsSatisfying => Find.TickManager.TicksGame < lastGainTick + 10;
+        
+    // IsSatisfying should allow for fall in Slippers when apparel is removed
+    protected override bool IsSatisfied()
     {
+        return IsSuppressed || !IsSatisfying || curLevelInt >= 0.50f;
+    }
+        
+    public override void NeedInterval()
+    {
+        int currentTick = Find.TickManager.TicksGame;
+        if (currentTick <= lastUpdateTick)
+            return;
+       
+        int entryTick = lastUpdateTick;
+        MMToolkit.DebugLog($"=========={pawn.LabelShort}====={def.defName}===@==={lastUpdateTick}==========");
+        MMToolkit.DebugLog($"NeedInterval Instance ID: {GetHashCode()}, CurLevel: {CurLevel}, Baseline: {baselineSatisfaction}, Rolling: {rollingSatisfaction.Total}");
+            
+        
+        // Core rise/fall logic
+        if (!IsSatisfied())
+        {
+            rollingSatisfaction.Add(def.seekerRisePerHour * RiseFactor * UpdateDeltaFactor);
+        }
+        else
+        {
+            rollingSatisfaction.Add(-def.seekerFallPerHour * FallPerIntervalFactor * UpdateDeltaFactor);
+            MMToolkit.DebugLog(
+                $"[NeedInterval]<<<<<<< Falling: {(-def.seekerFallPerHour * FallPerIntervalFactor * UpdateDeltaFactor)}, Rolling Total: {rollingSatisfaction.Total}");
+        }
+
+        // Consolidate rolling contribution and recalculate need level
+        rollingSatisfaction.Consolidate();
+      
+        RecalculateNeedLevel();
+
+        lastUpdateTick = Find.TickManager.TicksGame;
+        MMToolkit.DebugLog($"======= CurLevel at End: {CurLevel} ==== {entryTick} / {lastUpdateTick} ============");
     }
 
-    // The reflection-friendly constructor:
-    public ConstraintNeed(Pawn pawn) : base(pawn)
+    // ReSharper disable once MemberCanBePrivate.Global - can be exported to API
+    public DynamicNeedLevel CurCategory
     {
+        get
+        {
+            if (CurLevel < 0.00001f)
+            {
+                return DynamicNeedLevel.Empty;
+            }
+            if (CurLevel < 0.15f)
+            {
+                return DynamicNeedLevel.VeryLow;
+            }
+            if (CurLevel < 0.3f)
+            {
+                return DynamicNeedLevel.Low;
+            }
+            if (CurLevel < 0.7f)
+            {
+                return DynamicNeedLevel.Satisfied;
+            }
+            if (CurLevel < 0.85f)
+            {
+                return DynamicNeedLevel.High;
+            }
+            return DynamicNeedLevel.Extreme;
+        }
     }
-
-    // The existing two-arg constructor:
-    public ConstraintNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
+    
+    private float FallPerIntervalFactor => CurCategory switch
     {
-    }
+        DynamicNeedLevel.Empty => 0f, 
+        DynamicNeedLevel.VeryLow => 1.5f, 
+        DynamicNeedLevel.Low => 1.75f, 
+        DynamicNeedLevel.Satisfied => 2.5f, 
+        DynamicNeedLevel.High => 3.5f, 
+        DynamicNeedLevel.Extreme => 4.15f, 
+        _ => throw new InvalidOperationException(), 
+    };
+    /*
+    protected override void RecalculateNeedLevel()
+    {
+        // Use the base method, which now integrates rolling satisfaction
+        base.RecalculateNeedLevel();
 
-    // Provide a fallback def in case the reflection path uses (Pawn) only:
+        if (MindMattersMod.settings.enableLogging)
+        {
+            MMToolkit.DebugLog($"[ConstraintNeed] Recalculated: CurLevel={CurLevel}, Baseline={baselineSatisfaction}, Rolling={rollingSatisfaction.Total}");
+        }
+    }*/
+
     protected override NeedDef DefaultNeedDef()
     {
         return DefDatabase<NeedDef>.GetNamedSilentFail("ConstraintNeed");
     }
-    
-    public override void Initialize(Pawn pawn, NeedDef def)
+
+    public override bool ShouldPawnHaveThisNeed(Pawn instPawn)
     {
-        base.Initialize(pawn, def);
-    }
-
-
-
-    public override bool ShouldPawnHaveThisNeed(Pawn pawn)
-    {
-        if (pawn == null)
+        if (instPawn == null)
         {
-            MMToolkit.GripeOnce("ConstraintNeed: Null pawn detected in ShouldPawnHaveThisNeed.");
+            MMToolkit.GripeOnce("ConstraintNeed: Null instPawn detected in ShouldPawnHaveThisNeed.");
             return false;
         }
-            
-        return pawn.story.traits.HasTrait(MindMattersTraitDef.Submissive) == true &&
-               pawn.story.traits.HasTrait(MindMattersTraitDef.Masochist) == true ||
-               pawn.story.traits.HasTrait(MindMattersTraitDef.Prude) == true;
+
+        return instPawn.story.traits.HasTrait(MindMattersTraitDef.Submissive) &&
+               instPawn.story.traits.HasTrait(MindMattersTraitDef.Masochist) ||
+               instPawn.story.traits.HasTrait(MindMattersTraitDef.Prude);
     }
 
-    
-    protected override void UpdateValue()
-    {
-        // Example: Penalize need if wearing "restrictive" gear
-        var apparel = pawn.apparel?.WornApparel;
-        if (apparel != null)
-        {
-            CurLevel = 1f - apparel.Sum(a => a.def.GetStatValueAbstract(StatDefOf.Comfort, null)) / 10f;
-        }
-    }
     public override string GetTipString()
     {
-        return $"Constraint: {(CurLevel * 100f):F0}%\n"
-               + "This pawn becomes unhappy when wearing restrictive clothing.";
+        return $"Constraint: {(CurInstantLevelPercentage * 100f):F0}%\n"
+               + "This pawn is most comfortable while wearing movement-limiting or restricting clothing.";
     }
-    
+
     public override void ExposeData()
     {
-        base.ExposeData(); 
-        Scribe_Defs.Look(ref def, "def");
-        Scribe_Values.Look(ref curLevel, "curLevel", 0.5f); 
+        base.ExposeData();
+        
+        Scribe_Values.Look(ref baselineSatisfaction, "baselineSatisfaction", 0f);
+    }
+        
+    // ReSharper disable once RedundantBaseConstructorCall - required for reflection
+    public ConstraintNeed() : base()
+    {
+    }
+
+    public ConstraintNeed(Pawn pawn) : base(pawn)
+    {
+    }
+
+    public ConstraintNeed(Pawn pawn, NeedDef needDef) : base(pawn, needDef)
+    {
+    }
+
+    protected override void UpdateValue()
+    {
     }
 }

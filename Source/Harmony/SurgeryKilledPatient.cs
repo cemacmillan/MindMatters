@@ -55,6 +55,6 @@ public static class Recipe_Surgery_FailPatch
         surgeon.needs.mood.thoughts.memories.TryGainMemory(thought);
 
         // Debug log for confirmation
-        MindMattersUtilities.DebugLog($"[MindMatters] Added 'KilledPatientTenderHearted' thought to {surgeon.LabelShort} after failing surgery on {patient.LabelShort}.");
+        MMToolkit.DebugLog($"[MindMatters] Added 'KilledPatientTenderHearted' thought to {surgeon.LabelShort} after failing surgery on {patient.LabelShort}.");
     }
 }

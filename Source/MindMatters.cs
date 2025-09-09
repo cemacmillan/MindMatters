@@ -40,7 +40,7 @@ public class MindMattersMod : Mod
             MindMattersBridge.Initialize();
         }
 
-        MindMattersUtilities.DebugLog("<color=#00FF7F>[Mind Matters]</color> v1.5.8 fifth-horseperson");
+        Log.Message("<color=#00FF7F>[Mind Matters Pre-Release]</color> v1.6.0.0 sixth-sense awakening");
 
         // Patch with Harmony
         var harmony = new Harmony("mod.cem.mindmatters");

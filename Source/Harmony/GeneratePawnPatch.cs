@@ -19,7 +19,7 @@ namespace MindMatters
                 // Log the matrix for debugging.
                 //foreach (var dimension in matrix.GetDimensions())
                 //{
-                //    MindMattersUtilities.DebugLog($"{__result.NameShortColored}'s {dimension.Key}: {dimension.Value}");
+                //    MMToolkit.DebugLog($"{__result.NameShortColored}'s {dimension.Key}: {dimension.Value}");
                 //}
             }
         }

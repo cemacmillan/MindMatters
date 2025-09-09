@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <ThoughtDef>
+        <defName>MM_Pluviophile</defName>
+        <workerClass>MindMatters.ThoughtWorker_Pluviophile</workerClass>
+        <stages>
+            <li>
+                <label>raining outside</label>
+                <description>I like the sound of the rain beating down above me.</description>
+                <baseMoodEffect>3</baseMoodEffect>
+            </li>
+            <li>
+                <label>in the rain</label>
+                <description>The rain is so relaxing. I don't mind getting wet.</description>
+                <baseMoodEffect>8</baseMoodEffect>
+            </li>
+        </stages>
+        <requiredTraits>
+            <li>MM_Pluviophile</li>
+        </requiredTraits>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_PrudeUncomfortableNudity</defName>
+        <label>Uncomfortable Nudity</label>
+        <description>This pawn is uncomfortable with nudity while resting on a bed.</description>
+        <workerClass>MindMatters.ThoughtWorker_Prude</workerClass>
+        <stages>
+            <li>
+                <label>Uncomfortable Nudity</label>
+                <description>I feel exposed and it's making me uncomfortable.</description>
+                <baseMoodEffect>-5</baseMoodEffect>
+            </li>
+            <li>
+                <label>More Uncomfortable Nudity</label>
+                <description>I feel practically naked, and this upsets me.</description>
+                <baseMoodEffect>-10</baseMoodEffect>
+            </li>
+        </stages>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_FilledGraveTenderHearted</defName>
+        <durationDays>1</durationDays>
+        <label>Filled Grave - Tender-Hearted</label>
+        <description>Seeing a filled grave reminds [PAWN_nameDef] of the fragility of life, stirring up [PAWN_pronounPossessive] tender-hearted nature.</description>
+        <thoughtClass>Thought_Memory</thoughtClass>
+        <stages>
+            <!-- Define the thought stages based on the intensity of the emotion -->
+            <li>
+                <label>buried someone (low)</label>
+                <description>I feel a bit melancholic at the sight of a filled grave.</description>
+                <baseMoodEffect>-3</baseMoodEffect>
+            </li>
+            <li>
+                <label>buried someone (medium)</label>
+                <description>I am deeply saddened by the sight of a filled grave.</description>
+                <baseMoodEffect>-6</baseMoodEffect>
+            </li>
+            <li>
+                <label>buried someone (high)</label>
+                <description>The sight of the filled grave brings me to tears, overwhelming my tender heart.</description>
+                <baseMoodEffect>-9</baseMoodEffect>
+            </li>
+        </stages>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_KilledPatientTenderHearted</defName>
+        <durationDays>3</durationDays>
+        <label>Killed Patient - Tender-Hearted</label>
+        <description>Witnessing the death of a patient brings [PAWN_nameDef] great sorrow for the next few days, touching [PAWN_pronounPossessive] tender-hearted nature.</description>
+        <thoughtClass>Thought_Memory</thoughtClass>
+        <stages>
+            <li>
+                <label>killed patient (low)</label>
+                <description>I feel a deep sense of loss and regret for the loss of life.</description>
+                <baseMoodEffect>-4</baseMoodEffect>
+            </li>
+            <li>
+                <label>killed patient (medium)</label>
+                <description>The weight of the patient's death weighs heavily on my heart.</description>
+                <baseMoodEffect>-8</baseMoodEffect>
+            </li>
+            <li>
+                <label>killed patient (high)</label>
+                <description>The death of the patient haunts me, creating an overwhelming sadness within me.</description>
+                <baseMoodEffect>-12</baseMoodEffect>
+            </li>
+        </stages>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_SomeoneDied</defName>
+        <description>Someone died</description>
+        <thoughtClass>Thought_Memory</thoughtClass>
+        <durationDays>8</durationDays> <!-- The thought fades after 30 days -->
+        <stackLimit>1</stackLimit> <!-- A pawn can only have one of these thoughts at a time -->
+        <stages>
+            <li>
+                <label>someone I didn't care for died</label>
+                <description>Someone I didn't care about died. It affects me all the same.</description>
+                <baseMoodEffect>-5</baseMoodEffect> <!-- This thought makes the pawn slightly unhappy -->
+            </li>
+            <li>
+                <label>someone I was neutral about died</label>
+                <description>Someone I was neutral about died. I am shaken up.</description>
+                <baseMoodEffect>-10</baseMoodEffect> <!-- This thought makes the pawn somewhat unhappy -->
+            </li>
+            <li>
+                <label>someone I liked died</label>
+                <description>The death of someone I liked for has affected me deeply</description>
+                <baseMoodEffect>-20</baseMoodEffect> <!-- This thought makes the pawn very unhappy -->
+            </li>
+            <li>
+                <label>someone I cared about died</label>
+                <description>The death of someone close to me has left me profoundly pained. It is hard to go on.</description>
+                <baseMoodEffect>-40</baseMoodEffect> <!-- This thought makes the pawn extremely unhappy -->
+            </li>
+            <li>
+                <label>someone died and now there is a bug</label>
+                <description>The death of someone close to me has combined with another mod to fuck up the savegame in which I exist.</description>
+                <baseMoodEffect>-80</baseMoodEffect> <!-- This thought makes the pawn extremely unhappy -->
+            </li>
+        </stages>
+    </ThoughtDef>
+    <ThoughtDef>
+        <defName>MM_SocialiteActivity</defName>
+        <workerClass>MindMatters.ThoughtWorker_SocialActivity</workerClass>
+        <stages>
+            <li>
+                <label>attending social event</label>
+                <baseMoodEffect>5</baseMoodEffect>
+                <description>Attending a party or ceremony makes me feel connected and alive!</description>
+            </li>
+            <li>
+                <label>having a deep conversation</label>
+                <baseMoodEffect>3</baseMoodEffect>
+                <description>Having a deep and meaningful conversation is truly uplifting.</description>
+            </li>
+            <li>
+                <label>dressed to impress</label>
+                <baseMoodEffect>2</baseMoodEffect>
+                <description>Wearing high-quality clothes makes me feel confident and ready to socialize.</description>
+            </li>
+            <li>
+                <label>in a social space</label>
+                <baseMoodEffect>1</baseMoodEffect>
+                <description>Being in a dining or recreation room makes me feel sociable and content.</description>
+            </li>
+        </stages>
+        <requiredTraits>
+            <li>MM_Socialite</li>
+        </requiredTraits>
+    </ThoughtDef>
+</Defs>

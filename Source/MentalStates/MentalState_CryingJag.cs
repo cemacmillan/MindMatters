@@ -25,9 +25,9 @@ namespace MindMatters
             hearer.needs.mood.thoughts.memories.TryGainMemory(DefDatabase<ThoughtDef>.GetNamed("MM_WatchingSomeoneCry"), pawn);
         }
 
-        public override void MentalStateTick()
+        public override void MentalStateTick(int delta)
         {
-            base.MentalStateTick();
+            base.MentalStateTick(delta);
             if ((float)Find.TickManager.TicksGame > lastCryingTick + CryingInterval && !pawn.IsWorldPawn())
             {
                 GenClamor.DoClamor(pawn, CryingJagRadius, ApplyEffect);
