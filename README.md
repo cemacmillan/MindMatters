@@ -30,12 +30,14 @@ Mind Matters transforms pawn individuality into a deeper, more dynamic experienc
 ## Compatibility and Dependencies
 
 - **Required Mods**:
-    - Harmony (for all RimWorld mods to work seamlessly)
+    - Harmony
+
+Should not require DLC dependent code.
 
 - **Recommended Mods for Best Experience**:
-    - **Positive Connections**: Enhances interpersonal interactions, deeply integrating with Mind Matters to shape social evolution.
-    - **Slippers**: A lighthearted but meaningful addition that ties into certain Needs and Traits.
-    - Additional unreleased mods, like _Mind Matters Interface_, further refine the gameplay experience and allow for external mod interactions.
+    - **Positive Connections**: Enhances interpersonal interactions, deeply integrating with Mind Matters to shape social evolution. You'll want to use Positive Connections with Mind Matters, in general.
+    - **Slippers**: Comfort is a thing. Being quiet, and perhaps stealthy, is a thing. Adds footwear which does interesting things. Reusable comps that you can use in other mods.
+    - **Mind Matters Interface**, exists already in Slippers and Positive Connections, but, may be used by other mods to communicate via the Experience system, becoming psychological impressions within Mind Matters.
 
 ## What Sets Mind Matters Apart
 
@@ -48,3 +50,14 @@ Mind Matters is **functional but under active development**. This release is cur
 ## Acknowledgments
 
 Thank you to everyone who inspired this mod or contributed ideas along the way. Mind Matters builds on the RimWorld community's collective creativity and passion for storytelling.
+
+Mind Matters uses and references software and code and art licensed to Ludeon, who have no responsibility whatsoever for anything this or other mods cause to happen, or not happen in the world, and bear no responsibility for any bugs in my code, which is not endorsed by Ludeon Studios.
+
+Do pay for the games you play! Do not distribute this release via other outlets - it is intentionally only available via Github.
+
+Love,
+
+CEM
+
+
+
