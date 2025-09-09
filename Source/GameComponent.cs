@@ -189,8 +189,8 @@ namespace MindMatters
             if (Find.CurrentMap == null || Find.Maps == null || Find.Maps.Count == 0)
                 return false;
 
-            // Must have at least one playable pawn
-            if (!Find.CurrentMap.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any())
+            // Must have at least one playable pawn - double-check CurrentMap is not null
+            if (Find.CurrentMap?.mapPawns?.SpawnedPawnsInFaction(Faction.OfPlayer)?.Any() != true)
                 return false;
 
             // Ensure managers are not null
@@ -244,7 +244,7 @@ namespace MindMatters
                      (recluseTrait != null && traits.HasTrait(recluseTrait))) &&
                     MindMattersUtilities.IsPawnAlone(pawn, allPawns))
                 {
-                    PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager.TicksGame;
+                    PawnLastAloneTicks[pawn.thingIDNumber] = Find.TickManager?.TicksGame ?? 0;
                 }
 
                 // Example: if Unstable => handle logic
@@ -257,7 +257,7 @@ namespace MindMatters
 
         private void ProcessUnstableTrait(Pawn pawn)
         {
-            int currentTick = Find.TickManager.TicksGame;
+            int currentTick = Find.TickManager?.TicksGame ?? 0;
 
             if (!UnstablePawnLastMoodSwitchTicks.ContainsKey(pawn.thingIDNumber))
             {

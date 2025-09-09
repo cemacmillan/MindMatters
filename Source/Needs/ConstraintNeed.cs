@@ -25,8 +25,8 @@ public class ConstraintNeed : DynamicNeed
             return;
        
         int entryTick = lastUpdateTick;
-        MMToolkit.DebugLog($"=========={pawn.LabelShort}====={def.defName}===@==={lastUpdateTick}==========");
-        MMToolkit.DebugLog($"NeedInterval Instance ID: {GetHashCode()}, CurLevel: {CurLevel}, Baseline: {baselineSatisfaction}, Rolling: {rollingSatisfaction.Total}");
+        // MMToolkit.DebugLogVerbose($"=========={pawn.LabelShort}====={def.defName}===@==={lastUpdateTick}==========");
+        // MMToolkit.DebugLogVerbose($"NeedInterval Instance ID: {GetHashCode()}, CurLevel: {CurLevel}, Baseline: {baselineSatisfaction}, Rolling: {rollingSatisfaction.Total}");
             
         
         // Core rise/fall logic
@@ -37,8 +37,8 @@ public class ConstraintNeed : DynamicNeed
         else
         {
             rollingSatisfaction.Add(-def.seekerFallPerHour * FallPerIntervalFactor * UpdateDeltaFactor);
-            MMToolkit.DebugLog(
-                $"[NeedInterval]<<<<<<< Falling: {(-def.seekerFallPerHour * FallPerIntervalFactor * UpdateDeltaFactor)}, Rolling Total: {rollingSatisfaction.Total}");
+            // MMToolkit.DebugLogVerbose(
+            //     $"[NeedInterval]<<<<<<< Falling: {(-def.seekerFallPerHour * FallPerIntervalFactor * UpdateDeltaFactor)}, Rolling Total: {rollingSatisfaction.Total}");
         }
 
         // Consolidate rolling contribution and recalculate need level
@@ -47,7 +47,7 @@ public class ConstraintNeed : DynamicNeed
         RecalculateNeedLevel();
 
         lastUpdateTick = Find.TickManager.TicksGame;
-        MMToolkit.DebugLog($"======= CurLevel at End: {CurLevel} ==== {entryTick} / {lastUpdateTick} ============");
+        // MMToolkit.DebugLogVerbose($"======= CurLevel at End: {CurLevel} ==== {entryTick} / {lastUpdateTick} ============");
     }
 
     // ReSharper disable once MemberCanBePrivate.Global - can be exported to API

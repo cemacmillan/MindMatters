@@ -9,11 +9,11 @@ namespace MindMatters
     {
         protected override Job TryGiveJob(Pawn pawn)
         {
-            MMToolkit.DebugLog($"[CleaningFit] Pawn {pawn.Name} entering JobGiver_CleaningFit.");
+            MMToolkit.DebugLog($"[CleaningFit] Pawn {pawn.Name} entering JobGiver_CleaningFit.", MMToolkit.DebugLevel.Basic);
 
             if (pawn == null || pawn.Map == null)
             {
-                MMToolkit.DebugLog("[CleaningFit] Pawn or Map is null.");
+                MMToolkit.DebugLog("[CleaningFit] Pawn or Map is null.", MMToolkit.DebugLevel.Basic);
                 return null;
             }
 
@@ -24,9 +24,10 @@ namespace MindMatters
                              !t.IsForbidden(pawn) &&
                              pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.Deadly);
 
+                // Only log valid filth at verbose level to reduce spam
                 if (valid)
                 {
-                    MMToolkit.DebugLog($"[CleaningFit] Valid filth found at {t.Position}.");
+                    MMToolkit.DebugLog($"[CleaningFit] Valid filth found at {t.Position}.", MMToolkit.DebugLevel.Verbose);
                 }
 
                 return valid;
@@ -44,7 +45,7 @@ namespace MindMatters
 
             if (filth != null)
             {
-                MMToolkit.DebugLog($"[CleaningFit] Assigning cleaning job for filth at {filth.Position}.");
+                MMToolkit.DebugLog($"[CleaningFit] Assigning cleaning job for filth at {filth.Position}.", MMToolkit.DebugLevel.Basic);
 
                 Job job = JobMaker.MakeJob(JobDefOf.Clean);
                 job.AddQueuedTarget(TargetIndex.A, filth);
@@ -56,6 +57,9 @@ namespace MindMatters
                 int maxQueueSize = 15;
                 Map map = filth.Map;
                 Room room = filth.GetRoom();
+                
+                // More efficient approach: collect all nearby filth first, then validate
+                var nearbyFilth = new List<Thing>();
                 for (int i = 0; i < 100; i++)
                 {
                     IntVec3 c2 = filth.Position + GenRadial.RadialPattern[i];
@@ -63,18 +67,34 @@ namespace MindMatters
                     {
                         continue;
                     }
+                    
                     List<Thing> thingList = c2.GetThingList(map);
-                    for (int j = 0; j < thingList.Count; j++)
+                    foreach (Thing thing in thingList)
                     {
-                        Thing thing = thingList[j];
-                        if (thing is Filth filth2 && filth2 != filth && Validator(filth2))
+                        if (thing is Filth filth2 && filth2 != filth)
                         {
-                            job.AddQueuedTarget(TargetIndex.A, filth2);
+                            nearbyFilth.Add(filth2);
                         }
                     }
+                    
+                    if (nearbyFilth.Count >= maxQueueSize * 2) // Collect more than needed for validation
+                    {
+                        break;
+                    }
+                }
+
+                // Validate and add to job queue
+                foreach (Thing filth2 in nearbyFilth)
+                {
                     if (job.GetTargetQueue(TargetIndex.A).Count >= maxQueueSize)
                     {
                         break;
+                    }
+                    
+                    // Double-check the filth still exists and is valid
+                    if (filth2 != null && filth2.Spawned && Validator(filth2))
+                    {
+                        job.AddQueuedTarget(TargetIndex.A, filth2);
                     }
                 }
 
@@ -83,10 +103,11 @@ namespace MindMatters
                     job.targetQueueA.SortBy((LocalTargetInfo targ) => targ.Cell.DistanceToSquared(pawn.Position));
                 }
 
+                MMToolkit.DebugLog($"[CleaningFit] Job created with {job.GetTargetQueue(TargetIndex.A)?.Count ?? 0} targets.", MMToolkit.DebugLevel.Basic);
                 return job;
             }
 
-            MMToolkit.DebugLog("[CleaningFit] No filth found to clean.");
+            MMToolkit.DebugLog("[CleaningFit] No filth found to clean.", MMToolkit.DebugLevel.Basic);
             // No filth found; return null to allow other ThinkNodes to run
             return null;
         }

@@ -26,7 +26,7 @@ namespace MindMatters
                 return;
             }
             
-            MMToolkit.DebugLog($"[ITab_PsycheMap] Drawing for {pawn.LabelShort}, size: {size}");
+            MMToolkit.DebugLog($"[ITab_PsycheMap] Drawing for {pawn.LabelShort}, size: {size}", MMToolkit.DebugLevel.Verbose);
             
             // Create the main rect and contract it for proper ITab frame
             var rect = new Rect(0f, 0f, size.x, size.y).ContractedBy(10f);
@@ -74,14 +74,15 @@ namespace MindMatters
             
             float curY = 0f;
             
-            // Display basic psyche information
-            var infoRect = new Rect(0f, curY, rect.width, 60f);
+            // Display basic psyche information (increased height for better text visibility)
+            // Move down by 2em (32f) to avoid subtitle overlap
+            var infoRect = new Rect(0f, curY + 32f, rect.width, 120f);
             DrawPsycheInfo(infoRect, pawnPsyche);
-            curY += 65f;
+            curY += 125f + 32f; // Add the extra spacing
             
             // Center point for the pawn (adjusted for info area)
             var center = new Vector2(rect.width / 2f, (rect.height - curY) / 2f + curY);
-            var pawnRadius = 15f;
+            var pawnRadius = 20f; // Increased pawn size
             
             // Draw the pawn at center (blue circle with 'P')
             DrawPawnCenter(center, pawnRadius, pawn);
@@ -109,27 +110,46 @@ namespace MindMatters
             // Background for info area
             Widgets.DrawBoxSolid(rect, new Color(0.1f, 0.1f, 0.1f, 0.3f));
             
-            float curY = rect.y + 5f;
-            float lineHeight = 15f;
+            float curY = rect.y + 8f;
+            float lineHeight = 20f; // Increased line height for better text visibility
             
             // Get chroma information
             var chromaInfo = psyche.GetChromaInfo();
             var activeImpressions = psyche.GetActiveImpressions();
             
             // Dominant psychological mode with chroma intensity
-            var modeRect = new Rect(rect.x + 5f, curY, rect.width - 10f, lineHeight);
+            var modeRect = new Rect(rect.x + 8f, curY, rect.width - 16f, lineHeight);
+            Text.Font = GameFont.Small; // Ensure proper font size
             Widgets.Label(modeRect, $"Chroma: {chromaInfo.DominantMode} ({chromaInfo.DominantWeight:P0})");
             curY += lineHeight;
             
             // Active impressions count
-            var impressionCountRect = new Rect(rect.x + 5f, curY, rect.width - 10f, lineHeight);
+            var impressionCountRect = new Rect(rect.x + 8f, curY, rect.width - 16f, lineHeight);
             Widgets.Label(impressionCountRect, $"Active Impressions: {chromaInfo.ActiveImpressions}");
             curY += lineHeight;
             
             // Recent experiences count
-            var experienceRect = new Rect(rect.x + 5f, curY, rect.width - 10f, lineHeight);
+            var experienceRect = new Rect(rect.x + 8f, curY, rect.width - 16f, lineHeight);
             Widgets.Label(experienceRect, $"Recent Experiences: {chromaInfo.RecentExperiences}");
             curY += lineHeight;
+            
+            // Show recent experience details if any
+            var recentExperiences = GetRecentExperiences(SelPawn);
+            if (recentExperiences.Count > 0)
+            {
+                curY += 5f; // Spacing
+                var experienceHeaderRect = new Rect(rect.x + 8f, curY, rect.width - 16f, lineHeight);
+                Widgets.Label(experienceHeaderRect, "Recent Experience Details:");
+                curY += lineHeight;
+                
+                foreach (var experience in recentExperiences.Take(3)) // Show top 3
+                {
+                    var expRect = new Rect(rect.x + 12f, curY, rect.width - 20f, lineHeight);
+                    var tags = experience.Flags?.Count > 0 ? $" [{string.Join(", ", experience.Flags)}]" : "";
+                    Widgets.Label(expRect, $"  {experience.EventType} ({experience.Valency}){tags}");
+                    curY += lineHeight;
+                }
+            }
             
             // Mode weights (top 3) with chroma visualization
             var weights = chromaInfo.ModeWeights;
@@ -140,7 +160,7 @@ namespace MindMatters
             foreach (var mode in topModes)
             {
                 var modeName = ((PsychologicalMode)mode.Index).ToString();
-                var weightRect = new Rect(rect.x + 5f, curY, rect.width - 10f, lineHeight);
+                var weightRect = new Rect(rect.x + 8f, curY, rect.width - 16f, lineHeight);
                 
                 // Color the text based on mode intensity
                 var intensity = mode.Weight;
@@ -159,14 +179,14 @@ namespace MindMatters
             // Show active impressions if any
             if (activeImpressions.Count > 0)
             {
-                curY += 5f; // Spacing
-                var impressionHeaderRect = new Rect(rect.x + 5f, curY, rect.width - 10f, lineHeight);
+                curY += 8f; // Spacing
+                var impressionHeaderRect = new Rect(rect.x + 8f, curY, rect.width - 16f, lineHeight);
                 Widgets.Label(impressionHeaderRect, "Active Impressions:");
                 curY += lineHeight;
                 
                 foreach (var impression in activeImpressions.Take(3)) // Show top 3
                 {
-                    var impressionRect = new Rect(rect.x + 10f, curY, rect.width - 15f, lineHeight);
+                    var impressionRect = new Rect(rect.x + 12f, curY, rect.width - 20f, lineHeight);
                     var decayPercent = impression.DecayFactor * 100f;
                     Widgets.Label(impressionRect, $"  {impression.ModeName}: {impression.Magnitude:F2} ({decayPercent:F0}%)");
                     curY += lineHeight;
@@ -197,9 +217,27 @@ namespace MindMatters
             var pawnPsyche = psycheSystem.GetOrCreatePsyche(pawn);
             if (pawnPsyche == null) return new List<PsycheExperience>();
             
-            // For now, return empty list - we'll need to add a method to get recent experiences
-            // This would come from the Psyche system's experience tracking
-            return new List<PsycheExperience>();
+            // Get recent experiences from the ExperienceManager
+            var experienceManager = Current.Game?.GetComponent<MindMattersExperienceComponent>();
+            if (experienceManager == null) return new List<PsycheExperience>();
+            
+            var experiences = experienceManager.GetOrCreateExperiences(pawn);
+            if (experiences == null) return new List<PsycheExperience>();
+            
+            // Convert to PsycheExperience and return recent ones (last 5)
+            var recentExperiences = experiences
+                .OrderByDescending(e => e.Timestamp)
+                .Take(5)
+                .Select(e => new PsycheExperience
+                {
+                    EventType = e.EventType,
+                    Valency = e.Valency,
+                    Timestamp = e.Timestamp,
+                    Flags = e.Flags
+                })
+                .ToList();
+                
+            return recentExperiences;
         }
         
         private List<Thought> GetCurrentThoughts(Pawn pawn)
@@ -226,7 +264,7 @@ namespace MindMatters
         {
             // Draw experiences as shapes around the pawn
             var angleStep = 360f / Math.Max(experiences.Count, 1);
-            var distance = 80f;
+            var distance = 120f; // Increased distance for better visibility
             
             for (int i = 0; i < experiences.Count; i++)
             {
@@ -247,7 +285,7 @@ namespace MindMatters
             
             // Draw impressions as colored shapes around the pawn
             var angleStep = 360f / Math.Max(impressions.Count, 1);
-            var distance = 140f; // Further out than experiences
+            var distance = 180f; // Further out than experiences, increased for better visibility
             
             for (int i = 0; i < impressions.Count; i++)
             {
@@ -272,7 +310,7 @@ namespace MindMatters
             
             // Draw thoughts as colored shapes
             var angleStep = 360f / significantThoughts.Count;
-            var distance = 120f;
+            var distance = 150f; // Increased distance for better visibility
             
             for (int i = 0; i < significantThoughts.Count; i++)
             {
@@ -289,7 +327,7 @@ namespace MindMatters
         
         private void DrawExperienceShape(Vector2 pos, PsycheExperience experience)
         {
-            var size = 15f;
+            var size = 20f; // Increased size for better visibility
             var rect = new Rect(pos.x - size/2f, pos.y - size/2f, size, size);
             
             // Color based on valency
@@ -321,7 +359,7 @@ namespace MindMatters
         {
             // Size based on mood impact magnitude
             var moodOffset = thought.MoodOffset();
-            var size = Mathf.Clamp(Mathf.Abs(moodOffset) / 10f, 4f, 12f);
+            var size = Mathf.Clamp(Mathf.Abs(moodOffset) / 8f, 8f, 16f); // Increased base size and range
             
             // Color based on mood impact
             if (moodOffset > 0)
@@ -340,20 +378,21 @@ namespace MindMatters
         private void DrawImpressionShape(Vector2 pos, ImpressionInfo impression)
         {
             // Size based on magnitude and decay factor
-            var size = Mathf.Clamp(impression.Magnitude * 20f * impression.DecayFactor, 3f, 10f);
+            var size = Mathf.Clamp(impression.Magnitude * 25f * impression.DecayFactor, 8f, 18f); // Increased base size and range
             
-            // Color based on mode type
+            // Color based on mode type - brighter, more distinct colors
+            // These match the actual modes used in the system
             Color impressionColor = impression.ModeName switch
             {
-                "Calm" => Color.cyan,
-                "Vigilant" => new Color(1f, 0.5f, 0f), // Orange
-                "Affiliative" => Color.magenta,
-                "Acquisitive" => Color.yellow,
-                "Despair" => Color.red,
+                "Calm" => new Color(0f, 1f, 1f), // Bright cyan
+                "Vigilant" => new Color(1f, 0.6f, 0f), // Bright orange
+                "Affiliative" => new Color(1f, 0f, 1f), // Bright magenta
+                "Acquisitive" => new Color(1f, 1f, 0f), // Bright yellow
+                "Despair" => new Color(1f, 0.2f, 0.2f), // Bright red
                 "Defiant" => new Color(0.8f, 0.2f, 0.8f), // Purple
-                "Analyst" => Color.blue,
+                "Analyst" => new Color(0.2f, 0.2f, 1f), // Bright blue
                 "Oracle" => new Color(0.5f, 0.5f, 1f), // Light blue
-                _ => Color.gray
+                _ => new Color(0.7f, 0.7f, 0.7f) // Light grey instead of dark grey
             };
             
             // Alpha based on decay factor
@@ -366,21 +405,18 @@ namespace MindMatters
         
         private void DrawDiamond(Rect rect)
         {
-            // Draw a diamond shape
-            var points = new Vector2[]
-            {
-                new Vector2(rect.center.x, rect.yMin),           // Top
-                new Vector2(rect.xMax, rect.center.y),           // Right
-                new Vector2(rect.center.x, rect.yMax),           // Bottom
-                new Vector2(rect.xMin, rect.center.y)            // Left
-            };
+            // Draw a diamond shape using filled rectangles
+            var centerX = rect.center.x;
+            var centerY = rect.center.y;
+            var halfWidth = rect.width / 4f;
+            var halfHeight = rect.height / 4f;
             
-            // Simple diamond using lines
-            for (int i = 0; i < points.Length; i++)
-            {
-                var next = (i + 1) % points.Length;
-                Widgets.DrawLine(points[i], points[next], Color.white, 2f);
-            }
+            // Draw filled diamond using overlapping rectangles
+            var topRect = new Rect(centerX - halfWidth, centerY - halfHeight, halfWidth * 2, halfHeight * 2);
+            Widgets.DrawBoxSolid(topRect, GUI.color);
+            
+            // Draw outline for better visibility
+            Widgets.DrawBox(topRect, 2);
         }
         
         private void DrawLegend(Rect rect)
@@ -391,56 +427,56 @@ namespace MindMatters
             var y = legendRect.y + 5f;
             var x = legendRect.x + 5f;
             
-            Text.Font = GameFont.Tiny;
+            Text.Font = GameFont.Small; // Increased from Tiny for better readability
             
             // Legend entries
-            Widgets.Label(new Rect(x, y, 160f, 15f), "Legend:");
-            y += 15f;
+            Widgets.Label(new Rect(x, y, 160f, 18f), "Legend:");
+            y += 18f;
             
             // Pawn
             GUI.color = Color.blue;
             var pawnRect = new Rect(x + 2f, y + 2f, 12f, 12f);
             Widgets.DrawBoxSolid(pawnRect, Color.blue);
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x + 20f, y, 140f, 15f), "Pawn");
-            y += 15f;
+            Widgets.Label(new Rect(x + 20f, y, 140f, 18f), "Pawn");
+            y += 18f;
             
             // Impressions (triangles)
             GUI.color = Color.cyan;
             var impressionRect = new Rect(x + 2f, y + 2f, 12f, 12f);
             Widgets.DrawBoxSolid(impressionRect, Color.cyan);
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x + 20f, y, 140f, 15f), "Impressions");
-            y += 15f;
+            Widgets.Label(new Rect(x + 20f, y, 140f, 18f), "Impressions");
+            y += 18f;
             
             // Positive experience
             GUI.color = Color.green;
             DrawDiamond(new Rect(x, y, 12f, 12f));
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x + 20f, y, 140f, 15f), "Positive Experience");
-            y += 15f;
+            Widgets.Label(new Rect(x + 20f, y, 140f, 18f), "Positive Experience");
+            y += 18f;
             
             // Negative experience
             GUI.color = Color.red;
             DrawDiamond(new Rect(x, y, 12f, 12f));
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x + 20f, y, 140f, 15f), "Negative Experience");
-            y += 15f;
+            Widgets.Label(new Rect(x + 20f, y, 140f, 18f), "Negative Experience");
+            y += 18f;
             
             // Positive thought
             GUI.color = Color.green;
             var thoughtRect = new Rect(x + 2f, y + 2f, 8f, 8f);
             Widgets.DrawBoxSolid(thoughtRect, Color.green);
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x + 20f, y, 140f, 15f), "Positive Thought");
-            y += 15f;
+            Widgets.Label(new Rect(x + 20f, y, 140f, 18f), "Positive Thought");
+            y += 18f;
             
             // Negative thought
             GUI.color = Color.red;
             var negThoughtRect = new Rect(x + 2f, y + 2f, 8f, 8f);
             Widgets.DrawBoxSolid(negThoughtRect, Color.red);
             GUI.color = Color.white;
-            Widgets.Label(new Rect(x + 20f, y, 140f, 15f), "Negative Thought");
+            Widgets.Label(new Rect(x + 20f, y, 140f, 18f), "Negative Thought");
             
             Text.Font = GameFont.Small;
         }

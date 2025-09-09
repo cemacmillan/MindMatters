@@ -52,15 +52,20 @@ public class MindMattersExperienceComponent : GameComponent, IMindMattersExperie
     {
         base.GameComponentTick();
 
+        // Check if TickManager is available
+        if (Find.TickManager == null) return;
+
+        int currentTick = Find.TickManager.TicksGame;
+
         // Every quarter day (3 hours)
-        if (Find.TickManager.TicksGame % 7500 == 0)
+        if (currentTick % 7500 == 0)
         {
-            int expireThreshold = Find.TickManager.TicksGame - GenDate.TicksPerDay;
+            int expireThreshold = currentTick - GenDate.TicksPerDay;
             ExpireOldExperiencesInternal(expireThreshold);
         }
 
         // Check for therapy-related thoughts once a day
-        if (Find.TickManager.TicksGame % 60000 == 0)
+        if (currentTick % 60000 == 0)
         {
             CheckForTherapyThoughtsAndAddExperiences();
         }

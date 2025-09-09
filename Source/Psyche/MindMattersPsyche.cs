@@ -30,7 +30,7 @@ namespace MindMatters
             ProcessPsycheUpdates();
             
             // Test the system once after initialization (for debugging)
-            if (Find.TickManager.TicksGame == 1000) // After 1000 ticks
+            if (Find.TickManager?.TicksGame == 1000) // After 1000 ticks
             {
                 TestPsycheSystem();
             }

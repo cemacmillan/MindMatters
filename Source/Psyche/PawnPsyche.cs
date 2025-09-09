@@ -294,35 +294,47 @@ namespace MindMatters
             if (pawn?.needs == null) return;
             
             // Hunger pushes Acquisitive mode up
-            float hunger = 1f - pawn.needs.food.CurLevel; // 0..1
-            int acquisitiveIdx = GetModeIndex("Acquisitive");
-            if (acquisitiveIdx >= 0)
+            if (pawn.needs.food != null)
             {
-                modeWeights[acquisitiveIdx] += 0.15f * hunger;
+                float hunger = 1f - pawn.needs.food.CurLevel; // 0..1
+                int acquisitiveIdx = GetModeIndex("Acquisitive");
+                if (acquisitiveIdx >= 0)
+                {
+                    modeWeights[acquisitiveIdx] += 0.15f * hunger;
+                }
             }
             
             // Social isolation pushes Affiliative mode up
-            float solitude = 1f - pawn.needs.joy.CurLevel;
-            int affiliativeIdx = GetModeIndex("Affiliative");
-            if (affiliativeIdx >= 0)
+            if (pawn.needs.joy != null)
             {
-                modeWeights[affiliativeIdx] += 0.10f * solitude;
+                float solitude = 1f - pawn.needs.joy.CurLevel;
+                int affiliativeIdx = GetModeIndex("Affiliative");
+                if (affiliativeIdx >= 0)
+                {
+                    modeWeights[affiliativeIdx] += 0.10f * solitude;
+                }
             }
             
             // Low rest pushes Vigilant mode up
-            float fatigue = 1f - pawn.needs.rest.CurLevel;
-            int vigilantIdx = GetModeIndex("Vigilant");
-            if (vigilantIdx >= 0)
+            if (pawn.needs.rest != null)
             {
-                modeWeights[vigilantIdx] += 0.12f * fatigue;
+                float fatigue = 1f - pawn.needs.rest.CurLevel;
+                int vigilantIdx = GetModeIndex("Vigilant");
+                if (vigilantIdx >= 0)
+                {
+                    modeWeights[vigilantIdx] += 0.12f * fatigue;
+                }
             }
             
             // High stress pushes Despair mode up
-            float stress = 1f - pawn.needs.mood.CurLevel;
-            int despairIdx = GetModeIndex("Despair");
-            if (despairIdx >= 0)
+            if (pawn.needs.mood != null)
             {
-                modeWeights[despairIdx] += 0.08f * stress;
+                float stress = 1f - pawn.needs.mood.CurLevel;
+                int despairIdx = GetModeIndex("Despair");
+                if (despairIdx >= 0)
+                {
+                    modeWeights[despairIdx] += 0.08f * stress;
+                }
             }
             
             // Normalize after applying needs coupling

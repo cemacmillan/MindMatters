@@ -62,6 +62,7 @@ public class MindMattersSettings : ModSettings
     // ReSharper disable once MemberCanBePrivate.Global
     public float someSetting = 1.0f;
     public bool enableLogging = false; // Add EnableLogging toggle
+    public int debugLevel = 2; // Debug level: 1=Basic, 2=Detailed, 3=Verbose
     public bool enableAPI;
     public bool NeedsApplyToGuests;
     public bool DoNotAddNeeds;
@@ -73,6 +74,7 @@ public class MindMattersSettings : ModSettings
         Scribe_Values.Look(ref someSetting, "DummySlider", 1.0f);
         Scribe_Values.Look(ref enableAPI, "EnableAPI", true);
         Scribe_Values.Look(ref enableLogging, "EnableLogging", false);
+        Scribe_Values.Look(ref debugLevel, "DebugLevel", 2);
         Scribe_Values.Look(ref NeedsApplyToGuests, "NeedsApplyToGuests", false);
         Scribe_Values.Look(ref DoNotAddNeeds, "DoNotAddNeeds", true);
     }
@@ -88,6 +90,14 @@ public class MindMattersSettings : ModSettings
 
         // Add EnableLogging checkbox
         listingStandard.CheckboxLabeled("Enable detailed logging", ref enableLogging, "Toggle detailed logging output for debugging purposes.");
+        
+        // Debug level setting
+        if (enableLogging)
+        {
+            listingStandard.Label("Debug Level: " + (debugLevel == 1 ? "Basic" : debugLevel == 2 ? "Detailed" : "Verbose"));
+            debugLevel = (int)listingStandard.Slider(debugLevel, 1f, 3f);
+        }
+        
         listingStandard.CheckboxLabeled("Enable API for other mods", ref enableAPI, "Toggle interaction with other mods via the API.");
         listingStandard.CheckboxLabeled("Guests have transient Needs like other pawns", ref NeedsApplyToGuests, "Toggle interaction with other mods via the API.");
         listingStandard.CheckboxLabeled("Do not touch Needs directly: Trust The Game", ref DoNotAddNeeds, "Toggle interaction with other mods via the API.");

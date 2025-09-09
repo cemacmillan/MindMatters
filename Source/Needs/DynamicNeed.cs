@@ -117,8 +117,8 @@ public abstract class DynamicNeed : Need, IDynamicNeed
             return;
        
         int entryTick = lastUpdateTick;
-        MMToolkit.DebugLog($"=========={pawn.LabelShort}====={def.defName}===@==={lastUpdateTick}==========");
-        MMToolkit.DebugLog($"NeedInterval Instance ID: {GetHashCode()}, CurLevel: {CurLevel}, Baseline: {baselineSatisfaction}, Rolling: {rollingSatisfaction.Total}");
+        // MMToolkit.DebugLogVerbose($"=========={pawn.LabelShort}====={def.defName}===@==={lastUpdateTick}==========");
+        // MMToolkit.DebugLogVerbose($"NeedInterval Instance ID: {GetHashCode()}, CurLevel: {CurLevel}, Baseline: {baselineSatisfaction}, Rolling: {rollingSatisfaction.Total}");
             
         
             // Core rise/fall logic
@@ -129,8 +129,8 @@ public abstract class DynamicNeed : Need, IDynamicNeed
             else
             {
                 rollingSatisfaction.Add(-def.seekerFallPerHour * UpdateDeltaFactor);
-                MMToolkit.DebugLog(
-                    $"[NeedInterval] Fall Added: {(-def.seekerFallPerHour * UpdateDeltaFactor)}, Rolling Total: {rollingSatisfaction.Total}");
+                // MMToolkit.DebugLogVerbose(
+                //     $"[NeedInterval] Fall Added: {(-def.seekerFallPerHour * UpdateDeltaFactor)}, Rolling Total: {rollingSatisfaction.Total}");
             }
 
         // Consolidate rolling contribution and recalculate need level
@@ -147,7 +147,7 @@ public abstract class DynamicNeed : Need, IDynamicNeed
         }*/
         // CurLevel = Mathf.Clamp(baselineSatisfaction + rollingSatisfaction.Total, 0f, MaxLevel);
         lastUpdateTick = Find.TickManager.TicksGame;
-        MMToolkit.DebugLog($"======= CurLevel at End: {CurLevel} ==== {entryTick} / {lastUpdateTick} ============");
+        // MMToolkit.DebugLogVerbose($"======= CurLevel at End: {CurLevel} ==== {entryTick} / {lastUpdateTick} ============");
     }
     
         
